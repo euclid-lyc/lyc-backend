@@ -1,5 +1,5 @@
 # lyc-backend
-ㅤ    
+
 ## Commit Convention
 - `[chore]` : 동작에 영향 없는 코드 or 변경 없는 변경사항(주석 추가 등)
 - `[feat]` : 기능 구현
