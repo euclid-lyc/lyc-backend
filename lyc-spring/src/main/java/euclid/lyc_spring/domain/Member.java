@@ -6,6 +6,7 @@ import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Entity
@@ -58,5 +59,20 @@ public class Member {
 
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
     private Info info;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Notification> notificationList;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Attendance> attendanceList;
+
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
+    private List<Follow> followerList;
+
+    @OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
+    private List<Follow> followingList;
+
+    @OneToMany(mappedBy = "blockMember", cascade = CascadeType.ALL)
+    private List<BlockMember> blockMemberList;
 
 }
