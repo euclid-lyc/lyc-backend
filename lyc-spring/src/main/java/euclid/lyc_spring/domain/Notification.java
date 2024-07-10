@@ -1,6 +1,6 @@
 package euclid.lyc_spring.domain;
 
-import euclid.lyc_spring.domain.enums.NotificationType;
+import euclid.lyc_spring.domain.enums.CommissionStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -14,7 +14,7 @@ public class Notification {
     private Long id;
 
     @Column(nullable = false)
-    private NotificationType type;
+    private CommissionStatus type;
 
     @Column(columnDefinition = "text")
     private String text;
