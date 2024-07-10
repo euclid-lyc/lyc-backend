@@ -1,0 +1,31 @@
+package euclid.lyc_spring.domain.mapping;
+
+import euclid.lyc_spring.domain.Member;
+import euclid.lyc_spring.domain.posting.Posting;
+import jakarta.persistence.*;
+import lombok.Getter;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.util.Date;
+
+@Getter
+@Entity
+public class SavedPosting {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, unique = true)
+    private Long id;
+
+    @CreatedDate
+    @Column
+    private Date createdAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "posting_id", nullable = false)
+    private Posting posting;
+}
