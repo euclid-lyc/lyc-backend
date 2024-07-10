@@ -1,5 +1,6 @@
 package euclid.lyc_spring.domain;
 
+import euclid.lyc_spring.domain.commission.Commission;
 import euclid.lyc_spring.domain.info.Info;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -74,5 +75,8 @@ public class Member {
 
     @OneToMany(mappedBy = "blockMember", cascade = CascadeType.ALL)
     private List<BlockMember> blockMemberList;
+
+    @OneToMany(mappedBy = "director", cascade = CascadeType.ALL)
+    private List<Commission> directorList;
 
 }
