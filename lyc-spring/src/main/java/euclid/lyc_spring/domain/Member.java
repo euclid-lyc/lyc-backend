@@ -2,6 +2,8 @@ package euclid.lyc_spring.domain;
 
 import euclid.lyc_spring.domain.commission.Commission;
 import euclid.lyc_spring.domain.info.Info;
+import euclid.lyc_spring.domain.mapping.MemberChat;
+import euclid.lyc_spring.domain.posting.Posting;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
@@ -61,11 +63,20 @@ public class Member {
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
     private Info info;
 
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    private PushSet pushSet;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Notification> notificationList;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Attendance> attendanceList;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<MemberChat> memberChatList;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<PointUsage> pointUsageList;
 
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
     private List<Follow> followerList;
@@ -78,5 +89,12 @@ public class Member {
 
     @OneToMany(mappedBy = "director", cascade = CascadeType.ALL)
     private List<Commission> directorList;
+
+    @OneToMany(mappedBy = "fromMember", cascade = CascadeType.ALL)
+    private List<Posting> coordieList;
+
+    @OneToMany(mappedBy = "toMember", cascade = CascadeType.ALL)
+    private List<Posting> postingList;
+
 
 }
