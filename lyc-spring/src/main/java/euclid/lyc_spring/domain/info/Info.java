@@ -58,5 +58,5 @@ public class Info {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
-    s
+    
 }
