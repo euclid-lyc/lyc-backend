@@ -1,8 +1,11 @@
 package euclid.lyc_spring.domain;
 
+import euclid.lyc_spring.domain.clothes.Clothes;
 import euclid.lyc_spring.domain.commission.Commission;
 import euclid.lyc_spring.domain.info.Info;
+import euclid.lyc_spring.domain.mapping.LikedPosting;
 import euclid.lyc_spring.domain.mapping.MemberChat;
+import euclid.lyc_spring.domain.mapping.SavedPosting;
 import euclid.lyc_spring.domain.posting.Posting;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -77,6 +80,15 @@ public class Member {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<PointUsage> pointUsageList;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<LikedPosting> likedPostingList;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<SavedPosting> savedPostingList;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Clothes> clothesList;
 
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
     private List<Follow> followerList;
