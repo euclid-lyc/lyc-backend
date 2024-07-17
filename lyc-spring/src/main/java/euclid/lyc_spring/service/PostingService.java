@@ -20,10 +20,27 @@ public class PostingService {
 
     public PostingImageListDTO getMemberCoordies(Long memberId) {
 
-        Member member = memberRepository.findById(memberId)
+        memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         List<PostingImageDTO> postingImageDTOList = postingRepository.findByFromMember_Id(memberId).stream()
+                .map(PostingImageDTO::toDTO)
+                .toList();
+
+        return PostingImageListDTO.builder()
+                .memberId(memberId)
+                .imageList(postingImageDTOList)
+                .build();
+    }
+
+    public PostingImageListDTO getMemberReviews(Long memberId) {
+
+        memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // 내가 아닌 from_member 로부터 리뷰를 받음
+        List<PostingImageDTO> postingImageDTOList = postingRepository.findByToMember_Id(memberId).stream()
+                .filter(toPosting -> !memberId.equals(toPosting.getFromMember().getId()))
                 .map(PostingImageDTO::toDTO)
                 .toList();
 
