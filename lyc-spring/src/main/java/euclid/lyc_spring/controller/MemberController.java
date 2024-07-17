@@ -2,7 +2,7 @@ package euclid.lyc_spring.controller;
 
 import euclid.lyc_spring.service.MemberService;
 import euclid.lyc_spring.apiPayload.ApiResponse;
-import euclid.lyc_spring.dto.response.TodayDirectorDTO;
+import euclid.lyc_spring.dto.response.MemberDTO.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
