@@ -2,7 +2,7 @@ package euclid.lyc_spring.service;
 
 import euclid.lyc_spring.repository.MemberRepository;
 import euclid.lyc_spring.domain.Member;
-import euclid.lyc_spring.dto.TodayDirectorDTO;
+import euclid.lyc_spring.dto.response.TodayDirectorDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

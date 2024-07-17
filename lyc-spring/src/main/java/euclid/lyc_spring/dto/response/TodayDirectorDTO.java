@@ -1,4 +1,4 @@
-package euclid.lyc_spring.dto;
+package euclid.lyc_spring.dto.response;
 
 import euclid.lyc_spring.domain.Member;
 import lombok.AccessLevel;
