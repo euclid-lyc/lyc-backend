@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @Tag(name = "Post", description = "게시글 기능 관련 API")
 @RestController
 @RequiredArgsConstructor
@@ -32,6 +30,13 @@ public class PostingController {
     @GetMapping("/members/{memberId}/reviews")
     ApiResponse<PostingImageListDTO> getMemberReviews(@PathVariable("memberId") Long memberId) {
         PostingImageListDTO postingImageListDTO = postingService.getMemberReviews(memberId);
+        return ApiResponse.onSuccess(postingImageListDTO);
+    }
+
+    @Operation(summary = "저장한 코디 목록 불러오기", description = "마이페이지에 저장한 코디 목록을 불러옵니다.")
+    @GetMapping("/members/{memberId}/saved-coordies")
+    ApiResponse<PostingImageListDTO> getSavedCoordies(@PathVariable("memberId") Long memberId) {
+        PostingImageListDTO postingImageListDTO = postingService.getSavedCoordies(memberId);
         return ApiResponse.onSuccess(postingImageListDTO);
     }
 

@@ -24,7 +24,7 @@ public class MemberDTO {
             this.follower = follower;
         }
 
-        public static TodayDirectorDTO todayDirectorDTO(Member member) {
+        public static TodayDirectorDTO toDTO(Member member) {
             return TodayDirectorDTO.builder()
                     .memberId(member.getId())
                     .nickname(member.getNickname())

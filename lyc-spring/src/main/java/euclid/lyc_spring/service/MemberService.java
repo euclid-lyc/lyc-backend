@@ -18,7 +18,7 @@ public class MemberService {
     public List<TodayDirectorDTO> getTodayDirectorList() {
         return memberRepository.findAll().stream()
                 .sorted(Comparator.comparing(Member::getFollower).reversed())
-                .map(TodayDirectorDTO::todayDirectorDTO)
+                .map(TodayDirectorDTO::toDTO)
                 .toList();
 
     }
