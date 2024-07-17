@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -25,10 +26,10 @@ public class Commission {
 
     @CreatedDate
     @Column(nullable = false)
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @Column
-    private Date finishedAt;
+    private LocalDateTime finishedAt;
 
     @OneToMany(mappedBy = "commission", cascade = CascadeType.ALL)
     private List<Schedule> scheduleList;

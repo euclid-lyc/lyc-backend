@@ -11,6 +11,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -49,13 +50,13 @@ public class Member {
 
     @CreatedDate
     @Column(nullable = false)
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @Column
-    private Date inactive;
+    private LocalDateTime inactive;
 
     @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
-    private Long point;
+    private Integer point;
 
     @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
     private Long follower;

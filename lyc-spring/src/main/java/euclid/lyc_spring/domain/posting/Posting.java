@@ -10,6 +10,7 @@ import lombok.Getter;
 import org.hibernate.annotations.Check;
 import org.springframework.data.annotation.CreatedDate;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class Posting {
 
     @CreatedDate
     @Column
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @Column(columnDefinition = "text")
     private String content;

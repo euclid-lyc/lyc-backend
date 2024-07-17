@@ -3,7 +3,7 @@ package euclid.lyc_spring.domain.commission;
 import jakarta.persistence.*;
 import lombok.Getter;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Getter
 @Entity
@@ -15,7 +15,7 @@ public class Schedule {
     private Long id;
 
     @Column(nullable = false)
-    private Date date;
+    private LocalDate date;
 
     @Column(columnDefinition = "text")
     private String memo;
