@@ -2,7 +2,9 @@ package euclid.lyc_spring.domain.info;
 
 import euclid.lyc_spring.domain.enums.BodyType;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Entity
@@ -20,7 +22,16 @@ public class InfoBodyType {
     @Column(nullable = false)
     private Boolean isGood;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "info_id", nullable = false)
     private Info info;
+
+    protected InfoBodyType() {}
+
+    @Builder
+    public InfoBodyType(BodyType bodyType, Boolean isGood) {
+        this.bodyType = bodyType;
+        this.isGood = isGood;
+    }
 }

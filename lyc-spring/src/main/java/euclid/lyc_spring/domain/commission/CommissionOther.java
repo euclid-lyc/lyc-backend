@@ -3,6 +3,7 @@ package euclid.lyc_spring.domain.commission;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Getter
@@ -15,10 +16,10 @@ public class CommissionOther {
     private Long id;
 
     @Column
-    private Date dateToUse;
+    private LocalDate dateToUse;
 
     @Column
-    private Date desiredDate;
+    private LocalDate desiredDate;
 
     @Column(nullable = false)
     private Integer minPrice;

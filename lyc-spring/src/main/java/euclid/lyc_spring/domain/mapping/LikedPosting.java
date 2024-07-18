@@ -4,12 +4,16 @@ import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.posting.Posting;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class LikedPosting {
 
     @Id
@@ -19,12 +23,14 @@ public class LikedPosting {
 
     @CreatedDate
     @Column
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "posting_id", nullable = false)
     private Posting posting;

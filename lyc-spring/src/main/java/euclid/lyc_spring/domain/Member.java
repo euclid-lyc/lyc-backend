@@ -8,14 +8,19 @@ import euclid.lyc_spring.domain.mapping.MemberChat;
 import euclid.lyc_spring.domain.mapping.SavedPosting;
 import euclid.lyc_spring.domain.posting.Posting;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Member {
 
     @Id
@@ -29,7 +34,7 @@ public class Member {
     @Column(length = 30, nullable = false)
     private String loginId;
 
-    @Column(length = 30, nullable = false)
+    @Column(nullable = false)
     private String loginPw;
 
     @Column(length = 30, nullable = false)
@@ -49,13 +54,13 @@ public class Member {
 
     @CreatedDate
     @Column(nullable = false)
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @Column
-    private Date inactive;
+    private LocalDateTime inactive;
 
     @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
-    private Long point;
+    private Integer point;
 
     @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
     private Long follower;
@@ -66,6 +71,7 @@ public class Member {
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
     private Info info;
 
+    @Setter
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
     private PushSet pushSet;
 
@@ -100,13 +106,130 @@ public class Member {
     private List<BlockMember> blockMemberList;
 
     @OneToMany(mappedBy = "director", cascade = CascadeType.ALL)
-    private List<Commission> directorList;
+    private List<Commission> commissionList;
 
     @OneToMany(mappedBy = "fromMember", cascade = CascadeType.ALL)
-    private List<Posting> coordieList;
+    private List<Posting> fromPostingList;
 
     @OneToMany(mappedBy = "toMember", cascade = CascadeType.ALL)
+    private List<Posting> toPostingList;
+
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     private List<Posting> postingList;
 
+    protected Member() {}
 
+    @Builder
+    public Member(String name, String loginId, String loginPw,
+                  String email, String nickname, String introduction,
+                  String profileImage) {
+        this.name = name;
+        this.loginId = loginId;
+        this.loginPw = loginPw;
+        this.email = email;
+        this.nickname = nickname;
+        this.introduction = introduction;
+        this.profileImage = profileImage;
+        this.stampNo = 0;
+        this.point = 0;
+        this.follower = 0L;
+        this.following = 0L;
+        this.notificationList = new ArrayList<>();
+        this.attendanceList = new ArrayList<>();
+        this.memberChatList = new ArrayList<>();
+        this.pointUsageList = new ArrayList<>();
+        this.likedPostingList = new ArrayList<>();
+        this.savedPostingList = new ArrayList<>();
+        this.clothesList = new ArrayList<>();
+        this.followerList = new ArrayList<>();
+        this.followingList = new ArrayList<>();
+        this.blockMemberList = new ArrayList<>();
+        this.commissionList = new ArrayList<>();
+        this.fromPostingList = new ArrayList<>();
+        this.toPostingList = new ArrayList<>();
+        this.postingList = new ArrayList<>();
+    }
+
+
+    //=== Methods ===//
+
+    public void setInfo(Info info) {
+        this.info = info;
+        info.setMember(this);
+    }
+
+    public void addPushSet(PushSet pushSet) {
+        this.pushSet = pushSet;
+        pushSet.setMember(this);
+    }
+
+    public void addNotification(Notification notification) {
+        notificationList.add(notification);
+        notification.setMember(this);
+    }
+
+    public void addAttendance(Attendance attendance) {
+        attendanceList.add(attendance);
+        attendance.setMember(this);
+    }
+
+    public void addMemberChat(MemberChat memberChat) {
+        memberChatList.add(memberChat);
+        memberChat.setMember(this);
+    }
+
+    public void addPointUsage(PointUsage pointUsage) {
+        pointUsageList.add(pointUsage);
+        pointUsage.setMember(this);
+    }
+
+    public void addLikedPosting(LikedPosting likedPosting) {
+        likedPostingList.add(likedPosting);
+        likedPosting.setMember(this);
+    }
+
+    public void addSavedPosting(SavedPosting savedPosting) {
+        savedPostingList.add(savedPosting);
+        savedPosting.setMember(this);
+    }
+
+    public void addClothes(Clothes clothes) {
+        clothesList.add(clothes);
+        clothes.setMember(this);
+    }
+
+    public void addFollower(Follow follower) {
+        followerList.add(follower);
+        follower.setFollower(this);
+    }
+
+    public void addFollowing(Follow following) {
+        followingList.add(following);
+        following.setFollower(this);
+    }
+
+    public void addBlockMember(BlockMember blockMember) {
+        blockMemberList.add(blockMember);
+        blockMember.setBlockMember(this);
+    }
+
+    public void addCommission(Commission commission) {
+        commissionList.add(commission);
+        commission.setDirector(this);
+    }
+
+    public void addFromPosting(Posting posting) {
+        fromPostingList.add(posting);
+        posting.setFromMember(this);
+    }
+
+    public void addToPosting(Posting posting) {
+        toPostingList.add(posting);
+        posting.setToMember(this);
+    }
+
+    public void addPosting(Posting posting) {
+        postingList.add(posting);
+        posting.setWriter(this);
+    }
 }
