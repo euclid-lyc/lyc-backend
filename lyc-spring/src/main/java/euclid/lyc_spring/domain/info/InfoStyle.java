@@ -8,6 +8,12 @@ import lombok.Getter;
 @Entity
 public class InfoStyle {
 
+    public InfoStyle(Info info, Style style, Boolean isPrefer) {
+        this.info = info;
+        this.style = style;
+        this.isPrefer = isPrefer;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, unique = true)
@@ -23,4 +29,8 @@ public class InfoStyle {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "info_id", nullable = false)
     private Info info;
+
+    public InfoStyle() {
+        super();
+    }
 }
