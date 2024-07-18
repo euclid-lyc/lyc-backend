@@ -3,6 +3,7 @@ package euclid.lyc_spring.domain.clothes;
 import euclid.lyc_spring.domain.enums.Fit;
 import euclid.lyc_spring.domain.enums.Material;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,4 +31,13 @@ public class ClothesText {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clothes_id", nullable = false)
     private Clothes clothes;
+
+    protected ClothesText() {}
+
+    @Builder
+    public ClothesText(String name, Material material, Fit fit) {
+        this.name = name;
+        this.material = material;
+        this.fit = fit;
+    }
 }

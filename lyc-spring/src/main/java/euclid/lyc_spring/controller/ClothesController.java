@@ -21,12 +21,20 @@ public class ClothesController {
      * POST API
      */
 
-    @Operation(summary = "", description = "")
+    @Operation(summary = "옷장 게시글 작성하기(사진)", description = "사진과 함께 옷장 게시글을 작성합니다.")
     @PostMapping("/members/{memberId}/clothes-by-image")
     ApiResponse<ClothesImageResponseDTO> createClothesByImage(@PathVariable("memberId") Long memberId,
                                                                          @RequestBody ClothesByImageDTO clothesByImageDTO) {
         ClothesImageResponseDTO clothesImageResponseDTO = clothesService.createClothesByImage(memberId, clothesByImageDTO);
         return ApiResponse.onSuccess(clothesImageResponseDTO);
+    }
+
+    @Operation(summary = "옷장 게시글 작성하기(텍스트)", description = "텍스트와 함께 옷장 게시글을 작성합니다.")
+    @PostMapping("/members/{memberId}/clothes-by-text")
+    ApiResponse<ClothesTextResponseDTO> createClothesByText(@PathVariable("memberId") Long memberId,
+                                                              @RequestBody ClothesByTextDTO clothesByTextDTO) {
+        ClothesTextResponseDTO clothesTextResponseDTO = clothesService.createClothesByText(memberId, clothesByTextDTO);
+        return ApiResponse.onSuccess(clothesTextResponseDTO);
     }
 
 }
