@@ -11,7 +11,6 @@ import org.hibernate.annotations.Check;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -60,6 +59,10 @@ public class Posting {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "to_id", nullable = false)
     private Member toMember;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "writer_id", nullable = false)
+    private Member writer;
 
     //=== Methods ===//
     public void reloadLikes(Long likesFromLikedPosting) {

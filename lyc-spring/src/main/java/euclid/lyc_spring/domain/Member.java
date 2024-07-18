@@ -104,9 +104,12 @@ public class Member {
     private List<Commission> directorList;
 
     @OneToMany(mappedBy = "fromMember", cascade = CascadeType.ALL)
-    private List<Posting> coordieList;
+    private List<Posting> fromPostingList;
 
     @OneToMany(mappedBy = "toMember", cascade = CascadeType.ALL)
+    private List<Posting> toPostingList;
+
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     private List<Posting> postingList;
 
 
