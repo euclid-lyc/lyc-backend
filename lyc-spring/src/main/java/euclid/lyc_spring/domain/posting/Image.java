@@ -1,6 +1,7 @@
 package euclid.lyc_spring.domain.posting;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,6 +30,7 @@ public class Image {
 
     protected Image() {}
 
+    @Builder
     public Image(String image, Posting posting) {
         this.image = image;
         this.posting = posting;

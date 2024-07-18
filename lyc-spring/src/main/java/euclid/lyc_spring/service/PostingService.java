@@ -187,28 +187,37 @@ public class PostingService {
         toMember.addToPosting(posting);
         writer.addPosting(posting);
 
-        postingRepository.save(posting);
+        posting = postingRepository.save(posting);
+
         createImage(posting, postingSaveDTO);
 
         return PostingViewDTO.toDTO(posting);
     }
 
-    public void createImage(Posting posting, PostingSaveDTO postingSaveDTO) {
+    private void createImage(Posting posting, PostingSaveDTO postingSaveDTO) {
 
         postingSaveDTO.getImageList()
                 .forEach(imageSaveDTO -> {
-                    Image image = imageRepository.save(new Image(imageSaveDTO.getImage(), posting));
+                    Image image = Image.builder()
+                            .image(imageSaveDTO.getImage())
+                            .posting(posting)
+                            .build();
                     posting.addImage(image);
+                    imageRepository.save(image);
                     createImageUrl(image, imageSaveDTO);
                 });
 
     }
 
-    public void createImageUrl(Image image, ImageSaveDTO imageSaveDTO) {
+    private void createImageUrl(Image image, ImageSaveDTO imageSaveDTO) {
         imageSaveDTO.getImageUrlList()
                 .forEach(link -> {
-                    ImageUrl imageUrl = imageUrlRepository.save(new ImageUrl(link, image));
+                    ImageUrl imageUrl = ImageUrl.builder()
+                            .link(imageSaveDTO.getImage())
+                            .image(image)
+                            .build();
                     image.addImageUrl(imageUrl);
+                    imageUrlRepository.save(imageUrl);
                 });
     }
 }
