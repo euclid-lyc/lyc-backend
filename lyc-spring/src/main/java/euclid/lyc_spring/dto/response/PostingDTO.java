@@ -48,8 +48,8 @@ public class PostingDTO {
     @Getter
     public static class PostingViewDTO {
 
-        private final MemberInfoDTO fromMember;
-        private final MemberInfoDTO toMember;
+        private final MemberProfileDTO fromMember;
+        private final MemberProfileDTO toMember;
         private final Long writerId;
         private final String nickname;
         private final String loginId;
@@ -60,7 +60,7 @@ public class PostingDTO {
         private final List<ImageInfoDTO> imageInfo;
 
         @Builder(access = AccessLevel.PRIVATE)
-        private PostingViewDTO(MemberInfoDTO fromMember, MemberInfoDTO toMember,
+        private PostingViewDTO(MemberProfileDTO fromMember, MemberProfileDTO toMember,
                                Long writerId, String nickname, String loginId,
                                Long postingId, Short minTemp, Short maxTemp, String content,
                                List<ImageInfoDTO> imageInfo) {
@@ -78,8 +78,8 @@ public class PostingDTO {
 
         public static PostingViewDTO toDTO(Posting posting) {
             return PostingViewDTO.builder()
-                    .fromMember(MemberInfoDTO.toDTO(posting.getFromMember()))
-                    .toMember(MemberInfoDTO.toDTO(posting.getToMember()))
+                    .fromMember(MemberProfileDTO.toDTO(posting.getFromMember()))
+                    .toMember(MemberProfileDTO.toDTO(posting.getToMember()))
                     .writerId(posting.getWriter().getId())
                     .nickname(posting.getWriter().getNickname())
                     .loginId(posting.getWriter().getLoginId())

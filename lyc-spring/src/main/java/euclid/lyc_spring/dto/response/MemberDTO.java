@@ -35,23 +35,47 @@ public class MemberDTO {
     }
 
     @Getter
-    public static class MemberInfoDTO {
+    public static class MemberProfileDTO {
 
         private final Long memberId;
         private final String profileImage;
 
         @Builder(access = AccessLevel.PRIVATE)
-        private MemberInfoDTO(Long memberId, String profileImage) {
+        private MemberProfileDTO(Long memberId, String profileImage) {
             this.memberId = memberId;
             this.profileImage = profileImage;
         }
 
-        public static MemberInfoDTO toDTO(Member member) {
-            return MemberInfoDTO.builder()
+        public static MemberProfileDTO toDTO(Member member) {
+            return MemberProfileDTO.builder()
                     .memberId(member.getId())
                     .profileImage(member.getProfileImage())
                     .build();
         }
     }
+
+    @Getter
+    public static class MemberInfoDTO {
+
+        private final Long memberId;
+        private final String nickname;
+        private final String loginId;
+
+        @Builder(access = AccessLevel.PRIVATE)
+        private MemberInfoDTO(Long memberId, String nickname, String loginId) {
+            this.memberId = memberId;
+            this.nickname = nickname;
+            this.loginId = loginId;
+        }
+
+        public static MemberInfoDTO toDTO(Member member) {
+            return MemberInfoDTO.builder()
+                    .memberId(member.getId())
+                    .nickname(member.getNickname())
+                    .loginId(member.getLoginId())
+                    .build();
+        }
+    }
+
 }
 
