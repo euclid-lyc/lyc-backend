@@ -12,6 +12,19 @@ import java.util.List;
 @Entity
 public class Info {
 
+    public Info(Member member, Short height, Short weight, TopSize topSize, BottomSize bottomSize,
+                Integer postalCode, String address, String detailAddress, String text) {
+        this.member = member;
+        this.height = height;
+        this.weight = weight;
+        this.topSize = topSize;
+        this.bottomSize = bottomSize;
+        this.postalCode = postalCode;
+        this.address = address;
+        this.detailAddress = detailAddress;
+        this.text = text;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, unique = true)
@@ -31,13 +44,13 @@ public class Info {
     @Column(length = 8)
     private BottomSize bottomSize;
 
-    @Column(nullable = false)
+    @Column//(nullable = false)
     private Integer postalCode;
 
-    @Column(length = 30, nullable = false)
+    @Column//(length = 30, nullable = false)
     private String address;
 
-    @Column(length = 30, nullable = false)
+    @Column//(length = 30, nullable = false)
     private String detailAddress;
 
     @Column(columnDefinition = "text")
@@ -58,5 +71,8 @@ public class Info {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
-    
+
+    public Info() {
+        super();
+    }
 }

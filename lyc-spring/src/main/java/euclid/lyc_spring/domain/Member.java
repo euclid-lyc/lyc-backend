@@ -9,6 +9,7 @@ import euclid.lyc_spring.domain.mapping.SavedPosting;
 import euclid.lyc_spring.domain.posting.Posting;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.util.Date;
@@ -16,7 +17,28 @@ import java.util.List;
 
 @Getter
 @Entity
+@Setter
 public class Member {
+
+    public Member(String name, String LoginId, String loginPw, String email,
+                  String nickname, String introduction, String profileImage) {
+        this.name = name;
+        this.loginId = LoginId;
+        this.loginPw = loginPw;
+        this.email = email;
+        this.nickname = nickname;
+        this.introduction = introduction;
+        this.profileImage = profileImage;
+        this.stampNo = 0;
+        this.createdAt = new Date();
+        this.point = 0L;
+        this.follower = 0L;
+        this.following = 0L;
+    }
+
+    public Member() {
+        super();
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +51,7 @@ public class Member {
     @Column(length = 30, nullable = false)
     private String loginId;
 
-    @Column(length = 30, nullable = false)
+    @Column(length = 60, nullable = false)
     private String loginPw;
 
     @Column(length = 30, nullable = false)
@@ -107,6 +129,4 @@ public class Member {
 
     @OneToMany(mappedBy = "toMember", cascade = CascadeType.ALL)
     private List<Posting> postingList;
-
-
 }
