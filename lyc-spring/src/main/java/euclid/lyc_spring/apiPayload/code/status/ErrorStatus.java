@@ -18,6 +18,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // member
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER4041", "사용자가 존재하지 않습니다."),
+    MEMBER_ALREADY_EXIST(HttpStatus.FORBIDDEN, "MEMBER4031", "이메일이 일치하는 사용자가 이미 존재합니다."),
 
     // posting
     POSTING_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4041", "포스팅이 존재하지 않습니다."),
