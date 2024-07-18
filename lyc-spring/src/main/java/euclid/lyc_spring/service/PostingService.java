@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -154,6 +155,17 @@ public class PostingService {
                     .isClicked(true)
                     .build();
         }
+    }
+
+    public RecentPostingListDTO getRecentPostings() {
+
+        List<RecentPostingDTO> postingImageDTOList = postingRepository.findAll().stream()
+                .sorted(Comparator.comparing(Posting::getCreatedAt).reversed())
+                .map(RecentPostingDTO::toDTO)
+                .limit(10)
+                .toList();
+
+        return new RecentPostingListDTO(postingImageDTOList);
     }
 
     /**

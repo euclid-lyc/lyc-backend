@@ -67,6 +67,13 @@ public class PostingController {
         return ApiResponse.onSuccess(clickDTO);
     }
 
+    @Operation(summary = "최신 피드 10개 불러오기", description = "홈 화면에 최신 피드를 불러옵니다.")
+    @GetMapping("/postings/latest-order")
+    ApiResponse<RecentPostingListDTO> getRecentPostings() {
+        RecentPostingListDTO recentPostingListDTO = postingService.getRecentPostings();
+        return ApiResponse.onSuccess(recentPostingListDTO);
+    }
+
     /**
      * POST API
      */
@@ -99,4 +106,5 @@ public class PostingController {
         SavedPostingIdDTO savedPostingIdDTO = postingService.deleteSavedPosting(memberId, postingId,savedPostingId);
         return ApiResponse.onSuccess(savedPostingIdDTO);
     }
+
 }

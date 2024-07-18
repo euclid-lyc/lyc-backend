@@ -19,6 +19,7 @@ public class MemberService {
         return memberRepository.findAll().stream()
                 .sorted(Comparator.comparing(Member::getFollower).reversed())
                 .map(TodayDirectorDTO::toDTO)
+                .limit(10)
                 .toList();
 
     }

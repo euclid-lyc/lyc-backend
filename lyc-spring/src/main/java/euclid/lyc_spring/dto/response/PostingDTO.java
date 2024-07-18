@@ -5,6 +5,7 @@ import euclid.lyc_spring.dto.response.MemberDTO.*;
 import euclid.lyc_spring.dto.response.ImageDTO.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -41,6 +42,36 @@ public class PostingDTO {
             this.memberId = memberId;
             this.imageList = imageList;
         }
+    }
+
+    @Getter
+    public static class RecentPostingDTO {
+
+        private final Long postingId;
+        private final String image;
+        private final LocalDateTime createdAt;
+
+        @Builder(access = AccessLevel.PRIVATE)
+        private RecentPostingDTO(Long postingId, String image, LocalDateTime createdAt) {
+            this.postingId = postingId;
+            this.image = image;
+            this.createdAt = createdAt;
+        }
+
+        public static RecentPostingDTO toDTO(Posting posting) {
+            return RecentPostingDTO.builder()
+                    .postingId(posting.getId())
+                    .image(posting.getImageList().isEmpty() ? "" : posting.getImageList().get(0).getImage())
+                    .createdAt(posting.getCreatedAt())
+                    .build();
+        }
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    public static class RecentPostingListDTO {
+
+        private final List<RecentPostingDTO> posting;
     }
 
     @Getter
