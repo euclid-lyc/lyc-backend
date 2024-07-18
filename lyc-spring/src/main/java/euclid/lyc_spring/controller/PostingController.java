@@ -21,23 +21,47 @@ public class PostingController {
 
     @Operation(summary = "유저의 코디 목록 불러오기", description = "마이페이지에 유저의 코디 목록을 불러옵니다.")
     @GetMapping("/members/{memberId}/coordies")
-    ApiResponse<PostingImageListDTO> getMemberCoordies(@PathVariable("memberId") Long memberId) {
-        PostingImageListDTO postingImageListDTO = postingService.getMemberCoordies(memberId);
+    ApiResponse<PostingImageListDTO> getAllMemberCoordies(@PathVariable("memberId") Long memberId) {
+        PostingImageListDTO postingImageListDTO = postingService.getAllMemberCoordies(memberId);
         return ApiResponse.onSuccess(postingImageListDTO);
     }
 
     @Operation(summary = "유저의 리뷰 목록 불러오기", description = "마이페이지에 유저의 리뷰 목록을 불러옵니다.")
     @GetMapping("/members/{memberId}/reviews")
-    ApiResponse<PostingImageListDTO> getMemberReviews(@PathVariable("memberId") Long memberId) {
-        PostingImageListDTO postingImageListDTO = postingService.getMemberReviews(memberId);
+    ApiResponse<PostingImageListDTO> getAllMemberReviews(@PathVariable("memberId") Long memberId) {
+        PostingImageListDTO postingImageListDTO = postingService.getAllMemberReviews(memberId);
         return ApiResponse.onSuccess(postingImageListDTO);
     }
 
     @Operation(summary = "저장한 코디 목록 불러오기", description = "마이페이지에 저장한 코디 목록을 불러옵니다.")
-    @GetMapping("/members/{memberId}/saved-coordies")
-    ApiResponse<PostingImageListDTO> getSavedCoordies(@PathVariable("memberId") Long memberId) {
-        PostingImageListDTO postingImageListDTO = postingService.getSavedCoordies(memberId);
+    @GetMapping("/members/{memberId}/saved-postings")
+    ApiResponse<PostingImageListDTO> getAllSavedCoordies(@PathVariable("memberId") Long memberId) {
+        PostingImageListDTO postingImageListDTO = postingService.getAllSavedCoordies(memberId);
         return ApiResponse.onSuccess(postingImageListDTO);
     }
 
+    @Operation(summary = "저장한 게시글(코디 or 리뷰) 불러오기", description = "게시글을 불러옵니다.")
+    @GetMapping("/members/{memberId}/postings/{postingId}/saved-postings/{savedPostingId}")
+    ApiResponse<PostingViewDTO> getSavedCoordie(@PathVariable("memberId") Long memberId,
+                                                @PathVariable("postingId") Long postingId,
+                                                @PathVariable("savedPostingId") Long savedPostingId) {
+        PostingViewDTO postingViewDTO = postingService.getSavedCoordie(memberId, postingId, savedPostingId);
+        return ApiResponse.onSuccess(postingViewDTO);
+    }
+
+    @Operation(summary = "게시글 좋아요 클릭 여부 불러오기", description = "게시글에 좋아요를 눌렀는지 확인합니다.")
+    @GetMapping("/members/{memberId}/postings/{postingId}/likes")
+    ApiResponse<ClickDTO> getIsClickedLike(@PathVariable("memberId") Long memberId,
+                                           @PathVariable("postingId") Long postingId) {
+        ClickDTO clickDTO = postingService.getIsClickedLike(memberId, postingId);
+        return ApiResponse.onSuccess(clickDTO);
+    }
+
+    @Operation(summary = "게시글 저장 여부 불러오기", description = "게시글을 저장하였는지 확인합니다.")
+    @GetMapping("/members/{memberId}/postings/{postingId}/saves")
+    ApiResponse<ClickDTO> getIsClickedSave(@PathVariable("memberId") Long memberId,
+                                           @PathVariable("postingId") Long postingId) {
+        ClickDTO clickDTO = postingService.getIsClickedSave(memberId, postingId);
+        return ApiResponse.onSuccess(clickDTO);
+    }
 }

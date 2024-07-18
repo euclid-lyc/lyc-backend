@@ -21,6 +21,7 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // posting
     POSTING_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4041", "포스팅이 존재하지 않습니다."),
+    SAVED_POSTING_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4042", "포스팅이 저장되어 있지 않습니다.")
 
     ;
 

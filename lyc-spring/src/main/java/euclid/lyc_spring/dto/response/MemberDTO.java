@@ -33,5 +33,25 @@ public class MemberDTO {
                     .build();
         }
     }
+
+    @Getter
+    public static class MemberInfoDTO {
+
+        private final Long memberId;
+        private final String profileImage;
+
+        @Builder(access = AccessLevel.PRIVATE)
+        private MemberInfoDTO(Long memberId, String profileImage) {
+            this.memberId = memberId;
+            this.profileImage = profileImage;
+        }
+
+        public static MemberInfoDTO toDTO(Member member) {
+            return MemberInfoDTO.builder()
+                    .memberId(member.getId())
+                    .profileImage(member.getProfileImage())
+                    .build();
+        }
+    }
 }
 
