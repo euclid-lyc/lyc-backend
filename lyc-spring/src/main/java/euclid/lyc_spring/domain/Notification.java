@@ -3,6 +3,7 @@ package euclid.lyc_spring.domain;
 import euclid.lyc_spring.domain.enums.CommissionStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Entity
@@ -20,6 +21,7 @@ public class Notification {
     @Column(columnDefinition = "text")
     private String text;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
