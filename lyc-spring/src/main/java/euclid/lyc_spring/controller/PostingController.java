@@ -83,6 +83,7 @@ public class PostingController {
      * DELETE API
      */
 
+    @Operation(summary = "게시글(코디 or 리뷰) 삭제하기", description = "게시글을 삭제합니다.")
     @DeleteMapping("/members/{memberId}/postings/{postingId}")
     ApiResponse<Long> deletePosting(@PathVariable("memberId") Long memberId,
                                     @PathVariable("postingId") Long postingId) {
