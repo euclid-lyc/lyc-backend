@@ -78,4 +78,15 @@ public class PostingController {
         PostingViewDTO postingViewDTO = postingService.createPosting(memberId, postingSaveDTO);
         return ApiResponse.onSuccess(postingViewDTO);
     }
+
+    /**
+     * DELETE API
+     */
+
+    @DeleteMapping("/members/{memberId}/postings/{postingId}")
+    ApiResponse<Long> deletePosting(@PathVariable("memberId") Long memberId,
+                                    @PathVariable("postingId") Long postingId) {
+        postingService.deletePosting(memberId, postingId);
+        return ApiResponse.onSuccess(postingId);
+    }
 }

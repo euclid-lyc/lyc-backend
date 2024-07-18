@@ -220,4 +220,27 @@ public class PostingService {
                     imageUrlRepository.save(imageUrl);
                 });
     }
+
+    /**
+     * DELETE API
+     */
+
+    @Transactional
+    public void deletePosting(Long memberId, Long postingId) {
+
+        memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Posting posting = postingRepository.findById(postingId)
+                .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
+
+        posting.getImageList().forEach(image -> {
+            imageUrlRepository.deleteAll(image.getImageUrlList());
+            imageRepository.delete(image);
+        });
+
+        postingRepository.delete(posting);
+
+    }
+
 }
