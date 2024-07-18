@@ -6,14 +6,13 @@ import euclid.lyc_spring.dto.response.MemberDTO.*;
 import euclid.lyc_spring.service.RegisterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Controller;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
-@ResponseBody
-@AllArgsConstructor
 @Tag(name = "register", description = "회원가입 기능 관련 API")
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api")
 public class RegisterController {
 
     private final RegisterService joinService;

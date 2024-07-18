@@ -34,4 +34,20 @@ public class Clothes {
     @OneToOne(mappedBy = "clothes", cascade = CascadeType.ALL)
     private ClothesText clothesText;
 
+    protected Clothes() {}
+
+    public Clothes(Member member) {
+        this.member = member;
+    }
+
+    //=== add Methods ===//
+    public void addClothesImage(ClothesImage clothesImage) {
+        this.clothesImage = clothesImage;
+        clothesImage.setClothes(this);
+    }
+
+    public void addClothesText(ClothesText clothesText) {
+        this.clothesText = clothesText;
+        clothesText.setClothes(this);
+    }
 }

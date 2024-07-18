@@ -4,6 +4,7 @@ import euclid.lyc_spring.domain.enums.Fit;
 import euclid.lyc_spring.domain.enums.Material;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Entity
@@ -25,6 +26,7 @@ public class ClothesText {
     @Column(nullable = false)
     private Fit fit;
 
+    @Setter
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clothes_id", nullable = false)
     private Clothes clothes;
