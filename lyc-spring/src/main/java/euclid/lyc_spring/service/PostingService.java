@@ -226,9 +226,9 @@ public class PostingService {
      */
 
     @Transactional
-    public void deletePosting(Long memberId, Long postingId) {
+    public PostingIdDTO deletePosting(Long memberId, Long postingId) {
 
-        memberRepository.findById(memberId)
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         Posting posting = postingRepository.findById(postingId)
@@ -239,8 +239,29 @@ public class PostingService {
             imageRepository.delete(image);
         });
 
-        postingRepository.delete(posting);
+        member.removePosting(posting);
+        postingRepository.deleteById(postingId);
 
+        return new PostingIdDTO(postingId);
+    }
+
+    public SavedPostingIdDTO deleteSavedPosting(Long memberId, Long postingId, Long savedPostingId) {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Posting posting = postingRepository.findById(postingId)
+                .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
+
+        SavedPosting savedPosting = savedPostingRepository.findById(savedPostingId)
+                .orElseThrow(() -> new PostingHandler(ErrorStatus.SAVED_POSTING_NOT_FOUND));
+
+
+        member.removeSavedPosting(savedPosting);
+        posting.removeSavedPosting(savedPosting);
+        savedPostingRepository.deleteById(savedPostingId);
+
+        return new SavedPostingIdDTO(postingId, savedPostingId);
     }
 
 }

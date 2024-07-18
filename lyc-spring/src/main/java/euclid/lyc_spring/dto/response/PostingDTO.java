@@ -3,9 +3,7 @@ package euclid.lyc_spring.dto.response;
 import euclid.lyc_spring.domain.posting.Posting;
 import euclid.lyc_spring.dto.response.MemberDTO.*;
 import euclid.lyc_spring.dto.response.ImageDTO.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.List;
 
@@ -107,6 +105,21 @@ public class PostingDTO {
             this.postingId = postingId;
             this.isClicked = isClicked;
         }
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    public static class PostingIdDTO {
+
+        private final Long postingId;
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    public static class SavedPostingIdDTO {
+
+        private final Long postingId;
+        private final Long savedPostingId;
     }
 
 }

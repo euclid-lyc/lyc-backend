@@ -151,7 +151,7 @@ public class Member {
     }
 
 
-    //=== Methods ===//
+    //=== Add Methods ===//
 
     public void setInfo(Info info) {
         this.info = info;
@@ -231,5 +231,17 @@ public class Member {
     public void addPosting(Posting posting) {
         postingList.add(posting);
         posting.setWriter(this);
+    }
+
+    //=== remove Methods ===//
+
+    public void removePosting(Posting posting) {
+        fromPostingList.remove(posting);
+        toPostingList.remove(posting);
+        postingList.remove(posting);
+    }
+
+    public void removeSavedPosting(SavedPosting savedPosting) {
+        savedPostingList.remove(savedPosting);
     }
 }

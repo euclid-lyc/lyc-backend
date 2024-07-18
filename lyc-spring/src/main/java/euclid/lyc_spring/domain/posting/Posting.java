@@ -91,13 +91,19 @@ public class Posting {
     }
 
 
-    //=== Methods ===//
-    public void reloadLikes(Long likesFromLikedPosting) {
-        likes = likesFromLikedPosting;
-    }
-
+    //=== add Methods ===//
     public void addImage(Image image) {
         imageList.add(image);
         image.setPosting(this);
+    }
+
+    public void addSavedPosting(SavedPosting savedPosting) {
+        savedPostingList.add(savedPosting);
+        savedPosting.setPosting(this);
+    }
+
+    //=== remove Methods==//
+    public void removeSavedPosting(SavedPosting savedPosting) {
+        savedPostingList.remove(savedPosting);
     }
 }

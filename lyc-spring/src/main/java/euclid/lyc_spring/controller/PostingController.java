@@ -85,9 +85,18 @@ public class PostingController {
 
     @Operation(summary = "게시글(코디 or 리뷰) 삭제하기", description = "게시글을 삭제합니다.")
     @DeleteMapping("/members/{memberId}/postings/{postingId}")
-    ApiResponse<Long> deletePosting(@PathVariable("memberId") Long memberId,
+    ApiResponse<PostingIdDTO> deletePosting(@PathVariable("memberId") Long memberId,
                                     @PathVariable("postingId") Long postingId) {
-        postingService.deletePosting(memberId, postingId);
-        return ApiResponse.onSuccess(postingId);
+        PostingIdDTO postingIdDTO = postingService.deletePosting(memberId, postingId);
+        return ApiResponse.onSuccess(postingIdDTO);
+    }
+
+    @Operation(summary = "저장한 게시글 삭제하기", description = "저장한 게시글을 삭제합니다.")
+    @DeleteMapping("/members/{memberId}/postings/{postingId}/saved-postings/{savedPostingId}")
+    ApiResponse<SavedPostingIdDTO> deleteSavedPosting(@PathVariable("memberId") Long memberId,
+                                         @PathVariable("postingId") Long postingId,
+                                         @PathVariable("savedPostingId") Long savedPostingId) {
+        SavedPostingIdDTO savedPostingIdDTO = postingService.deleteSavedPosting(memberId, postingId,savedPostingId);
+        return ApiResponse.onSuccess(savedPostingIdDTO);
     }
 }
