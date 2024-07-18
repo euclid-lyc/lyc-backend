@@ -52,7 +52,6 @@ public class PostingService {
                 .build();
     }
 
-
     public PostingImageListDTO getAllMemberReviews(Long memberId) {
 
         memberRepository.findById(memberId)
