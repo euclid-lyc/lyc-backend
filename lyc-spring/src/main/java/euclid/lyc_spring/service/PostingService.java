@@ -1,18 +1,22 @@
 package euclid.lyc_spring.service;
 
+import euclid.lyc_spring.apiPayload.ApiResponse;
 import euclid.lyc_spring.apiPayload.code.status.ErrorStatus;
 import euclid.lyc_spring.apiPayload.exception.handler.MemberHandler;
 import euclid.lyc_spring.apiPayload.exception.handler.PostingHandler;
+import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.mapping.LikedPosting;
 import euclid.lyc_spring.domain.mapping.SavedPosting;
+import euclid.lyc_spring.domain.posting.Image;
+import euclid.lyc_spring.domain.posting.ImageUrl;
 import euclid.lyc_spring.domain.posting.Posting;
+import euclid.lyc_spring.dto.request.ImageRequestDTO.*;
+import euclid.lyc_spring.dto.request.PostingRequestDTO.*;
 import euclid.lyc_spring.dto.response.PostingDTO.*;
-import euclid.lyc_spring.repository.LikedPostingRepository;
-import euclid.lyc_spring.repository.MemberRepository;
-import euclid.lyc_spring.repository.PostingRepository;
-import euclid.lyc_spring.repository.SavedPostingRepository;
+import euclid.lyc_spring.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,7 +29,12 @@ public class PostingService {
     private final PostingRepository postingRepository;
     private final SavedPostingRepository savedPostingRepository;
     private final LikedPostingRepository likedPostingRepository;
+    private final ImageRepository imageRepository;
+    private final ImageUrlRepository imageUrlRepository;
 
+    /**
+     * GET API
+     */
 
     public PostingImageListDTO getAllMemberCoordies(Long memberId) {
 
@@ -145,5 +154,61 @@ public class PostingService {
                     .isClicked(true)
                     .build();
         }
+    }
+
+    /**
+     * POST API
+     */
+
+    @Transactional
+    public PostingViewDTO createPosting(Long memberId, PostingSaveDTO postingSaveDTO) {
+
+        Member writer = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Member fromMember = memberRepository.findById(postingSaveDTO.getFromMemberId())
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Member toMember = memberRepository.findById(postingSaveDTO.getToMemberId())
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Posting posting = Posting.builder()
+                .minTemp(postingSaveDTO.getMinTemp())
+                .maxTemp(postingSaveDTO.getMaxTemp())
+                .style(postingSaveDTO.getStyle())
+                .likes(0L)
+                .content(postingSaveDTO.getContent())
+                .fromMember(fromMember)
+                .toMember(toMember)
+                .writer(writer)
+                .build();
+
+        fromMember.addFromPosting(posting);
+        toMember.addToPosting(posting);
+        writer.addPosting(posting);
+
+        postingRepository.save(posting);
+        createImage(posting, postingSaveDTO);
+
+        return PostingViewDTO.toDTO(posting);
+    }
+
+    public void createImage(Posting posting, PostingSaveDTO postingSaveDTO) {
+
+        postingSaveDTO.getImageList()
+                .forEach(imageSaveDTO -> {
+                    Image image = imageRepository.save(new Image(imageSaveDTO.getImage(), posting));
+                    posting.addImage(image);
+                    createImageUrl(image, imageSaveDTO);
+                });
+
+    }
+
+    public void createImageUrl(Image image, ImageSaveDTO imageSaveDTO) {
+        imageSaveDTO.getImageUrlList()
+                .forEach(link -> {
+                    ImageUrl imageUrl = imageUrlRepository.save(new ImageUrl(link, image));
+                    image.addImageUrl(imageUrl);
+                });
     }
 }

@@ -12,6 +12,7 @@ import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -112,5 +113,53 @@ public class Member {
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     private List<Posting> postingList;
 
+    protected Member() {}
 
+    public Member(String name, String loginId, String loginPw,
+                  String email, String nickname, String introduction,
+                  String profileImage) {
+        this.name = name;
+        this.loginId = loginId;
+        this.loginPw = loginPw;
+        this.email = email;
+        this.nickname = nickname;
+        this.introduction = introduction;
+        this.profileImage = profileImage;
+        this.stampNo = 0;
+        this.point = 0;
+        this.follower = 0L;
+        this.following = 0L;
+        this.info = new Info();
+        this.pushSet = new PushSet();
+        this.notificationList = new ArrayList<>();
+        this.attendanceList = new ArrayList<>();
+        this.memberChatList = new ArrayList<>();
+        this.pointUsageList = new ArrayList<>();
+        this.likedPostingList = new ArrayList<>();
+        this.savedPostingList = new ArrayList<>();
+        this.clothesList = new ArrayList<>();
+        this.followerList = new ArrayList<>();
+        this.followingList = new ArrayList<>();
+        this.blockMemberList = new ArrayList<>();
+        this.directorList = new ArrayList<>();
+        this.fromPostingList = new ArrayList<>();
+        this.toPostingList = new ArrayList<>();
+        this.postingList = new ArrayList<>();
+    }
+
+    //=== Methods ===//
+    public void addFromPosting(Posting posting) {
+        fromPostingList.add(posting);
+        posting.setFromMember(this);
+    }
+
+    public void addToPosting(Posting posting) {
+        toPostingList.add(posting);
+        posting.setToMember(this);
+    }
+
+    public void addPosting(Posting posting) {
+        postingList.add(posting);
+        posting.setWriter(this);
+    }
 }
