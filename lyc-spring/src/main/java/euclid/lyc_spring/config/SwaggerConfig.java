@@ -1,4 +1,4 @@
-package euclid.lyc_spring;
+package euclid.lyc_spring.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
