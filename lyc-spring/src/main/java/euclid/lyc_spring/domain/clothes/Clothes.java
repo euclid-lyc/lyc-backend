@@ -3,13 +3,15 @@ package euclid.lyc_spring.domain.clothes;
 import euclid.lyc_spring.domain.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Clothes {
 
     @Id
@@ -19,8 +21,9 @@ public class Clothes {
 
     @CreatedDate
     @Column
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;

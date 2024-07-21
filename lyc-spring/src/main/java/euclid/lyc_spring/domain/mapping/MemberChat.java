@@ -5,6 +5,7 @@ import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.Message;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -20,10 +21,12 @@ public class MemberChat {
     @OneToMany(mappedBy = "memberChat", cascade = CascadeType.ALL)
     private List<Message> messageList;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_id", nullable = false)
     private Chat chat;

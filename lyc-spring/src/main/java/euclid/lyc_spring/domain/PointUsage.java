@@ -2,12 +2,15 @@ package euclid.lyc_spring.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class PointUsage {
 
     @Id
@@ -17,7 +20,7 @@ public class PointUsage {
 
     @CreatedDate
     @Column
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private Integer amount;
@@ -28,6 +31,7 @@ public class PointUsage {
     @Column(nullable = false, length = 20)
     private String name;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;

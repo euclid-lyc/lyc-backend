@@ -4,11 +4,13 @@ import euclid.lyc_spring.domain.mapping.MemberChat;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class Message {
 
     @Id
@@ -21,7 +23,7 @@ public class Message {
 
     @CreatedDate
     @Column
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     @Column(columnDefinition = "BIT DEFAULT 0")
     private Boolean isChecked;
@@ -29,4 +31,5 @@ public class Message {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_chat_id", nullable = false)
     private MemberChat memberChat;
+
 }
