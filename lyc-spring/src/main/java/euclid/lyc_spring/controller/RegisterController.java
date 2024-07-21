@@ -1,6 +1,7 @@
 package euclid.lyc_spring.controller;
 
 import euclid.lyc_spring.apiPayload.ApiResponse;
+import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
 import euclid.lyc_spring.dto.request.RegisterDTO.*;
 import euclid.lyc_spring.dto.response.MemberDTO.*;
 import euclid.lyc_spring.service.RegisterService;
@@ -22,7 +23,7 @@ public class RegisterController {
     public ApiResponse<MemberInfoDTO> register(@RequestBody RegisterMemberDTO registerMemberDTO){
 
         MemberInfoDTO memberInfoDTO = joinService.join(registerMemberDTO);
-        return ApiResponse.onSuccess(memberInfoDTO);
+        return ApiResponse.onSuccess(SuccessStatus._MEMBER_CREATED, memberInfoDTO);
     }
 
     @GetMapping("/")

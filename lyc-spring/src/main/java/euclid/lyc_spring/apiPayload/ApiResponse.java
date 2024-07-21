@@ -6,9 +6,11 @@ import euclid.lyc_spring.apiPayload.code.BaseCode;
 import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
 @AllArgsConstructor
+@RequiredArgsConstructor
 public class ApiResponse<T> {
 
     @JsonProperty("isSuccess")
@@ -19,12 +21,12 @@ public class ApiResponse<T> {
     private T result;
 
     // Success
-    public static <T> ApiResponse<T> onSuccess(T result) {
-        return new ApiResponse<>(true, SuccessStatus._OK.getCode(), SuccessStatus._OK.getMessage(), result);
+    public static <T> ApiResponse<T> onSuccess(BaseCode code, T result) {
+        return new ApiResponse<>(true, code.getReason().getCode(), code.getReason().getMessage(), result);
     }
 
-    public static <T> ApiResponse<T> onSuccess(BaseCode code, T result) {
-        return new ApiResponse<>(true, code.getReasonHttpStatus().getCode(), code.getReasonHttpStatus().getMessage(), result);
+    public static <Void> ApiResponse<Void> onSuccess(BaseCode code) {
+        return new ApiResponse<>(true, code.getReasonHttpStatus().getCode(), code.getReason().getMessage());
     }
 
     // Fail

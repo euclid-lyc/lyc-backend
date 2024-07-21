@@ -1,5 +1,6 @@
 package euclid.lyc_spring.controller;
 
+import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
 import euclid.lyc_spring.service.MemberService;
 import euclid.lyc_spring.apiPayload.ApiResponse;
 import euclid.lyc_spring.dto.response.MemberDTO.*;
@@ -24,6 +25,6 @@ public class MemberController {
     @GetMapping("/members/follower-order")
     ApiResponse<List<TodayDirectorDTO>> getTodayDirectorList() {
         List<TodayDirectorDTO> todayDirectorDTOList = memberService.getTodayDirectorList();
-        return ApiResponse.onSuccess(todayDirectorDTOList);
+        return ApiResponse.onSuccess(SuccessStatus._TODAY_DIRECTOR_FETCHED, todayDirectorDTOList);
     }
 }

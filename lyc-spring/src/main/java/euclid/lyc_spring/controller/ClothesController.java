@@ -1,6 +1,7 @@
 package euclid.lyc_spring.controller;
 
 import euclid.lyc_spring.apiPayload.ApiResponse;
+import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
 import euclid.lyc_spring.dto.request.ClothesRequestDTO.*;
 import euclid.lyc_spring.dto.response.ClothesDTO.*;
 import euclid.lyc_spring.service.ClothesService;
@@ -26,7 +27,7 @@ public class ClothesController {
     ApiResponse<ClothesImageResponseDTO> createClothesByImage(@PathVariable("memberId") Long memberId,
                                                                          @RequestBody ClothesByImageDTO clothesByImageDTO) {
         ClothesImageResponseDTO clothesImageResponseDTO = clothesService.createClothesByImage(memberId, clothesByImageDTO);
-        return ApiResponse.onSuccess(clothesImageResponseDTO);
+        return ApiResponse.onSuccess(SuccessStatus._CLOTHES_BY_IMAGE_CREATED, clothesImageResponseDTO);
     }
 
     @Operation(summary = "옷장 게시글 작성하기(텍스트)", description = "텍스트와 함께 옷장 게시글을 작성합니다.")
@@ -34,7 +35,7 @@ public class ClothesController {
     ApiResponse<ClothesTextResponseDTO> createClothesByText(@PathVariable("memberId") Long memberId,
                                                               @RequestBody ClothesByTextDTO clothesByTextDTO) {
         ClothesTextResponseDTO clothesTextResponseDTO = clothesService.createClothesByText(memberId, clothesByTextDTO);
-        return ApiResponse.onSuccess(clothesTextResponseDTO);
+        return ApiResponse.onSuccess(SuccessStatus._CLOTHES_BY_TEXT_CREATED, clothesTextResponseDTO);
     }
 
 }
