@@ -3,6 +3,9 @@ package euclid.lyc_spring.dto.response;
 import euclid.lyc_spring.domain.posting.Posting;
 import euclid.lyc_spring.dto.response.MemberDTO.*;
 import euclid.lyc_spring.dto.response.ImageDTO.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.*;
 
 import java.time.LocalDateTime;

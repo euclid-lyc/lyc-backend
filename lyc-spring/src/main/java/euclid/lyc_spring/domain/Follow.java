@@ -23,4 +23,9 @@ public class Follow {
     @JoinColumn(name = "follower_id", nullable = false)
     private Member follower;
 
+    public Follow(Member follower, Member following) {
+        this.following = following;
+        this.follower = follower;
+    }
+
 }

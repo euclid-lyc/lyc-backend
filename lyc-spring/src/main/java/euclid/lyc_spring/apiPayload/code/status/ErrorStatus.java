@@ -26,19 +26,25 @@ public enum ErrorStatus implements BaseErrorCode {
     LOGIN_PW_NOT_MATCHED(HttpStatus.NOT_FOUND, "AA4007", "로그인 패스워드가 일치하지 않습니다."),
 
     // member
-    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER4041", "사용자가 존재하지 않습니다."),
-    MEMBER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "MEMBER4042", "이메일이 일치하는 사용자가 이미 존재합니다."),
-    MEMBER_DUPLICATED_LOGIN_ID(HttpStatus.BAD_REQUEST, "MEMBER4043", "로그인 아이디가 이미 존재합니다."),
-    MEMBER_INVALID_LOGIN_PW(HttpStatus.BAD_REQUEST, "MEMBER4044", "패스워드와 패스워드 확인이 일치하지 않습니다."),
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER4001", "사용자가 존재하지 않습니다."),
+    MEMBER_ALREADY_EXIST(HttpStatus.FORBIDDEN, "MEMBER4002", "이메일이 일치하는 사용자가 이미 존재합니다."),
+    NOT_FOLLOWING(HttpStatus.NOT_FOUND, "MEMBER4003", "팔로우 관계가 존재하지 않습니다."),
+    MEMBER_ALREADY_BLOCKED(HttpStatus.FORBIDDEN, "MEMBER4004", "이미 차단된 유저입니다"),
+    MEMBER_NOT_BLOCKED(HttpStatus.NOT_FOUND, "MEMBER4005", "차단 관계가 존재하지 않습니다."),
+    MEMBER_DUPLICATED_LOGIN_ID(HttpStatus.BAD_REQUEST, "MEMBER4006", "로그인 아이디가 이미 존재합니다."),
+    MEMBER_INVALID_LOGIN_PW(HttpStatus.BAD_REQUEST, "MEMBER4007", "패스워드와 패스워드 확인이 일치하지 않습니다."),
 
     // posting
-    POSTING_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4041", "포스팅이 존재하지 않습니다."),
-    SAVED_POSTING_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4042", "포스팅이 저장되어 있지 않습니다."),
-    SAVED_POSTING_CANNOT_ACCESS(HttpStatus.UNAUTHORIZED, "POST4043", "저장된 게시글에 접근할 수 없습니다."),
+    POSTING_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4001", "포스팅이 존재하지 않습니다."),
+    SAVED_POSTING_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4002", "포스팅이 저장되어 있지 않습니다."),
+    POSTING_ALREADY_SAVED(HttpStatus.FORBIDDEN, "POST4003", "이미 저장한 게시물입니다."),
+    MEMBER_NOT_LIKED_POSTING(HttpStatus.FORBIDDEN, "POST4004", "해당 유저는 이 게시물에 좋아요를 누르지 않았습니다."),
+    SAVED_POSTING_CANNOT_ACCESS(HttpStatus.UNAUTHORIZED, "POST4005", "저장된 게시글에 접근할 수 없습니다."),
 
     // clothes
-    CLOTHES_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4041", "옷장 이미지를 찾을 수 없습니다."),
-    CLOTHES_TEXT_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4042", "옷장 텍스트를 찾을 수 없습니다.")
+    CLOTHES_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4001", "옷장 이미지를 찾을 수 없습니다."),
+    CLOTHES_TEXT_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4002", "옷장 텍스트를 찾을 수 없습니다."),
+
     ;
 
     private final HttpStatus httpStatus;

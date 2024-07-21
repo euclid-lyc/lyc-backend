@@ -34,4 +34,9 @@ public class LikedPosting {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "posting_id", nullable = false)
     private Posting posting;
+
+    public LikedPosting(Member member, Posting posting) {
+        this.member = member;
+        this.posting = posting;
+    }
 }

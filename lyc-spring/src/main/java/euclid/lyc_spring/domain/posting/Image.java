@@ -43,5 +43,4 @@ public class Image {
         imageUrlList.add(imageUrl);
         imageUrl.setImage(this);
     }
-
 }

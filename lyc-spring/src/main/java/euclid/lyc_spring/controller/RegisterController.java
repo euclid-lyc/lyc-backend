@@ -1,6 +1,8 @@
 package euclid.lyc_spring.controller;
 
 import euclid.lyc_spring.apiPayload.ApiResponse;
+import euclid.lyc_spring.dto.request.RegisterDTO.*;
+import euclid.lyc_spring.dto.response.MemberDTO.*;
 import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
 import euclid.lyc_spring.dto.request.RegisterDTO.*;
 import euclid.lyc_spring.dto.response.MemberDTO.*;

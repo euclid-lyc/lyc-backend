@@ -38,6 +38,7 @@ public class Posting {
     @Column(nullable = false)
     private Style style;
 
+    @Setter
     @Column(columnDefinition = "BIGINT DEFAULT 0")
     private Long likes;
 
@@ -106,4 +107,9 @@ public class Posting {
     public void removeSavedPosting(SavedPosting savedPosting) {
         savedPostingList.remove(savedPosting);
     }
+
+    public void reloadLikes(Long likesFromLikedPosting) {
+        likes = likesFromLikedPosting;
+    }
+
 }

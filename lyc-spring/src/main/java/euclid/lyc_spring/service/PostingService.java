@@ -1,5 +1,6 @@
 package euclid.lyc_spring.service;
 
+import euclid.lyc_spring.apiPayload.ApiResponse;
 import euclid.lyc_spring.apiPayload.code.status.ErrorStatus;
 import euclid.lyc_spring.apiPayload.exception.handler.JwtHandler;
 import euclid.lyc_spring.apiPayload.exception.handler.MemberHandler;
@@ -23,10 +24,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PostingService {
 
     private final MemberRepository memberRepository;
@@ -100,7 +103,21 @@ public class PostingService {
                 .memberId(memberId)
                 .imageList(savedPostingList)
                 .build();
+    }
 
+
+    public PostingViewDTO getSavedCoordie(Long memberId, Long postingId, Long savedPostingId) {
+
+        memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Posting posting = postingRepository.findById(postingId)
+                .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
+
+        savedPostingRepository.findById(savedPostingId)
+                .orElseThrow(() -> new PostingHandler(ErrorStatus.SAVED_POSTING_NOT_FOUND));
+
+        return PostingViewDTO.toDTO(posting);
     }
 
     public ClickDTO getIsClickedLike(Long memberId, Long postingId) {
@@ -129,7 +146,6 @@ public class PostingService {
                     .build();
         }
     }
-
 
     public ClickDTO getIsClickedSave(Long memberId, Long postingId) {
 
@@ -242,6 +258,34 @@ public class PostingService {
                 });
     }
 
+    public void likePosting(Long memberId, Long postingId){
+        Posting posting = postingRepository.findById(postingId)
+                .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
+
+        Member member = new Member(memberId);
+
+        LikedPosting likedPosting = new LikedPosting(member, posting);
+
+        likedPostingRepository.save(likedPosting);
+
+        posting.setLikes(posting.getLikes()+1);
+        postingRepository.save(posting);
+    }
+
+    public void savedPosting(Long memberId, Long postingId) {
+        Posting posting = postingRepository.findById(postingId)
+                .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
+
+        Member member = new Member(memberId);
+
+        if(savedPostingRepository.existsByMember_IdAndPost_Id(memberId, postingId)){
+            throw new PostingHandler(ErrorStatus.POSTING_ALREADY_SAVED);
+        }
+
+        SavedPosting savedPosting = new SavedPosting(member, posting);
+        savedPostingRepository.save(savedPosting);
+    }
+
     /**
      * DELETE API
      */
@@ -299,6 +343,23 @@ public class PostingService {
         return new SavedPostingIdDTO(postingId, savedPostingId);
     }
 
+    public void unlikePosting(Long memberId, Long postingId) {
+        Optional<LikedPosting> likedPostings = likedPostingRepository.findByMember_idAndPostingId(memberId, postingId);
+
+
+        if(likedPostings.isPresent()){
+            LikedPosting likedPosting = likedPostings.get();
+            likedPostingRepository.delete(likedPosting);
+
+            Posting posting = postingRepository.findById(postingId)
+                    .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
+            posting.setLikes(posting.getLikes()-1);
+            postingRepository.save(posting);
+        } else{
+            throw new PostingHandler(ErrorStatus.MEMBER_NOT_LIKED_POSTING);
+        }
+    }
+
 /* ---------------------------------------- 인증/인가 ---------------------------------------- */
 
     private void authorizeWriter(Member member) {
@@ -330,5 +391,4 @@ public class PostingService {
             throw new JwtHandler(ErrorStatus.JWT_INVALID_TOKEN);
         }
     }
-
 }
