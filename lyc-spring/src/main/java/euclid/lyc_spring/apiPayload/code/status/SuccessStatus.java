@@ -11,7 +11,37 @@ import org.springframework.http.HttpStatus;
 public enum SuccessStatus implements BaseCode {
 
     // common
-    _OK(HttpStatus.OK, "COMMON200", "성공입니다."),
+    _OK(HttpStatus.OK, "COMMON200", "성공"),
+
+    // clothes
+    _CLOTHES_BY_IMAGE_CREATED(HttpStatus.CREATED, "CLOTHES2001", "옷장 게시글(이미지) 작성 완료"),
+    _CLOTHES_BY_TEXT_CREATED(HttpStatus.CREATED, "CLOTHES2002", "옷장 게시글(텍스트) 작성 완료"),
+
+    // member
+    _MEMBER_CREATED(HttpStatus.CREATED, "MEMBER2001", "회원가입 완료"),
+    _TODAY_DIRECTOR_FETCHED(HttpStatus.OK, "MEMBER2002", "오늘의 디렉터 불러오기 완료"),
+
+    // coordie
+    _MEMBER_COORDIES_FETCHED(HttpStatus.OK, "COORDIE2001", "유저의 코디 목록 불러오기 완료"),
+    _SAVED_COORDIES_FETCHED(HttpStatus.OK, "COORDIE2002", "저장한 코디 목록 불러오기 완료"),
+
+    // REVIEW
+    _MEMBER_REVIEWS_FETCHED(HttpStatus.OK, "REVIEW2001", "유저의 리뷰 목록 불러오기 완료"),
+
+    // POSTING(GENERAL)
+    _SAVED_POSTING_FETCHED(HttpStatus.OK, "POSTING2001", "저장한 게시글 불러오기 완료"),
+    _IS_CLICKED_LIKE_FETCHED(HttpStatus.OK, "POSTING2002", "게시글 좋아요 클릭 여부 불러오기 완료"),
+    _IS_SAVED_POSTING_FETCHED(HttpStatus.OK, "POSTING2003", "게시글 저장 여부 불러오기 완료"),
+    _POSTING_CREATED(HttpStatus.CREATED, "POSTING2004", "게시글 작성 완료"),
+    _POSTING_DELETED(HttpStatus.OK, "POSTING2005", "게시글 삭제 완료"),
+    _SAVED_POSTING_DELETED(HttpStatus.OK, "POSTING2006", "저장한 게시글 삭제 완료"),
+
+    // FEED
+    _RECENT_TEN_FEEDS_FETCHED(HttpStatus.OK, "FEED2001", "최신 피드 10개 불러오기 완료"),
+
+
+
+
 
     ;
 
