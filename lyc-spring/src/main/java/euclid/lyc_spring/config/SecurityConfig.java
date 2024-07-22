@@ -4,14 +4,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private final JwtProvider jwtProvider;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -19,25 +23,21 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, HttpSecurity httpSecurity) throws Exception {
 
-        // jwt session stateless 설정
-        http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        return httpSecurity
+                .httpBasic(AbstractHttpConfigurer::disable) // disable basic auth
+                .csrf(AbstractHttpConfigurer::disable) // disable csrf
+                .formLogin(AbstractHttpConfigurer::disable) // disable form login
+                .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // use stateless session
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/api/register").permitAll() // 회원가입에만 모든 요청 허가
+                        .anyRequest().hasAuthority("ROLE_MEMBER")) // 나머지 요청은 멤버 권한이 있어야 허가
+                .addFilterBefore(new JwtFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class) // JWT 인증 필터 처리 -> 패스워드 인증 필터 처리
+                .requiresChannel(requiresChannel -> requiresChannel // 모든 요청을 https로 강제
+                        .anyRequest().requiresSecure())
+                .build();
 
-        // csrf disable 설정
-        // session 방식에서는 session이 고정되기 때문에 csrf 공격에 대비를 해줘야하는데 jwt 방식에서는 그럴 필요가 없음
-        http.csrf((auth)->auth.disable());
-
-        // jwt 방식으로 로그인을 할 것이기에 form방식과 http basic 인증 방식의 로그인은 disable
-        http.formLogin((auth)->auth.disable());
-        http.httpBasic((auth)->auth.disable());
-
-        // 필터 등록
-        //http.addFilterAt(new LoginFilter(configuration.getAuthenticationManager(), jwtUtil), UsernamePasswordAuthenticationFilter.class);
-
-        // JWTFilter 추가
-        //http.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
-
-        return http.build();
     }
 }
