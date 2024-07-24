@@ -2,6 +2,7 @@ package euclid.lyc_spring.domain;
 
 import euclid.lyc_spring.domain.clothes.Clothes;
 import euclid.lyc_spring.domain.commission.Commission;
+import euclid.lyc_spring.domain.enums.Role;
 import euclid.lyc_spring.domain.info.Info;
 import euclid.lyc_spring.domain.mapping.LikedPosting;
 import euclid.lyc_spring.domain.mapping.MemberChat;
@@ -31,7 +32,7 @@ public class Member {
     @Column(length = 30, nullable = false)
     private String name;
 
-    @Column(length = 30, nullable = false)
+    @Column(length = 30, nullable = false, unique = true)
     private String loginId;
 
     @Column(nullable = false)
@@ -67,6 +68,10 @@ public class Member {
 
     @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
     private Long following;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
     private Info info;
@@ -122,7 +127,7 @@ public class Member {
     @Builder
     public Member(String name, String loginId, String loginPw,
                   String email, String nickname, String introduction,
-                  String profileImage) {
+                  String profileImage, Role role) {
         this.name = name;
         this.loginId = loginId;
         this.loginPw = loginPw;
@@ -134,6 +139,7 @@ public class Member {
         this.point = 0;
         this.follower = 0L;
         this.following = 0L;
+        this.role = role;
         this.notificationList = new ArrayList<>();
         this.attendanceList = new ArrayList<>();
         this.memberChatList = new ArrayList<>();
