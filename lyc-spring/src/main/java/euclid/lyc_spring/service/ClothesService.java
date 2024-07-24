@@ -1,6 +1,7 @@
 package euclid.lyc_spring.service;
 
 import euclid.lyc_spring.apiPayload.code.status.ErrorStatus;
+import euclid.lyc_spring.apiPayload.exception.handler.JwtHandler;
 import euclid.lyc_spring.apiPayload.exception.handler.MemberHandler;
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.clothes.Clothes;
@@ -13,6 +14,8 @@ import euclid.lyc_spring.repository.ClothesRepository;
 import euclid.lyc_spring.repository.ClothesTextRepository;
 import euclid.lyc_spring.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +37,7 @@ public class ClothesService {
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        authorizeWriter(member);
 
         Clothes clothes = new Clothes(member);
 
@@ -60,6 +64,7 @@ public class ClothesService {
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        authorizeWriter(member);
 
         Clothes clothes = new Clothes(member);
 
@@ -80,5 +85,21 @@ public class ClothesService {
 
         clothes.addClothesText(clothesText);
         clothesTextRepository.save(clothesText);
+    }
+
+/* ---------------------------------------- 인증/인가 ---------------------------------------- */
+
+    private void authorizeWriter(Member member) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            // 인증 정보가 존재하면 loginId 확인
+            String loginId = (String) authentication.getPrincipal();
+            if (!loginId.equals(member.getLoginId())) {
+                // 글쓴이 혹은 게시글을 저장한 회원과 로그인한 회원이 일치하지 않으면 오류
+                throw new JwtHandler(ErrorStatus.JWT_UNAUTHORIZED);
+            }
+        } else {
+            throw new JwtHandler(ErrorStatus.JWT_INVALID_TOKEN);
+        }
     }
 }
