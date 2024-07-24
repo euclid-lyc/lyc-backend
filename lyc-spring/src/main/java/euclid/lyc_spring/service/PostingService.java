@@ -17,10 +17,10 @@ import euclid.lyc_spring.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,6 +42,12 @@ public class PostingService {
 
     public PostingImageListDTO getAllMemberCoordies(Long memberId) {
 
+        // Authorization
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new JwtHandler(ErrorStatus.JWT_INVALID_TOKEN);
+        }
+
         memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
@@ -56,6 +62,12 @@ public class PostingService {
     }
 
     public PostingImageListDTO getAllMemberReviews(Long memberId) {
+
+        // Authorization
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new JwtHandler(ErrorStatus.JWT_INVALID_TOKEN);
+        }
 
         memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -75,8 +87,10 @@ public class PostingService {
 
     public PostingImageListDTO getAllSavedCoordies(Long memberId) {
 
-        memberRepository.findById(memberId)
+        // Authorization
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        authorizeSavedCoordie(member);
 
         List<PostingImageDTO> savedPostingList = savedPostingRepository.findAllByMember_Id(memberId).stream()
                 .map(savedPosting -> PostingImageDTO.toDTO(savedPosting.getPosting()))
@@ -86,23 +100,8 @@ public class PostingService {
                 .memberId(memberId)
                 .imageList(savedPostingList)
                 .build();
+
     }
-
-
-    public PostingViewDTO getSavedCoordie(Long memberId, Long postingId, Long savedPostingId) {
-
-        memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-        Posting posting = postingRepository.findById(postingId)
-                .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
-
-        savedPostingRepository.findById(savedPostingId)
-                .orElseThrow(() -> new PostingHandler(ErrorStatus.SAVED_POSTING_NOT_FOUND));
-
-        return PostingViewDTO.toDTO(posting);
-    }
-
 
     public ClickDTO getIsClickedLike(Long memberId, Long postingId) {
 
@@ -161,6 +160,12 @@ public class PostingService {
 
     public RecentPostingListDTO getRecentPostings() {
 
+        // Authorization
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new JwtHandler(ErrorStatus.JWT_INVALID_TOKEN);
+        }
+
         List<RecentPostingDTO> postingImageDTOList = postingRepository.findAll().stream()
                 .sorted(Comparator.comparing(Posting::getCreatedAt).reversed())
                 .map(RecentPostingDTO::toDTO)
@@ -180,16 +185,7 @@ public class PostingService {
         // Authorization
         Member writer = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            String loginId = (String) authentication.getPrincipal();
-            if (!loginId.equals(writer.getLoginId())) {
-                throw new JwtHandler(ErrorStatus.JWT_UNAUTHORIZED);
-            }
-        } else {
-            throw new JwtHandler(ErrorStatus.JWT_INVALID_TOKEN);
-        }
+        authorizeWriter(writer);
 
         Member fromMember = memberRepository.findById(postingSaveDTO.getFromMemberId())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -253,11 +249,17 @@ public class PostingService {
     @Transactional
     public PostingIdDTO deletePosting(Long memberId, Long postingId) {
 
+        // Authorization
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        authorizeWriter(member);
 
         Posting posting = postingRepository.findById(postingId)
                 .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
+
+        if (!member.equals(posting.getWriter())) {
+            throw new PostingHandler(ErrorStatus.POSTING_NOT_FOUND);
+        }
 
         posting.getImageList().forEach(image -> {
             imageUrlRepository.deleteAll(image.getImageUrlList());
@@ -272,8 +274,10 @@ public class PostingService {
 
     public SavedPostingIdDTO deleteSavedPosting(Long memberId, Long postingId, Long savedPostingId) {
 
+        // Authorization (저장한 회원)
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        authorizeWriter(member);
 
         Posting posting = postingRepository.findById(postingId)
                 .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
@@ -281,12 +285,50 @@ public class PostingService {
         SavedPosting savedPosting = savedPostingRepository.findById(savedPostingId)
                 .orElseThrow(() -> new PostingHandler(ErrorStatus.SAVED_POSTING_NOT_FOUND));
 
+        if (!member.equals(savedPosting.getMember())) {
+            throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+        }
+        if (!posting.equals(savedPosting.getPosting())) {
+            throw new PostingHandler(ErrorStatus.POSTING_NOT_FOUND);
+        }
 
         member.removeSavedPosting(savedPosting);
         posting.removeSavedPosting(savedPosting);
         savedPostingRepository.deleteById(savedPostingId);
 
         return new SavedPostingIdDTO(postingId, savedPostingId);
+    }
+
+/* ---------------------------------------- 인증/인가 ---------------------------------------- */
+
+    private void authorizeWriter(Member member) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            // 인증 정보가 존재하면 loginId 확인
+            String loginId = (String) authentication.getPrincipal();
+            if (!loginId.equals(member.getLoginId())) {
+                // 글쓴이 혹은 게시글을 저장한 회원과 로그인한 회원이 일치하지 않으면 오류
+                throw new JwtHandler(ErrorStatus.JWT_UNAUTHORIZED);
+            }
+        } else {
+            throw new JwtHandler(ErrorStatus.JWT_INVALID_TOKEN);
+        }
+    }
+
+    private void authorizeSavedCoordie(Member member) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            // 인증 정보가 존재하면 loginId 확인
+            String loginId = (String) authentication.getPrincipal();
+            if (!loginId.equals(member.getLoginId())) {
+                // 게시글을 저장한 회원과 로그인한 회원이 일치하지 않으면 저장한 코디 공개 여부 확인
+                if (!member.getIsPublic()) {
+                    throw new PostingHandler(ErrorStatus.SAVED_POSTING_CANNOT_ACCESS);
+                }
+            }
+        } else {
+            throw new JwtHandler(ErrorStatus.JWT_INVALID_TOKEN);
+        }
     }
 
 }

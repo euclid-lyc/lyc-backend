@@ -43,15 +43,6 @@ public class PostingController {
         return ApiResponse.onSuccess(SuccessStatus._SAVED_COORDIES_FETCHED, postingImageListDTO);
     }
 
-    @Operation(summary = "저장한 게시글(코디 or 리뷰) 불러오기", description = "게시글을 불러옵니다.")
-    @GetMapping("/members/{memberId}/postings/{postingId}/saved-postings/{savedPostingId}")
-    ApiResponse<PostingViewDTO> getSavedCoordie(@PathVariable("memberId") Long memberId,
-                                                @PathVariable("postingId") Long postingId,
-                                                @PathVariable("savedPostingId") Long savedPostingId) {
-        PostingViewDTO postingViewDTO = postingService.getSavedCoordie(memberId, postingId, savedPostingId);
-        return ApiResponse.onSuccess(SuccessStatus._SAVED_POSTING_FETCHED, postingViewDTO);
-    }
-
     @Operation(summary = "게시글 좋아요 클릭 여부 불러오기", description = "게시글에 좋아요를 눌렀는지 확인합니다.")
     @GetMapping("/members/{memberId}/postings/{postingId}/likes")
     ApiResponse<ClickDTO> getIsClickedLike(@PathVariable("memberId") Long memberId,

@@ -34,6 +34,7 @@ public enum ErrorStatus implements BaseErrorCode {
     // posting
     POSTING_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4041", "포스팅이 존재하지 않습니다."),
     SAVED_POSTING_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4042", "포스팅이 저장되어 있지 않습니다."),
+    SAVED_POSTING_CANNOT_ACCESS(HttpStatus.UNAUTHORIZED, "POST4043", "저장된 게시글에 접근할 수 없습니다."),
 
     // clothes
     CLOTHES_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4041", "옷장 이미지를 찾을 수 없습니다."),

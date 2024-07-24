@@ -77,6 +77,10 @@ public class Member {
     private Info info;
 
     @Setter
+    @Column(columnDefinition = "BIT DEFAULT 1")
+    private Boolean isPublic; // 저장한 코디 공개 여부
+
+    @Setter
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
     private PushSet pushSet;
 
@@ -140,6 +144,7 @@ public class Member {
         this.follower = 0L;
         this.following = 0L;
         this.role = role;
+        this.isPublic = true;
         this.notificationList = new ArrayList<>();
         this.attendanceList = new ArrayList<>();
         this.memberChatList = new ArrayList<>();
