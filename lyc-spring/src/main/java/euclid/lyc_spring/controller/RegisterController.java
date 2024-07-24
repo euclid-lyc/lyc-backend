@@ -19,15 +19,11 @@ public class RegisterController {
     private final RegisterService joinService;
 
     @Operation(summary = "회원가입하기", description = "회원을 생성합니다")
-    @PostMapping("/api/register")
+    @PostMapping("/register")
     public ApiResponse<MemberInfoDTO> register(@RequestBody RegisterMemberDTO registerMemberDTO){
 
         MemberInfoDTO memberInfoDTO = joinService.join(registerMemberDTO);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_CREATED, memberInfoDTO);
     }
 
-    @GetMapping("/")
-    public String index(){
-        return "index";
-    }
 }

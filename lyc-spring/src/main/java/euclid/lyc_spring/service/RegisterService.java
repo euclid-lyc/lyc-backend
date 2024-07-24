@@ -3,6 +3,7 @@ package euclid.lyc_spring.service;
 import euclid.lyc_spring.apiPayload.code.status.ErrorStatus;
 import euclid.lyc_spring.apiPayload.exception.handler.MemberHandler;
 import euclid.lyc_spring.domain.Member;
+import euclid.lyc_spring.domain.enums.Role;
 import euclid.lyc_spring.domain.info.*;
 import euclid.lyc_spring.dto.request.InfoRequestDTO.*;
 import euclid.lyc_spring.dto.request.MemberRequestDTO.*;
@@ -59,6 +60,7 @@ public class RegisterService {
                 .nickname(memberInfoDTO.getNickname())
                 .introduction(memberInfoDTO.getIntroduction())
                 .profileImage(image)
+                .role(Role.MEMBER)
                 .build();
 
         member = memberRepository.save(member);
