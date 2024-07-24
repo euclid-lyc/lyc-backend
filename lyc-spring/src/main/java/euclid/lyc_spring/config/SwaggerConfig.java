@@ -19,7 +19,7 @@ public class SwaggerConfig {
                 .title("EUCLID-LYC API")
                 .description("EUCLID-LYC API 명세서");
 
-        String jwtSchemeName = "JWT TOKEN";
+        String jwtSchemeName = "bearerAuth";
 
         SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtSchemeName);
 
