@@ -1,6 +1,5 @@
 package euclid.lyc_spring.auth;
 
-import euclid.lyc_spring.domain.enums.Role;
 import euclid.lyc_spring.dto.token.JwtTokenDTO;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -21,7 +20,7 @@ public class JwtGenerator {
         this.key = Keys.hmacShaKeyFor(keyBytes); // 디코딩된 Secret Key를 해싱하여 저장
     }
 
-    public JwtTokenDTO generateToken(String loginId, Role role) {
+    public JwtTokenDTO generateToken(String loginId) {
 
         Date now = new Date();
 
@@ -33,7 +32,6 @@ public class JwtGenerator {
                 .subject(loginId)
                 .issuedAt(now)
                 .expiration(accessTokenExpiredAt)
-                .claim("role", role)
                 .signWith(key) // Access Token에 digital signature 포함
                 .compact();
 
@@ -42,7 +40,6 @@ public class JwtGenerator {
                 .subject(loginId)
                 .issuedAt(now)
                 .expiration(refreshTokenExpiredAt)
-                .claim("role", role)
                 .signWith(key) // Refresh Token에 digital signature 포함
                 .compact();
 
