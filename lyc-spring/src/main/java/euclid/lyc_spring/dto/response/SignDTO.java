@@ -20,15 +20,13 @@ public class SignDTO {
         private final String loginId;
         private final String nickname;
         private final Role role;
-        private final String token;
 
-        public static SignInDTO toDTO(Member member, String token) {
+        public static SignInDTO toDTO(Member member) {
             return SignInDTO.builder()
                     .memberId(member.getId())
                     .loginId(member.getLoginId())
                     .nickname(member.getNickname())
                     .role(member.getRole())
-                    .token(token)
                     .build();
         }
     }
