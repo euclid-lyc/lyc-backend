@@ -48,8 +48,17 @@ public class RegisterService {
         if(memberInfoDTO.getProfileImage().isEmpty())
             image = "default url";
 
+        // 이미 회원가입이 되어있음
         if (memberRepository.findByEmail(memberInfoDTO.getEmail()).isPresent()) {
             throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_EXIST);
+        }
+        // 중복된 아이디가 있음
+        if (memberRepository.findByLoginId(memberInfoDTO.getLoginId()).isPresent()) {
+            throw new MemberHandler(ErrorStatus.MEMBER_DUPLICATED_LOGIN_ID);
+        }
+        // 비밀번호와 비밀번호 확인이 일치하지 않음
+        if (!memberInfoDTO.getLoginPw().equals(memberInfoDTO.getLoginPwCheck())) {
+            throw new MemberHandler(ErrorStatus.MEMBER_INVALID_LOGIN_PW);
         }
 
         Member member = Member.builder()
