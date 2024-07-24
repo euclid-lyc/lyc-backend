@@ -16,6 +16,14 @@ public enum ErrorStatus implements BaseErrorCode {
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED,"COMMON401","인증이 필요합니다."),
     FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403", "금지된 요청입니다."),
 
+    // Authentication & Authorization
+    JWT_EXPIRED(HttpStatus.UNAUTHORIZED, "AA4001", "토큰이 만료되었습니다."),
+    JWT_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "AA4002", "인증에 실패하였습니다."),
+    JWT_BEARER_NOT_VALIDATED(HttpStatus.UNAUTHORIZED, "AA4003", "Bearer 검증에 실패했습니다."),
+    JWT_INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AA4004", "토큰이 유효하지 않습니다."),
+    LOGIN_ID_NOT_MATCHED(HttpStatus.NOT_FOUND, "AA4005", "로그인 아이디가 일치하지 않습니다."),
+    LOGIN_PW_NOT_MATCHED(HttpStatus.NOT_FOUND, "AA4005", "로그인 패스워드가 일치하지 않습니다."),
+
     // member
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER4041", "사용자가 존재하지 않습니다."),
     MEMBER_ALREADY_EXIST(HttpStatus.FORBIDDEN, "MEMBER4031", "이메일이 일치하는 사용자가 이미 존재합니다."),

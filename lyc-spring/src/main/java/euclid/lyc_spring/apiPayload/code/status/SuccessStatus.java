@@ -20,6 +20,7 @@ public enum SuccessStatus implements BaseCode {
     // member
     _MEMBER_CREATED(HttpStatus.CREATED, "MEMBER2001", "회원가입 완료"),
     _TODAY_DIRECTOR_FETCHED(HttpStatus.OK, "MEMBER2002", "오늘의 디렉터 불러오기 완료"),
+    _MEMBER_SIGNED_IN(HttpStatus.CREATED, "MEMBER2003", "로그인 완료"),
 
     // coordie
     _MEMBER_COORDIES_FETCHED(HttpStatus.OK, "COORDIE2001", "유저의 코디 목록 불러오기 완료"),
