@@ -1,7 +1,7 @@
 package euclid.lyc_spring.service;
 
-import euclid.lyc_spring.apiPayload.ApiResponse;
 import euclid.lyc_spring.apiPayload.code.status.ErrorStatus;
+import euclid.lyc_spring.apiPayload.exception.handler.JwtHandler;
 import euclid.lyc_spring.apiPayload.exception.handler.MemberHandler;
 import euclid.lyc_spring.apiPayload.exception.handler.PostingHandler;
 import euclid.lyc_spring.domain.Member;
@@ -15,6 +15,9 @@ import euclid.lyc_spring.dto.request.PostingRequestDTO.*;
 import euclid.lyc_spring.dto.response.PostingDTO.*;
 import euclid.lyc_spring.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -174,8 +177,19 @@ public class PostingService {
     @Transactional
     public PostingViewDTO createPosting(Long memberId, PostingSaveDTO postingSaveDTO) {
 
+        // Authorization
         Member writer = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            String loginId = (String) authentication.getPrincipal();
+            if (!loginId.equals(writer.getLoginId())) {
+                throw new JwtHandler(ErrorStatus.JWT_UNAUTHORIZED);
+            }
+        } else {
+            throw new JwtHandler(ErrorStatus.JWT_INVALID_TOKEN);
+        }
 
         Member fromMember = memberRepository.findById(postingSaveDTO.getFromMemberId())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
