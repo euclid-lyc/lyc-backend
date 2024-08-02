@@ -33,4 +33,12 @@ public class SavedPosting {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "posting_id", nullable = false)
     private Posting posting;
+
+    public SavedPosting(Member member, Posting posting) {
+        this.member = member;
+        this.posting = posting;
+    }
+
+    protected SavedPosting() {}
+
 }

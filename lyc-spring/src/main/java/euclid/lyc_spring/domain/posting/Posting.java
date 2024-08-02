@@ -38,6 +38,7 @@ public class Posting {
     @Column(nullable = false)
     private Style style;
 
+    @Setter
     @Column(columnDefinition = "BIGINT DEFAULT 0")
     private Long likes;
 

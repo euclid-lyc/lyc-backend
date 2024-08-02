@@ -19,10 +19,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PostingService {
 
     private final MemberRepository memberRepository;
@@ -220,4 +222,72 @@ public class PostingService {
                     imageUrlRepository.save(imageUrl);
                 });
     }
+
+    public void likePosting(Long memberId, Long postingId){
+        Posting posting = postingRepository.findById(postingId)
+                .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
+
+        Member member = new Member(memberId);
+
+        LikedPosting likedPosting = new LikedPosting(member, posting);
+
+        likedPostingRepository.save(likedPosting);
+
+        posting.setLikes(posting.getLikes()+1);
+        postingRepository.save(posting);
+    }
+
+    /**
+     * DELETE API
+     */
+
+    @Transactional
+    public void deletePosting(Long memberId, Long postingId) {
+
+        memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Posting posting = postingRepository.findById(postingId)
+                .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
+
+        posting.getImageList().forEach(image -> {
+            imageUrlRepository.deleteAll(image.getImageUrlList());
+            imageRepository.delete(image);
+        });
+
+        postingRepository.delete(posting);
+
+    }
+
+    public void unlikePosting(Long memberId, Long postingId) {
+        Optional<LikedPosting> likedPostings = likedPostingRepository.findByMember_idAndPostingId(memberId, postingId);
+
+
+        if(likedPostings.isPresent()){
+            LikedPosting likedPosting = likedPostings.get();
+            likedPostingRepository.delete(likedPosting);
+
+            Posting posting = postingRepository.findById(postingId)
+                    .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
+            posting.setLikes(posting.getLikes()-1);
+            postingRepository.save(posting);
+        } else{
+            throw new PostingHandler(ErrorStatus.MEMBER_NOT_LIKED_POSTING);
+        }
+    }
+
+    public void savedPosting(Long memberId, Long postingId) {
+        Posting posting = postingRepository.findById(postingId)
+                .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
+
+        Member member = new Member(memberId);
+
+        if(savedPostingRepository.existsByMember_IdAndPost_Id(memberId, postingId)){
+            throw new PostingHandler(ErrorStatus.POSTING_ALREADY_SAVED);
+        }
+
+        SavedPosting savedPosting = new SavedPosting(member, posting);
+        savedPostingRepository.save(savedPosting);
+    }
+
 }

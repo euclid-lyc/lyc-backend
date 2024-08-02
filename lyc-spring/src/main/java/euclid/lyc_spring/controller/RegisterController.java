@@ -28,6 +28,7 @@ public class RegisterController {
 
     @GetMapping("/")
     public String index(){
+        System.out.println(123);
         return "index";
     }
 }

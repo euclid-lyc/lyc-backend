@@ -63,7 +63,7 @@ public class Info {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    public Info() {}
+    protected Info() {}
 
     @Builder
     public Info(Member member, Short height, Short weight, TopSize topSize, BottomSize bottomSize,

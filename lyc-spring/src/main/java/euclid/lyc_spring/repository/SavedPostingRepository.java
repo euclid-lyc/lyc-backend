@@ -10,4 +10,7 @@ import java.util.List;
 public interface SavedPostingRepository extends JpaRepository<SavedPosting, Long> {
 
     List<SavedPosting> findAllByMember_Id(Long memberId);
+
+    boolean existsByMember_IdAndPost_Id(Long memberId, Long postId);
+
 }

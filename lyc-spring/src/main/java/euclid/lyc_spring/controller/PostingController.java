@@ -78,4 +78,37 @@ public class PostingController {
         PostingViewDTO postingViewDTO = postingService.createPosting(memberId, postingSaveDTO);
         return ApiResponse.onSuccess(postingViewDTO);
     }
+
+    @Operation(summary = "좋아요 누르기", description = "게시글에 좋아요를 누릅니다.")
+    @PostMapping("/api/postings/{postingId}/like?id={myId}")
+    public ApiResponse<String> likePosting(@PathVariable("postingId") Long postingId, @PathVariable("myId") Long myId) {
+        postingService.likePosting(myId, postingId);
+        return ApiResponse.onSuccess("게시글에 좋아요를 추가했습니다.");
+    }
+
+    @Operation(summary = "코디 저장하기", description = "게시글을 저장합니다")
+    @PostMapping("/api/postings/{postingId}?id={myId}")
+    public ApiResponse<String> savedPosting(@PathVariable("myId") Long myId, @PathVariable("postingId") Long postingId) {
+        postingService.savedPosting(myId, postingId);
+        return ApiResponse.onSuccess("게시글을 저장하였습니다.");
+    }
+
+    /**
+     * DELETE API
+     */
+
+    @Operation(summary = "게시글(코디 or 리뷰) 삭제하기", description = "게시글을 삭제합니다.")
+    @DeleteMapping("/members/{memberId}/postings/{postingId}")
+    ApiResponse<Long> deletePosting(@PathVariable("memberId") Long memberId,
+                                    @PathVariable("postingId") Long postingId) {
+        postingService.deletePosting(memberId, postingId);
+        return ApiResponse.onSuccess(postingId);
+    }
+
+    @Operation(summary = "좋아요 취소하기", description = "게시글에 좋아요를 취소합니다.")
+    @DeleteMapping("/api/postings/{postingId}/dislike?id={myId}")
+    ApiResponse<String> dislikePosting(@PathVariable("postingId") Long postingId, @PathVariable("myId") Long myId) {
+        postingService.unlikePosting(myId, postingId);
+        return ApiResponse.onSuccess("게시글에 좋아요를 제거했습니다.");
+    }
 }

@@ -35,6 +35,32 @@ public class MemberDTO {
     }
 
     @Getter
+    public static class FollowDTO {
+
+        private final Long memberId;
+        private final String nickname;
+        private final String profileImage;
+        private final String introduction;
+
+        @Builder(access = AccessLevel.PRIVATE)
+        private FollowDTO(Long memberId, String nickname, String profileImage, String introduction) {
+            this.memberId =memberId;
+            this.nickname = nickname;
+            this.profileImage = profileImage;
+            this.introduction = introduction;
+        }
+
+        public static FollowDTO toDTO(Member member) {
+            return FollowDTO.builder()
+                    .memberId(member.getId())
+                    .nickname(member.getNickname())
+                    .profileImage(member.getProfileImage())
+                    .introduction(member.getIntroduction())
+                    .build();
+        }
+    }
+
+    @Getter
     public static class MemberProfileDTO {
 
         private final Long memberId;
