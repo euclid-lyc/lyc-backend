@@ -4,8 +4,6 @@ import euclid.lyc_spring.apiPayload.ApiResponse;
 import euclid.lyc_spring.dto.request.RegisterDTO.*;
 import euclid.lyc_spring.dto.response.MemberDTO.*;
 import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
-import euclid.lyc_spring.dto.request.RegisterDTO.*;
-import euclid.lyc_spring.dto.response.MemberDTO.*;
 import euclid.lyc_spring.service.RegisterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,5 +25,4 @@ public class RegisterController {
         MemberInfoDTO memberInfoDTO = joinService.join(registerMemberDTO);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_CREATED, memberInfoDTO);
     }
-
 }

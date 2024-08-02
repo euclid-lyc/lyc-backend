@@ -121,4 +121,11 @@ public class PostingController {
         SavedPostingIdDTO savedPostingIdDTO = postingService.deleteSavedPosting(memberId, postingId,savedPostingId);
         return ApiResponse.onSuccess(SuccessStatus._SAVED_POSTING_DELETED, savedPostingIdDTO);
     }
+
+    @Operation(summary = "좋아요 취소하기", description = "게시글에 좋아요를 취소합니다.")
+    @DeleteMapping("/api/postings/{postingId}/dislike?id={myId}")
+    ApiResponse<String> dislikePosting(@PathVariable("postingId") Long postingId, @PathVariable("myId") Long myId) {
+        postingService.unlikePosting(myId, postingId);
+        return ApiResponse.onSuccess("게시글에 좋아요를 제거했습니다.");
+    }
 }

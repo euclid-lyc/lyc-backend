@@ -7,9 +7,6 @@ import euclid.lyc_spring.dto.response.MemberDTO.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +24,6 @@ public class MemberController {
     ApiResponse<List<TodayDirectorDTO>> getTodayDirectorList() {
         List<TodayDirectorDTO> todayDirectorDTOList = memberService.getTodayDirectorList();
         return ApiResponse.onSuccess(SuccessStatus._TODAY_DIRECTOR_FETCHED, todayDirectorDTOList);
-        return ApiResponse.onSuccess(todayDirectorDTOList);
     }
 
     @Operation(summary = "유저 정보 불러오기", description = "유저의 정보를 불러옵니다.")

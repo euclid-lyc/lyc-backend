@@ -35,10 +35,10 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_INVALID_LOGIN_PW(HttpStatus.BAD_REQUEST, "MEMBER4007", "패스워드와 패스워드 확인이 일치하지 않습니다."),
 
     // posting
-    POSTING_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4001", "포스팅이 존재하지 않습니다."),
-    SAVED_POSTING_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4002", "포스팅이 저장되어 있지 않습니다."),
-    POSTING_ALREADY_SAVED(HttpStatus.FORBIDDEN, "POST4003", "이미 저장한 게시물입니다."),
-    MEMBER_NOT_LIKED_POSTING(HttpStatus.FORBIDDEN, "POST4004", "해당 유저는 이 게시물에 좋아요를 누르지 않았습니다."),
+    POSTING_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4041", "포스팅이 존재하지 않습니다."),
+    SAVED_POSTING_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4042", "포스팅이 저장되어 있지 않습니다."),
+    POSTING_ALREADY_SAVED(HttpStatus.FORBIDDEN, "POST4044", "이미 저장한 게시물입니다."),
+    MEMBER_NOT_LIKED_POSTING(HttpStatus.FORBIDDEN, "POST4043", "해당 유저는 이 게시물에 좋아요를 누르지 않았습니다."),
     SAVED_POSTING_CANNOT_ACCESS(HttpStatus.UNAUTHORIZED, "POST4005", "저장된 게시글에 접근할 수 없습니다."),
 
     // clothes

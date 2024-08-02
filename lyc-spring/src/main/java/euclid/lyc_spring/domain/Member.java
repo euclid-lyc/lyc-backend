@@ -128,6 +128,12 @@ public class Member {
 
     protected Member() {}
 
+    // followerMember
+    @Builder
+    public Member(Long id){
+        this.id = id;
+    }
+
     @Builder
     public Member(String name, String loginId, String loginPw,
                   String email, String nickname, String introduction,
