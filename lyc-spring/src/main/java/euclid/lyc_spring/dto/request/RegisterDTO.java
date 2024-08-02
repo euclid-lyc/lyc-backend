@@ -17,4 +17,5 @@ public class RegisterDTO {
         private MemberInfoDTO memberInfo;
         private BasicInfoDTO basicInfo;
     }
+
 }

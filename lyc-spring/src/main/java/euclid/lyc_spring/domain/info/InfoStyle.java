@@ -10,6 +10,13 @@ import lombok.Setter;
 @Entity
 public class InfoStyle {
 
+    @Builder
+    public InfoStyle(Info info, Style style, Boolean isPrefer) {
+        this.info = info;
+        this.style = style;
+        this.isPrefer = isPrefer;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, unique = true)
@@ -28,12 +35,6 @@ public class InfoStyle {
     private Info info;
 
     protected InfoStyle() {}
-
-    @Builder
-    public InfoStyle(Style style, Boolean isPrefer) {
-        this.style = style;
-        this.isPrefer = isPrefer;
-    }
 
 
 }
