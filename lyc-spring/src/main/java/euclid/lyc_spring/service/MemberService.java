@@ -37,7 +37,8 @@ public class MemberService {
     }
 
     public MemberInfoDTO getMemberInfoDTO(Long memberId) {
-        Member member = memberRepository.findById(memberId).orElse(null);
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         return MemberInfoDTO.toDTO(Objects.requireNonNull(member));
     }
 
@@ -68,31 +69,39 @@ public class MemberService {
     // FOLLOW
 
     // 팔로우하기
-    public void followMember(Long myId, Long memberId) {
-        Member followingMember = memberRepository.findById(memberId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    public MemberInfoDTO followMember(Long myId, Long memberId) {
+        Member following = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         if (followRepository.findByFollowerIdAndFollowingId(myId,memberId).isPresent()) {
             throw new RuntimeException("이미 팔로우 중입니다.");
         }
 
-        Member followerMember = new Member(myId);
-        Follow follow = new Follow(followerMember,followingMember);
+        Member follower = memberRepository.findById(myId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Follow follow = new Follow(follower,following);
+
         followRepository.save(follow);
+
+        return MemberInfoDTO.toDTO(following);
     }
 
     // 언팔로우하기
-    public void unfollowMember(Long myId, Long memberId) {
+    public MemberInfoDTO unfollowMember(Long myId, Long memberId) {
+
+        Member followingMember = memberRepository.findById(memberId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         Follow follow = followRepository.findByFollowerIdAndFollowingId(myId,memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.NOT_FOLLOWING));
 
         followRepository.delete(follow);
+        return MemberInfoDTO.toDTO(followingMember);
     }
 
     // BLOCKED
 
     // 차단하기
-    public void blockMember(Long memberId, Long blockMemberId) {
+    public MemberInfoDTO blockMember(Long memberId, Long blockMemberId) {
         Member blockMember = memberRepository.findById(blockMemberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
@@ -100,16 +109,24 @@ public class MemberService {
             throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_BLOCKED);
         }
 
-        Member member = new Member(memberId);
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         BlockMember blockMemberRelation = new BlockMember(member, blockMember);
         blockMemberRepository.save(blockMemberRelation);
+
+        return MemberInfoDTO.toDTO(blockMember);
     }
 
     // 차단 해제하기
-    public void unblockMember(Long memberId, Long blockMemberId) {
+    public MemberInfoDTO unblockMember(Long memberId, Long blockMemberId) {
+        Member blockMember = memberRepository.findById(blockMemberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
         BlockMember blockMemberRelation = blockMemberRepository.findByMemberIdAndBlockMemberId(memberId, blockMemberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_BLOCKED));
 
         blockMemberRepository.delete(blockMemberRelation);
+
+        return MemberInfoDTO.toDTO(blockMember);
     }
 }

@@ -1,6 +1,7 @@
 package euclid.lyc_spring.domain;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,9 +24,11 @@ public class Follow {
     @JoinColumn(name = "follower_id", nullable = false)
     private Member follower;
 
+    @Builder
     public Follow(Member follower, Member following) {
         this.following = following;
         this.follower = follower;
     }
 
+    protected Follow() {}
 }

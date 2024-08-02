@@ -19,6 +19,10 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    /**
+     * GET API
+     */
+
     @Operation(summary = "오늘의 디렉터 불러오기", description = "홈화면에 오늘의 디렉터 10명을 불러옵니다.")
     @GetMapping("/members/follower-order")
     ApiResponse<List<TodayDirectorDTO>> getTodayDirectorList() {
@@ -27,51 +31,59 @@ public class MemberController {
     }
 
     @Operation(summary = "유저 정보 불러오기", description = "유저의 정보를 불러옵니다.")
-    @GetMapping("/api/members/{memberId}")
+    @GetMapping("/members/{memberId}")
     ApiResponse<MemberInfoDTO> getMember(@PathVariable("memberId") long memberId) {
         MemberInfoDTO memberInfoDTO = memberService.getMemberInfoDTO(memberId);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOUND, memberInfoDTO);
     }
 
     @Operation(summary = "팔로워 목록 불러오기", description = "팔로워 목록을 불러옵니다.")
-    @GetMapping("/api/members/{memberId}/followers")
+    @GetMapping("/members/{memberId}/followers")
     ApiResponse<List<FollowDTO>> getFollowers(@PathVariable("memberId") long memberId) {
         List<FollowDTO> Followers = memberService.getFollowerList(memberId);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOLLOWER_FOUND, Followers);
     }
 
     @Operation(summary = "팔로잉 목록 불러오기", description = "팔로잉 목록을 불러옵니다.")
-    @GetMapping("/api/members/{memberId}/followings")
+    @GetMapping("/members/{memberId}/followings")
     ApiResponse<List<FollowDTO>> getFollowings(@PathVariable("memberId") long memberId) {
         List<FollowDTO> Followings = memberService.getFollowingList(memberId);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOLLOWING_FOUND, Followings);
     }
 
-    @Operation(summary = "팔로우하기", description = "유저를 팔로우합니다.")
-    @PostMapping("/api/followings/{memberId}?id={myId}")
-    ApiResponse<String>  followMember(@PathVariable("myId") Long myId, @PathVariable("memberId") Long memberId) {
-        memberService.followMember(myId, memberId);
-        return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOLLOWED);
-    }
+    /**
+     * POST API
+     */
 
-    @Operation(summary = "팔로잉 삭제하기", description = "유저를 언팔로우합니다.")
-    @DeleteMapping("/api/follower/{memberId}?id={myId}")
-    ApiResponse<String>  unfollowMember(@PathVariable("myId") Long myId, @PathVariable("memberId") Long memberId) {
-        memberService.unfollowMember(myId, memberId);
-        return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOLLOWING_DELETED);
+    @Operation(summary = "팔로우하기", description = "유저를 팔로우합니다.")
+    @PostMapping("/followings/{memberId}")
+    ApiResponse<MemberInfoDTO>  followMember(@RequestParam("myId") Long myId, @PathVariable("memberId") Long memberId) {
+        MemberInfoDTO memberInfoDTO = memberService.followMember(myId, memberId);
+        return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOLLOWED, memberInfoDTO);
     }
 
     @Operation(summary = "차단하기", description = "해당 유저를 차단합니다.")
-    @PostMapping("/api/block-members/{memberId}?id={myId}")
-    ApiResponse<String> blockMember(@PathVariable("myId") Long myId, @PathVariable("memberId") Long memberId) {
-        memberService.blockMember(myId, memberId);
-        return ApiResponse.onSuccess(SuccessStatus._MEMBER_BLOCKED);
+    @PostMapping("/block-members/{memberId}")
+    ApiResponse<MemberInfoDTO> blockMember(@RequestParam("myId") Long myId, @PathVariable("memberId") Long memberId) {
+        MemberInfoDTO memberInfoDTO = memberService.blockMember(myId, memberId);
+        return ApiResponse.onSuccess(SuccessStatus._MEMBER_BLOCKED, memberInfoDTO);
+    }
+
+    /**
+     * DELETE API
+     */
+
+    @Operation(summary = "팔로잉 삭제하기", description = "유저를 언팔로우합니다.")
+    @DeleteMapping("/followings/{memberId}")
+    ApiResponse<MemberInfoDTO>  unfollowMember(@RequestParam("myId") Long myId, @PathVariable("memberId") Long memberId) {
+        MemberInfoDTO memberInfoDTO = memberService.unfollowMember(myId, memberId);
+        return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOLLOWING_DELETED, memberInfoDTO);
     }
 
     @Operation(summary = "차단 해제하기", description = "해당 유저의 차단을 해제합니다.")
-    @DeleteMapping("/api/block-members/{memberId}?id={myId}")
-    ApiResponse<String> unblockMember(@PathVariable("myId") Long myId, @PathVariable("memberId") Long memberId) {
-        memberService.unblockMember(myId, memberId);
-        return ApiResponse.onSuccess(SuccessStatus._MEMBER_BLOCK_CANCELED);
+    @DeleteMapping("/block-members/{memberId}")
+    ApiResponse<MemberInfoDTO> unblockMember(@RequestParam("myId") Long myId, @PathVariable("memberId") Long memberId) {
+        MemberInfoDTO memberInfoDTO = memberService.unblockMember(myId, memberId);
+        return ApiResponse.onSuccess(SuccessStatus._MEMBER_BLOCK_CANCELED, memberInfoDTO);
     }
 }

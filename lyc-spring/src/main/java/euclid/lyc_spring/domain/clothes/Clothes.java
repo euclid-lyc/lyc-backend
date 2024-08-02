@@ -23,6 +23,12 @@ public class Clothes {
     @Column
     private LocalDateTime createdAt;
 
+    @Column(length = 20, nullable = false)
+    private String title;
+
+    @Column(length = 100)
+    private String text;
+
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)

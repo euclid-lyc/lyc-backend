@@ -16,9 +16,6 @@ public class ClothesText {
     @Column(nullable = false, unique = true)
     private Long id;
 
-    @Column(length = 20, nullable = false)
-    private String name;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Material material;

@@ -2,12 +2,14 @@ package euclid.lyc_spring.controller;
 
 import euclid.lyc_spring.apiPayload.ApiResponse;
 import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
+import euclid.lyc_spring.domain.posting.Posting;
 import euclid.lyc_spring.dto.request.PostingRequestDTO.*;
 import euclid.lyc_spring.dto.response.PostingDTO.*;
 import euclid.lyc_spring.service.PostingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Posting", description = "게시글 기능 관련 API")
@@ -75,6 +77,13 @@ public class PostingController {
         return ApiResponse.onSuccess(SuccessStatus._RECENT_TEN_FEEDS_FETCHED, recentPostingListDTO);
     }
 
+    @Operation(summary = "게시글 불러오기", description = "게시글을 불러옵니다.")
+    @GetMapping("/members/{memberId}/postings/{postingId}")
+    ApiResponse<PostingViewDTO> getPosting(@PathVariable("memberId") Long memberId, @PathVariable("postingId") Long postingId){
+        PostingViewDTO postingViewDTO = postingService.getPosting(memberId, postingId);
+        return ApiResponse.onSuccess(SuccessStatus._OK, postingViewDTO);
+    }
+
     /**
      * POST API
      */
@@ -88,17 +97,17 @@ public class PostingController {
     }
 
     @Operation(summary = "좋아요 누르기", description = "게시글에 좋아요를 누릅니다.")
-    @PostMapping("/api/postings/{postingId}/like?id={myId}")
-    public ApiResponse<String> likePosting(@PathVariable("postingId") Long postingId, @PathVariable("myId") Long myId) {
-        postingService.likePosting(myId, postingId);
-        return ApiResponse.onSuccess(SuccessStatus._POSTING_LIKED);
+    @PostMapping("/postings/{postingId}/like?id={myId}")
+    public ApiResponse<PostingViewDTO> likePosting(@PathVariable("postingId") Long postingId, @PathVariable("myId") Long myId) {
+        PostingViewDTO postingViewDTO = postingService.likePosting(myId, postingId);
+        return ApiResponse.onSuccess(SuccessStatus._POSTING_LIKED, postingViewDTO);
     }
 
-    @Operation(summary = "게시글 저장하기", description = "게시글 저장합니다")
-    @PostMapping("/api/postings/{postingId}?id={myId}")
-    public ApiResponse<String> savedPosting(@PathVariable("myId") Long myId, @PathVariable("postingId") Long postingId) {
-        postingService.savedPosting(myId, postingId);
-        return ApiResponse.onSuccess(SuccessStatus._SAVED_POSTING_CREATED);
+    @Operation(summary = "코디 저장하기", description = "게시글을 저장합니다")
+    @PostMapping("/postings/{postingId}?id={myId}")
+    public ApiResponse<PostingViewDTO> savedPosting(@PathVariable("myId") Long myId, @PathVariable("postingId") Long postingId) {
+        PostingViewDTO postingViewDTO = postingService.savedPosting(myId, postingId);
+        return ApiResponse.onSuccess(SuccessStatus._SAVED_POSTING_CREATED, postingViewDTO);
     }
 
     /**
@@ -123,9 +132,9 @@ public class PostingController {
     }
 
     @Operation(summary = "좋아요 취소하기", description = "게시글에 좋아요를 취소합니다.")
-    @DeleteMapping("/api/postings/{postingId}/dislike?id={myId}")
-    ApiResponse<String> dislikePosting(@PathVariable("postingId") Long postingId, @PathVariable("myId") Long myId) {
-        postingService.unlikePosting(myId, postingId);
-        return ApiResponse.onSuccess(SuccessStatus._POSTING_LIKE_CANCELED);
+    @DeleteMapping("/postings/{postingId}/dislike?id={myId}")
+    ApiResponse<PostingViewDTO> dislikePosting(@PathVariable("postingId") Long postingId, @PathVariable("myId") Long myId) {
+        PostingViewDTO postingViewDTO = postingService.unlikePosting(myId, postingId);
+        return ApiResponse.onSuccess(SuccessStatus._POSTING_LIKE_CANCELED, postingViewDTO);
     }
 }
