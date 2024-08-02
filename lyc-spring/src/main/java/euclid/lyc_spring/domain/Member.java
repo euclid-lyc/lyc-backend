@@ -129,7 +129,6 @@ public class Member {
     protected Member() {}
 
     // followerMember
-    @Builder
     public Member(Long id){
         this.id = id;
     }

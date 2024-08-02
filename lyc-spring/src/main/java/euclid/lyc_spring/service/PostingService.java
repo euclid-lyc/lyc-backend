@@ -93,7 +93,7 @@ public class PostingService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         authorizeSavedCoordie(member);
 
-        List<PostingImageDTO> savedPostingList = savedPostingRepository.findAllByMember_Id(memberId).stream()
+        List<PostingImageDTO> savedPostingList = savedPostingRepository.findAllByMemberId(memberId).stream()
                 .map(savedPosting -> PostingImageDTO.toDTO(savedPosting.getPosting()))
                 .collect(Collectors.toList());
 
@@ -153,7 +153,7 @@ public class PostingService {
         postingRepository.findById(postingId)
                 .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
 
-        List<SavedPosting> savedPostingList = savedPostingRepository.findAllByMember_Id(memberId).stream()
+        List<SavedPosting> savedPostingList = savedPostingRepository.findAllByMemberId(memberId).stream()
                 .filter(savedPosting -> savedPosting.getPosting().getId().equals(postingId))
                 .toList();
 
@@ -276,7 +276,7 @@ public class PostingService {
 
         Member member = new Member(memberId);
 
-        if(savedPostingRepository.existsByMember_IdAndPost_Id(memberId, postingId)){
+        if(savedPostingRepository.existsByMemberIdAndPostingId(memberId, postingId)){
             throw new PostingHandler(ErrorStatus.POSTING_ALREADY_SAVED);
         }
 

@@ -10,14 +10,14 @@ import java.util.Optional;
 @Repository
 public interface BlockMemberRepository extends JpaRepository<BlockMember, Long> {
     // 유저 차단한 멤버 목록 조회
-    List<BlockMember> findByMember_Id(Long memberId);
+    List<BlockMember> findByMemberId(Long memberId);
 
     // 유저를 차단한 멤버 목록 조회
-    List<BlockMember> findByBlock_Id(Long blockId);
+    List<BlockMember> findByBlockMemberId(Long blockMemberId);
 
     // 차단 관계 조회 (유저가 다른 멤버를 차단했는지)
-    Optional<BlockMember> findByMember_IdAndBlock_Id(Long memberId, Long blockId);
+    Optional<BlockMember> findByMemberIdAndBlockMemberId(Long memberId, Long blockMemberId);
 
     // 차단 관계 삭제
-    void deleteByMember_IdAndBlock_Id(Long memberId, Long blockId);
+    void deleteByMemberIdAndBlockMemberId(Long memberId, Long blockId);
 }

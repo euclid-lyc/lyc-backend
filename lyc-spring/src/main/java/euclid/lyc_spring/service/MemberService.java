@@ -96,7 +96,7 @@ public class MemberService {
         Member blockMember = memberRepository.findById(blockMemberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        if (blockMemberRepository.findByMember_IdAndBlock_Id(memberId,blockMemberId).isPresent()) {
+        if (blockMemberRepository.findByMemberIdAndBlockMemberId(memberId,blockMemberId).isPresent()) {
             throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_BLOCKED);
         }
 
@@ -107,7 +107,7 @@ public class MemberService {
 
     // 차단 해제하기
     public void unblockMember(Long memberId, Long blockMemberId) {
-        BlockMember blockMemberRelation = blockMemberRepository.findByMember_IdAndBlock_Id(memberId, blockMemberId)
+        BlockMember blockMemberRelation = blockMemberRepository.findByMemberIdAndBlockMemberId(memberId, blockMemberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_BLOCKED));
 
         blockMemberRepository.delete(blockMemberRelation);

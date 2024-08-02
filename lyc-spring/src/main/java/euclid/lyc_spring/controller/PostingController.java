@@ -49,7 +49,7 @@ public class PostingController {
                                                 @PathVariable("postingId") Long postingId,
                                                 @PathVariable("savedPostingId") Long savedPostingId) {
         PostingViewDTO postingViewDTO = postingService.getSavedCoordie(memberId, postingId, savedPostingId);
-        return ApiResponse.onSuccess(postingViewDTO);
+        return ApiResponse.onSuccess(SuccessStatus._SAVED_POSTING_FETCHED, postingViewDTO);
     }
 
     @Operation(summary = "게시글 좋아요 클릭 여부 불러오기", description = "게시글에 좋아요를 눌렀는지 확인합니다.")
@@ -91,14 +91,14 @@ public class PostingController {
     @PostMapping("/api/postings/{postingId}/like?id={myId}")
     public ApiResponse<String> likePosting(@PathVariable("postingId") Long postingId, @PathVariable("myId") Long myId) {
         postingService.likePosting(myId, postingId);
-        return ApiResponse.onSuccess("게시글에 좋아요를 추가했습니다.");
+        return ApiResponse.onSuccess(SuccessStatus._POSTING_LIKED);
     }
 
-    @Operation(summary = "코디 저장하기", description = "게시글을 저장합니다")
+    @Operation(summary = "게시글 저장하기", description = "게시글 저장합니다")
     @PostMapping("/api/postings/{postingId}?id={myId}")
     public ApiResponse<String> savedPosting(@PathVariable("myId") Long myId, @PathVariable("postingId") Long postingId) {
         postingService.savedPosting(myId, postingId);
-        return ApiResponse.onSuccess("게시글을 저장하였습니다.");
+        return ApiResponse.onSuccess(SuccessStatus._SAVED_POSTING_CREATED);
     }
 
     /**
@@ -126,6 +126,6 @@ public class PostingController {
     @DeleteMapping("/api/postings/{postingId}/dislike?id={myId}")
     ApiResponse<String> dislikePosting(@PathVariable("postingId") Long postingId, @PathVariable("myId") Long myId) {
         postingService.unlikePosting(myId, postingId);
-        return ApiResponse.onSuccess("게시글에 좋아요를 제거했습니다.");
+        return ApiResponse.onSuccess(SuccessStatus._POSTING_LIKE_CANCELED);
     }
 }
