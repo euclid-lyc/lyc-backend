@@ -57,7 +57,7 @@ public class MemberController {
 
     @Operation(summary = "팔로우하기", description = "유저를 팔로우합니다.")
     @PostMapping("/followings/{memberId}")
-    ApiResponse<MemberInfoDTO>  followMember(@RequestParam("myId") Long myId, @PathVariable("memberId") Long memberId) {
+    ApiResponse<MemberInfoDTO> followMember(@RequestParam("myId") Long myId, @PathVariable("memberId") Long memberId) {
         MemberInfoDTO memberInfoDTO = memberService.followMember(myId, memberId);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOLLOWED, memberInfoDTO);
     }
@@ -65,6 +65,8 @@ public class MemberController {
     @Operation(summary = "차단하기", description = "해당 유저를 차단합니다.")
     @PostMapping("/block-members/{memberId}")
     ApiResponse<MemberInfoDTO> blockMember(@RequestParam("myId") Long myId, @PathVariable("memberId") Long memberId) {
+        memberService.unfollowMember(myId, memberId);
+        memberService.unfollowMember(memberId, myId);
         MemberInfoDTO memberInfoDTO = memberService.blockMember(myId, memberId);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_BLOCKED, memberInfoDTO);
     }
@@ -73,7 +75,7 @@ public class MemberController {
      * DELETE API
      */
 
-    @Operation(summary = "팔로잉 삭제하기", description = "유저를 언팔로우합니다.")
+    @Operation(summary = "언팔로우하기", description = "유저를 언팔로우합니다.")
     @DeleteMapping("/followings/{memberId}")
     ApiResponse<MemberInfoDTO>  unfollowMember(@RequestParam("myId") Long myId, @PathVariable("memberId") Long memberId) {
         MemberInfoDTO memberInfoDTO = memberService.unfollowMember(myId, memberId);

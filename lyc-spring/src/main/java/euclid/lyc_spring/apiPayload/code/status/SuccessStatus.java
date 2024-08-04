@@ -16,6 +16,8 @@ public enum SuccessStatus implements BaseCode {
     // clothes
     _CLOTHES_BY_IMAGE_CREATED(HttpStatus.CREATED, "CLOTHES2001", "옷장 게시글(이미지) 작성 완료"),
     _CLOTHES_BY_TEXT_CREATED(HttpStatus.CREATED, "CLOTHES2002", "옷장 게시글(텍스트) 작성 완료"),
+    _CLOTHES_LIST_FETCHED(HttpStatus.OK, "CLOTHES2003", "옷장 게시글 목록 불러오기 완료"),
+    _CLOTHES_FETCHED(HttpStatus.OK, "CLOTHES2003", "옷장 게시글 불러오기 완료"),
 
     // member
     _MEMBER_CREATED(HttpStatus.CREATED, "MEMBER2001", "회원가입 완료"),
@@ -49,6 +51,9 @@ public enum SuccessStatus implements BaseCode {
 
     // FEED
     _RECENT_TEN_FEEDS_FETCHED(HttpStatus.OK, "FEED2001", "최신 피드 10개 불러오기 완료"),
+
+    // WEATHER
+    _WEATHER_FETCHED(HttpStatus.OK, "WEATHER2001", "오늘 날씨 불러오기 완료")
 
 
     ;

@@ -18,7 +18,7 @@ public class SavedPosting {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, unique = true)
-    private Long id;
+    private java.lang.Long id;
 
     @CreatedDate
     @Column

@@ -97,15 +97,15 @@ public class PostingController {
     }
 
     @Operation(summary = "좋아요 누르기", description = "게시글에 좋아요를 누릅니다.")
-    @PostMapping("/postings/{postingId}/like?id={myId}")
-    public ApiResponse<PostingViewDTO> likePosting(@PathVariable("postingId") Long postingId, @PathVariable("myId") Long myId) {
+    @PostMapping("/postings/{postingId}/like")
+    public ApiResponse<PostingViewDTO> likePosting(@PathVariable("postingId") Long postingId, @RequestParam("myId") Long myId) {
         PostingViewDTO postingViewDTO = postingService.likePosting(myId, postingId);
         return ApiResponse.onSuccess(SuccessStatus._POSTING_LIKED, postingViewDTO);
     }
 
     @Operation(summary = "코디 저장하기", description = "게시글을 저장합니다")
-    @PostMapping("/postings/{postingId}?id={myId}")
-    public ApiResponse<PostingViewDTO> savedPosting(@PathVariable("myId") Long myId, @PathVariable("postingId") Long postingId) {
+    @PostMapping("/postings/{postingId}")
+    public ApiResponse<PostingViewDTO> savedPosting(@RequestParam("myId") Long myId, @PathVariable("postingId") Long postingId) {
         PostingViewDTO postingViewDTO = postingService.savedPosting(myId, postingId);
         return ApiResponse.onSuccess(SuccessStatus._SAVED_POSTING_CREATED, postingViewDTO);
     }
@@ -132,8 +132,10 @@ public class PostingController {
     }
 
     @Operation(summary = "좋아요 취소하기", description = "게시글에 좋아요를 취소합니다.")
-    @DeleteMapping("/postings/{postingId}/dislike?id={myId}")
-    ApiResponse<PostingViewDTO> dislikePosting(@PathVariable("postingId") Long postingId, @PathVariable("myId") Long myId) {
+    @PatchMapping("/postings/{postingId}/dislike")
+    public ApiResponse<PostingViewDTO> dislikePosting(@PathVariable("postingId") Long postingId,
+                                                      @RequestParam("myId") Long myId) {
+
         PostingViewDTO postingViewDTO = postingService.unlikePosting(myId, postingId);
         return ApiResponse.onSuccess(SuccessStatus._POSTING_LIKE_CANCELED, postingViewDTO);
     }

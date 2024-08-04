@@ -274,6 +274,8 @@ public class PostingService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
+        if (getIsClickedLike(memberId, postingId).getIsClicked())
+            throw new RuntimeException("이미 좋아요를 눌렀습니다.");
         LikedPosting likedPosting = new LikedPosting(member, posting);
 
         likedPostingRepository.save(likedPosting);
@@ -362,21 +364,21 @@ public class PostingService {
     }
 
     public PostingViewDTO unlikePosting(Long memberId, Long postingId) {
-        Optional<LikedPosting> likedPostings = likedPostingRepository.findByMember_idAndPostingId(memberId, postingId);
+        List<LikedPosting> likedPostings = likedPostingRepository.findByMember_IdAndPosting_Id(memberId, postingId);
 
-
-        if(likedPostings.isPresent()){
-            LikedPosting likedPosting = likedPostings.get();
-            likedPostingRepository.delete(likedPosting);
-
-            Posting posting = postingRepository.findById(postingId)
-                    .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
-            posting.reloadLikes(posting.getLikes()-1);
-            postingRepository.save(posting);
-            return PostingViewDTO.toDTO(posting);
-        } else{
-            throw new PostingHandler(ErrorStatus.MEMBER_NOT_LIKED_POSTING);
+        if (likedPostings.isEmpty()) {
+            throw new RuntimeException("좋아요 기록이 없습니다.");
         }
+
+        likedPostings.forEach(likedPostingRepository::delete);
+
+        Posting posting = postingRepository.findById(postingId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다."));
+
+        posting.reloadLikes(posting.getLikes()-1);
+        postingRepository.save(posting);
+
+        return PostingViewDTO.toDTO(posting);
     }
 
 /* ---------------------------------------- 인증/인가 ---------------------------------------- */

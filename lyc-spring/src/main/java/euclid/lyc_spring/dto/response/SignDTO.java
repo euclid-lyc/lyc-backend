@@ -2,7 +2,6 @@ package euclid.lyc_spring.dto.response;
 
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.enums.Role;
-import euclid.lyc_spring.dto.token.JwtTokenDTO;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

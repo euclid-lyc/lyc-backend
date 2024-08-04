@@ -46,14 +46,14 @@ public class ClothesController {
     @GetMapping("/members/{memberId}/clothes")
     ApiResponse<ClothesListDTO> getClothesByMemberId(@PathVariable("memberId") Long memberId) {
         ClothesListDTO clothesListDTO = clothesService.getClothesList(memberId);
-        return ApiResponse.onSuccess(clothesListDTO);
+        return ApiResponse.onSuccess(SuccessStatus._CLOTHES_LIST_FETCHED, clothesListDTO);
     }
 
     @Operation(summary = "옷장 게시글 불러오기", description = "옷장 게시글을 불러옵니다.")
     @GetMapping("/members/{memberId}/clothes/{clothesId}")
     ApiResponse<ClothesViewDTO> getClothes(@PathVariable("memberId") Long memberId, @PathVariable("clothesId") Long clothesId) {
         ClothesViewDTO clothesViewDTO = clothesService.getClothes(memberId, clothesId);
-        return ApiResponse.onSuccess(clothesViewDTO);
+        return ApiResponse.onSuccess(SuccessStatus._CLOTHES_FETCHED, clothesViewDTO);
     }
 
 }

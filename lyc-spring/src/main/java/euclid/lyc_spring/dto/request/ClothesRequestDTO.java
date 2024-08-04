@@ -17,6 +17,7 @@ public class ClothesRequestDTO {
         private Long memberId;
         private String image;
         private String text;
+        private String title;
     }
 
     @Getter
@@ -25,7 +26,8 @@ public class ClothesRequestDTO {
     public static class ClothesByTextDTO {
 
         private Long memberId;
-        private String name;
+        private String title;
+        private String text;
         private Material material;
         private Fit fit;
     }

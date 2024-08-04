@@ -32,8 +32,7 @@ public class ClothesText {
     protected ClothesText() {}
 
     @Builder
-    public ClothesText(String name, Material material, Fit fit) {
-        this.name = name;
+    public ClothesText(Material material, Fit fit) {
         this.material = material;
         this.fit = fit;
     }

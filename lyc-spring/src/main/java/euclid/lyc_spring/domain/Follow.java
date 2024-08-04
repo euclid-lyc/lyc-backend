@@ -12,7 +12,7 @@ public class Follow {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, unique = true)
-    private Long id;
+    private java.lang.Long id;
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)

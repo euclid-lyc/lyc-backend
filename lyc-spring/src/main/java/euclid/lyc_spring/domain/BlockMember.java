@@ -23,6 +23,8 @@ public class BlockMember {
     @JoinColumn(name = "block_member_id", nullable = false)
     private Member blockMember;
 
+    protected BlockMember() {}
+
     public BlockMember(Member member, Member blockMember) {
         this.member = member;
         this.blockMember = blockMember;
