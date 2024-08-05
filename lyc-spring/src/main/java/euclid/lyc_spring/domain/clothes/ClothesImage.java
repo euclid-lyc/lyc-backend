@@ -17,9 +17,6 @@ public class ClothesImage {
     @Column(nullable = false)
     private String image;
 
-    @Column(length = 100)
-    private String text;
-
     @Setter
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clothes_id", nullable = false)
@@ -28,8 +25,7 @@ public class ClothesImage {
     protected ClothesImage() {}
 
     @Builder
-    public ClothesImage(String image, String text) {
+    public ClothesImage(String image) {
         this.image = image;
-        this.text = text;
     }
 }

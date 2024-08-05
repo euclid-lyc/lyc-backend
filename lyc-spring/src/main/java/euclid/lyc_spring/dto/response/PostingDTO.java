@@ -90,12 +90,13 @@ public class PostingDTO {
         private final Short maxTemp;
         private final String content;
         private final List<ImageInfoDTO> imageInfo;
+        private final Long likes;
 
         @Builder(access = AccessLevel.PRIVATE)
         private PostingViewDTO(MemberProfileDTO fromMember, MemberProfileDTO toMember,
                                Long writerId, String nickname, String loginId,
                                Long postingId, Short minTemp, Short maxTemp, String content,
-                               List<ImageInfoDTO> imageInfo) {
+                               List<ImageInfoDTO> imageInfo, Long likes) {
             this.fromMember = fromMember;
             this.toMember = toMember;
             this.writerId = writerId;
@@ -106,6 +107,7 @@ public class PostingDTO {
             this.maxTemp = maxTemp;
             this.content = content;
             this.imageInfo = imageInfo;
+            this.likes = likes;
         }
 
         public static PostingViewDTO toDTO(Posting posting) {
@@ -119,6 +121,7 @@ public class PostingDTO {
                     .minTemp(posting.getMinTemp())
                     .maxTemp(posting.getMaxTemp())
                     .content(posting.getContent())
+                    .likes(posting.getLikes())
                     .imageInfo(posting.getImageList().stream()
                             .map(ImageInfoDTO::toDTO)
                             .toList())

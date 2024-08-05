@@ -1,6 +1,5 @@
 package euclid.lyc_spring.domain.posting;
 
-
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.enums.Style;
 import euclid.lyc_spring.domain.mapping.LikedPosting;

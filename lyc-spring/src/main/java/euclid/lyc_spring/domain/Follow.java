@@ -1,6 +1,7 @@
 package euclid.lyc_spring.domain;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +12,7 @@ public class Follow {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, unique = true)
-    private Long id;
+    private java.lang.Long id;
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
@@ -23,9 +24,11 @@ public class Follow {
     @JoinColumn(name = "follower_id", nullable = false)
     private Member follower;
 
+    @Builder
     public Follow(Member follower, Member following) {
         this.following = following;
         this.follower = follower;
     }
 
+    protected Follow() {}
 }

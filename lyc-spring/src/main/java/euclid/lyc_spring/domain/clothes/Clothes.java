@@ -17,11 +17,17 @@ public class Clothes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, unique = true)
-    private Long id;
+    private java.lang.Long id;
 
     @CreatedDate
     @Column
     private LocalDateTime createdAt;
+
+    @Column(length = 20, nullable = false)
+    private String title;
+
+    @Column(length = 100)
+    private String text;
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
@@ -36,8 +42,10 @@ public class Clothes {
 
     protected Clothes() {}
 
-    public Clothes(Member member) {
+    public Clothes(Member member, String title, String text) {
         this.member = member;
+        this.title = title;
+        this.text = text;
     }
 
     //=== add Methods ===//

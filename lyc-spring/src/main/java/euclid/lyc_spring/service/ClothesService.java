@@ -1,6 +1,7 @@
 package euclid.lyc_spring.service;
 
 import euclid.lyc_spring.apiPayload.code.status.ErrorStatus;
+import euclid.lyc_spring.apiPayload.exception.handler.ClothesHandler;
 import euclid.lyc_spring.apiPayload.exception.handler.JwtHandler;
 import euclid.lyc_spring.apiPayload.exception.handler.MemberHandler;
 import euclid.lyc_spring.domain.Member;
@@ -19,6 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ClothesService {
@@ -33,13 +36,13 @@ public class ClothesService {
      */
 
     @Transactional
-    public ClothesImageResponseDTO createClothesByImage(Long memberId, ClothesByImageDTO clothesByImageDTO) {
+    public ClothesImageResponseDTO createClothesByImage(java.lang.Long memberId, ClothesByImageDTO clothesByImageDTO) {
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         authorizeWriter(member);
 
-        Clothes clothes = new Clothes(member);
+        Clothes clothes = new Clothes(member, clothesByImageDTO.getTitle(), clothesByImageDTO.getText());
 
         member.addClothes(clothes);
         clothesRepository.save(clothes);
@@ -52,7 +55,6 @@ public class ClothesService {
 
         ClothesImage clothesImage = ClothesImage.builder()
                 .image(clothesByImageDTO.getImage())
-                .text(clothesByImageDTO.getText())
                 .build();
 
         clothes.addClothesImage(clothesImage);
@@ -60,13 +62,13 @@ public class ClothesService {
     }
 
     @Transactional
-    public ClothesTextResponseDTO createClothesByText(Long memberId, ClothesByTextDTO clothesByTextDTO) {
+    public ClothesTextResponseDTO createClothesByText( Long memberId, ClothesByTextDTO clothesByTextDTO) {
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         authorizeWriter(member);
 
-        Clothes clothes = new Clothes(member);
+        Clothes clothes = new Clothes(member, clothesByTextDTO.getTitle(), clothesByTextDTO.getText());
 
         member.addClothes(clothes);
         clothesRepository.save(clothes);
@@ -78,13 +80,53 @@ public class ClothesService {
     private void createClothesByText(Clothes clothes, ClothesByTextDTO clothesByTextDTO) {
 
         ClothesText clothesText = ClothesText.builder()
-                .name(clothesByTextDTO.getName())
                 .material(clothesByTextDTO.getMaterial())
                 .fit(clothesByTextDTO.getFit())
                 .build();
 
         clothes.addClothesText(clothesText);
         clothesTextRepository.save(clothesText);
+    }
+
+    @Transactional
+    public ClothesListDTO getClothesList(java.lang.Long memberId) {
+
+        // Authorization
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new JwtHandler(ErrorStatus.JWT_INVALID_TOKEN);
+        }
+
+        memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = memberRepository.findById(memberId).get();
+
+        List<ClothesInfoDTO> clothesInfoDTOList = clothesRepository.findByMember(member).stream()
+                .map(ClothesInfoDTO::toDTO)
+                .toList();
+
+        return ClothesListDTO.builder()
+                .memberId(memberId)
+                .clothesList(clothesInfoDTOList)
+                .build();
+    }
+
+    @Transactional
+    public ClothesViewDTO getClothes(java.lang.Long memberId, java.lang.Long clothesId) {
+        // Authorization
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new JwtHandler(ErrorStatus.JWT_INVALID_TOKEN);
+        }
+
+        memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = memberRepository.findById(memberId).get();
+
+        Clothes clothes = clothesRepository.findByIdAndMember(clothesId, member)
+                .orElseThrow(() -> new ClothesHandler(ErrorStatus.CLOTHES_NOT_FOUND));
+
+        return ClothesViewDTO.toDTO(clothes);
     }
 
 /* ---------------------------------------- 인증/인가 ---------------------------------------- */

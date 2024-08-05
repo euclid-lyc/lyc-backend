@@ -118,6 +118,17 @@ public class PostingService {
         return PostingViewDTO.toDTO(posting);
     }
 
+    public PostingViewDTO getPosting(Long memberId, Long postingId) {
+
+        memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Posting posting = postingRepository.findById(postingId)
+                .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
+
+        return PostingViewDTO.toDTO(posting);
+    }
+
     public ClickDTO getIsClickedLike(Long memberId, Long postingId) {
 
         memberRepository.findById(memberId)
@@ -256,25 +267,31 @@ public class PostingService {
                 });
     }
 
-    public void likePosting(Long memberId, Long postingId){
+    public PostingViewDTO likePosting(Long memberId, Long postingId){
         Posting posting = postingRepository.findById(postingId)
                 .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
 
-        Member member = new Member(memberId);
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
+        if (getIsClickedLike(memberId, postingId).getIsClicked())
+            throw new RuntimeException("이미 좋아요를 눌렀습니다.");
         LikedPosting likedPosting = new LikedPosting(member, posting);
 
         likedPostingRepository.save(likedPosting);
 
-        posting.setLikes(posting.getLikes()+1);
+        posting.reloadLikes(posting.getLikes()+1);
         postingRepository.save(posting);
+
+        return PostingViewDTO.toDTO(posting);
     }
 
-    public void savedPosting(Long memberId, Long postingId) {
+    public PostingViewDTO savedPosting(Long memberId, Long postingId) {
         Posting posting = postingRepository.findById(postingId)
                 .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
 
-        Member member = new Member(memberId);
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         if(savedPostingRepository.existsByMemberIdAndPostingId(memberId, postingId)){
             throw new PostingHandler(ErrorStatus.POSTING_ALREADY_SAVED);
@@ -282,7 +299,12 @@ public class PostingService {
 
         SavedPosting savedPosting = new SavedPosting(member, posting);
         savedPostingRepository.save(savedPosting);
+
+        return PostingViewDTO.toDTO(posting);
     }
+
+
+
 
     /**
      * DELETE API
@@ -341,21 +363,22 @@ public class PostingService {
         return new SavedPostingIdDTO(postingId, savedPostingId);
     }
 
-    public void unlikePosting(Long memberId, Long postingId) {
-        Optional<LikedPosting> likedPostings = likedPostingRepository.findByMember_idAndPostingId(memberId, postingId);
+    public PostingViewDTO unlikePosting(Long memberId, Long postingId) {
+        List<LikedPosting> likedPostings = likedPostingRepository.findByMember_IdAndPosting_Id(memberId, postingId);
 
-
-        if(likedPostings.isPresent()){
-            LikedPosting likedPosting = likedPostings.get();
-            likedPostingRepository.delete(likedPosting);
-
-            Posting posting = postingRepository.findById(postingId)
-                    .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
-            posting.setLikes(posting.getLikes()-1);
-            postingRepository.save(posting);
-        } else{
-            throw new PostingHandler(ErrorStatus.MEMBER_NOT_LIKED_POSTING);
+        if (likedPostings.isEmpty()) {
+            throw new RuntimeException("좋아요 기록이 없습니다.");
         }
+
+        likedPostings.forEach(likedPostingRepository::delete);
+
+        Posting posting = postingRepository.findById(postingId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다."));
+
+        posting.reloadLikes(posting.getLikes()-1);
+        postingRepository.save(posting);
+
+        return PostingViewDTO.toDTO(posting);
     }
 
 /* ---------------------------------------- 인증/인가 ---------------------------------------- */

@@ -16,9 +16,6 @@ public class ClothesText {
     @Column(nullable = false, unique = true)
     private Long id;
 
-    @Column(length = 20, nullable = false)
-    private String name;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Material material;
@@ -35,8 +32,7 @@ public class ClothesText {
     protected ClothesText() {}
 
     @Builder
-    public ClothesText(String name, Material material, Fit fit) {
-        this.name = name;
+    public ClothesText(Material material, Fit fit) {
         this.material = material;
         this.fit = fit;
     }
