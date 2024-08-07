@@ -44,7 +44,7 @@ public class MemberDTO {
 
         @Builder(access = AccessLevel.PRIVATE)
         private FollowDTO(Long memberId, String nickname, String profileImage, String introduction) {
-            this.memberId =memberId;
+            this.memberId = memberId;
             this.nickname = nickname;
             this.profileImage = profileImage;
             this.introduction = introduction;
@@ -86,12 +86,19 @@ public class MemberDTO {
         private final Long memberId;
         private final String nickname;
         private final String loginId;
+        private final Long follower;
+        private final Long following;
+        private final String profileImage;
 
         @Builder(access = AccessLevel.PRIVATE)
-        private MemberInfoDTO(Long memberId, String nickname, String loginId) {
+        private MemberInfoDTO(Long memberId, String nickname, String loginId,
+                              Long follower, Long following, String profileImage) {
             this.memberId = memberId;
             this.nickname = nickname;
             this.loginId = loginId;
+            this.follower = follower;
+            this.following = following;
+            this.profileImage = profileImage;
         }
 
         public static MemberInfoDTO toDTO(Member member) {
@@ -99,6 +106,9 @@ public class MemberDTO {
                     .memberId(member.getId())
                     .nickname(member.getNickname())
                     .loginId(member.getLoginId())
+                    .follower(member.getFollower())
+                    .following(member.getFollowing())
+                    .profileImage(member.getProfileImage())
                     .build();
         }
     }

@@ -55,11 +55,16 @@ public class MemberService {
             throw new RuntimeException("이미 팔로우 중입니다.");
         } else if (blockMemberRepository.findByMemberIdAndBlockMemberId(myId, memberId).isPresent()) {
             throw new RuntimeException("차단 중인 멤버입니다.");
+        } else if (blockMemberRepository.findByMemberIdAndBlockMemberId(memberId, myId).isPresent()) {
+            throw new RuntimeException("차단 당한 멤버입니다.");
         }
 
         Member follower = memberRepository.findById(myId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         Follow follow = new Follow(follower,following);
+
+        following.reloadFollower(following.getFollower()+1);
+        follower.reloadFollowing(follower.getFollowing()+1);
 
         followRepository.save(follow);
 
@@ -69,23 +74,24 @@ public class MemberService {
     // 언팔로우하기
     public MemberInfoDTO unfollowMember( Long myId,  Long memberId) {
 
-        Member followingMember = memberRepository.findById(memberId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
+        if (Objects.equals(myId, memberId)){
+            throw new RuntimeException("본인은 언팔로우할 수 없습니다.");
+        } else if (followRepository.findByFollowerIdAndFollowingId(myId,memberId).isEmpty()) {
+            throw new RuntimeException("팔로우 관계가 없습니다.");
+        }
         Follow follow = followRepository.findByFollowerIdAndFollowingId(myId,memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.NOT_FOLLOWING));
+
+        Member followingMember = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = memberRepository.findById(myId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        followingMember.reloadFollower(followingMember.getFollower()-1);
+        member.reloadFollowing(member.getFollowing()-1);
 
         followRepository.delete(follow);
         return MemberInfoDTO.toDTO(followingMember);
-    }
-
-    public void unfollow_member( Long myId,  Long memberId){
-        Member followingMember = memberRepository.findById(memberId).orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-        Follow follow = followRepository.findByFollowerIdAndFollowingId(myId,memberId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.NOT_FOLLOWING));
-
-        followRepository.delete(follow);
-
     }
 
     // 팔로워 목록 불러오기(member를 팔로우하는 사람들)
@@ -119,24 +125,46 @@ public class MemberService {
     // 차단하기
     public MemberInfoDTO blockMember( Long memberId,  Long blockMemberId) {
 
-        Member blockMember = memberRepository.findById(blockMemberId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-        if (blockMemberRepository.findByMemberIdAndBlockMemberId(memberId,blockMemberId).isPresent()) {
+        if (Objects.equals(memberId, blockMemberId)){
+            throw new RuntimeException("본인은 차단할 수 없습니다.");
+        } else if (blockMemberRepository.findByMemberIdAndBlockMemberId(memberId, blockMemberId).isPresent()) {
             throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_BLOCKED);
         }
+
+        Member blockMember = memberRepository.findById(blockMemberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
+        // 차단 관계 생성
         BlockMember blockMemberRelation = new BlockMember(member, blockMember);
         blockMemberRepository.save(blockMemberRelation);
+
+        // 팔로우 관계 삭제
+        if(followRepository.findByFollowerIdAndFollowingId(memberId, blockMemberId).isPresent()){
+            Follow follow = followRepository.findByFollowerIdAndFollowingId(memberId, blockMemberId).orElseThrow();
+            followRepository.delete(follow);
+            member.reloadFollowing(member.getFollowing()-1);
+            blockMember.reloadFollower(blockMember.getFollower()-1);
+        }
+        if(followRepository.findByFollowerIdAndFollowingId(blockMemberId, memberId).isPresent()){
+            Follow follow = followRepository.findByFollowerIdAndFollowingId(blockMemberId, memberId).orElseThrow();
+            followRepository.delete(follow);
+            blockMember.reloadFollowing(blockMember.getFollowing()-1);
+            member.reloadFollower(member.getFollower()-1);
+        }
 
         return MemberInfoDTO.toDTO(blockMember);
     }
 
     // 차단 해제하기
     public MemberInfoDTO unblockMember( Long memberId, Long blockMemberId) {
+
+        if (blockMemberRepository.findByMemberIdAndBlockMemberId(memberId, blockMemberId).isEmpty()) {
+            throw new RuntimeException("차단 관계가 없습니다.");
+        }
+
         Member blockMember = memberRepository.findById(blockMemberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
