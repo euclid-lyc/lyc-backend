@@ -65,8 +65,6 @@ public class MemberController {
     @Operation(summary = "차단하기", description = "해당 유저를 차단합니다.")
     @PostMapping("/block-members/{memberId}")
     ApiResponse<MemberInfoDTO> blockMember(@RequestParam("myId") Long myId, @PathVariable("memberId") Long memberId) {
-        memberService.unfollowMember(myId, memberId);
-        memberService.unfollowMember(memberId, myId);
         MemberInfoDTO memberInfoDTO = memberService.blockMember(myId, memberId);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_BLOCKED, memberInfoDTO);
     }

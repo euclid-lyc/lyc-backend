@@ -63,9 +63,11 @@ public class Member {
     @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
     private Integer point;
 
+    @Setter
     @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
     private Long follower;
 
+    @Setter
     @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
     private Long following;
 
@@ -259,5 +261,13 @@ public class Member {
 
     public void removeSavedPosting(SavedPosting savedPosting) {
         savedPostingList.remove(savedPosting);
+    }
+
+    public void reloadFollowing(Long following) {
+        this.following = following;
+    }
+
+    public void reloadFollower(Long follower) {
+        this.follower = follower;
     }
 }

@@ -275,7 +275,7 @@ public class PostingService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         if (getIsClickedLike(memberId, postingId).getIsClicked())
-            throw new RuntimeException("이미 좋아요를 눌렀습니다.");
+            throw new PostingHandler(ErrorStatus.POSTING_ALREADY_LIKED);
         LikedPosting likedPosting = new LikedPosting(member, posting);
 
         likedPostingRepository.save(likedPosting);
@@ -367,13 +367,13 @@ public class PostingService {
         List<LikedPosting> likedPostings = likedPostingRepository.findByMember_IdAndPosting_Id(memberId, postingId);
 
         if (likedPostings.isEmpty()) {
-            throw new RuntimeException("좋아요 기록이 없습니다.");
+            throw new PostingHandler(ErrorStatus.POSTING_NOT_LIKED);
         }
 
         likedPostings.forEach(likedPostingRepository::delete);
 
         Posting posting = postingRepository.findById(postingId)
-                .orElseThrow(() -> new IllegalArgumentException("게시글이 없습니다."));
+                .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
 
         posting.reloadLikes(posting.getLikes()-1);
         postingRepository.save(posting);
