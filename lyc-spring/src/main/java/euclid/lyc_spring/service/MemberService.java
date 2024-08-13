@@ -50,13 +50,13 @@ public class MemberService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         if (Objects.equals(myId, memberId)){
-            throw new RuntimeException("본인은 팔로우할 수 없습니다.");
+            throw new MemberHandler(ErrorStatus.FORBIDDEN);
         } else if (followRepository.findByFollowerIdAndFollowingId(myId,memberId).isPresent()) {
-            throw new RuntimeException("이미 팔로우 중입니다.");
+            throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_FOLLOWING);
         } else if (blockMemberRepository.findByMemberIdAndBlockMemberId(myId, memberId).isPresent()) {
-            throw new RuntimeException("차단 중인 멤버입니다.");
+            throw new MemberHandler(ErrorStatus.BLOCKING_MEMBER);
         } else if (blockMemberRepository.findByMemberIdAndBlockMemberId(memberId, myId).isPresent()) {
-            throw new RuntimeException("차단 당한 멤버입니다.");
+            throw new MemberHandler(ErrorStatus.BLOCKED_MEMBER);
         }
 
         Member follower = memberRepository.findById(myId)
@@ -75,9 +75,9 @@ public class MemberService {
     public MemberInfoDTO unfollowMember( Long myId,  Long memberId) {
 
         if (Objects.equals(myId, memberId)){
-            throw new RuntimeException("본인은 언팔로우할 수 없습니다.");
+            throw new MemberHandler(ErrorStatus.FORBIDDEN);
         } else if (followRepository.findByFollowerIdAndFollowingId(myId,memberId).isEmpty()) {
-            throw new RuntimeException("팔로우 관계가 없습니다.");
+            throw new MemberHandler(ErrorStatus.NOT_FOLLOWING);
         }
         Follow follow = followRepository.findByFollowerIdAndFollowingId(myId,memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.NOT_FOLLOWING));
@@ -126,9 +126,9 @@ public class MemberService {
     public MemberInfoDTO blockMember( Long memberId,  Long blockMemberId) {
 
         if (Objects.equals(memberId, blockMemberId)){
-            throw new RuntimeException("본인은 차단할 수 없습니다.");
+            throw new MemberHandler(ErrorStatus.FORBIDDEN);
         } else if (blockMemberRepository.findByMemberIdAndBlockMemberId(memberId, blockMemberId).isPresent()) {
-            throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_BLOCKED);
+            throw new MemberHandler(ErrorStatus.BLOCKING_MEMBER);
         }
 
         Member blockMember = memberRepository.findById(blockMemberId)
@@ -142,7 +142,7 @@ public class MemberService {
         blockMemberRepository.save(blockMemberRelation);
 
         // 팔로우 관계 삭제
-        if(followRepository.findByFollowerIdAndFollowingId(memberId, blockMemberId).isPresent()){
+        if(followRepository.existsByFollowerIdAndFollowingId(memberId, blockMemberId)){
             Follow follow = followRepository.findByFollowerIdAndFollowingId(memberId, blockMemberId).orElseThrow();
             followRepository.delete(follow);
             member.reloadFollowing(member.getFollowing()-1);
@@ -162,14 +162,14 @@ public class MemberService {
     public MemberInfoDTO unblockMember( Long memberId, Long blockMemberId) {
 
         if (blockMemberRepository.findByMemberIdAndBlockMemberId(memberId, blockMemberId).isEmpty()) {
-            throw new RuntimeException("차단 관계가 없습니다.");
+            throw new MemberHandler(ErrorStatus.MEMBER_NOT_BLOCKING);
         }
 
         Member blockMember = memberRepository.findById(blockMemberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         BlockMember blockMemberRelation = blockMemberRepository.findByMemberIdAndBlockMemberId(memberId, blockMemberId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_BLOCKED));
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_BLOCKING));
 
         blockMemberRepository.delete(blockMemberRelation);
 
