@@ -1,65 +1,54 @@
-package euclid.lyc_spring.service;
+package euclid.lyc_spring.service.social;
 
 import euclid.lyc_spring.apiPayload.code.status.ErrorStatus;
 import euclid.lyc_spring.apiPayload.exception.handler.MemberHandler;
+import euclid.lyc_spring.auth.SecurityUtils;
 import euclid.lyc_spring.domain.BlockMember;
 import euclid.lyc_spring.domain.Follow;
 import euclid.lyc_spring.domain.Member;
+import euclid.lyc_spring.dto.response.MemberDTO;
 import euclid.lyc_spring.repository.BlockMemberRepository;
 import euclid.lyc_spring.repository.FollowRepository;
 import euclid.lyc_spring.repository.MemberRepository;
-import euclid.lyc_spring.dto.response.MemberDTO.*;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.List;
 import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class MemberService {
+public class SocialCommandServiceImpl implements SocialCommandService {
 
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
     private final BlockMemberRepository blockMemberRepository;
 
+/*-------------------------------------------------- 회원 팔로우 및 팔로잉 --------------------------------------------------*/
 
-    public List<TodayDirectorDTO> getTodayDirectorList() {
-        return memberRepository.findAll().stream()
-                .sorted(Comparator.comparing(Member::getFollower).reversed())
-                .map(TodayDirectorDTO::toDTO)
-                .limit(10)
-                .toList();
+    @Override
+    public MemberDTO.MemberInfoDTO followMember(Long memberId) {
 
-    }
-
-    public MemberInfoDTO getMemberInfoDTO(Long memberId) {
-        Member member = memberRepository.findById(memberId)
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member loginMember = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        return MemberInfoDTO.toDTO(Objects.requireNonNull(member));
-    }
 
-    // FOLLOW
-
-    // 팔로우하기
-    public MemberInfoDTO followMember( Long myId,  Long memberId) {
         Member following = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        if (Objects.equals(myId, memberId)){
+        if (Objects.equals(loginMember.getId(), memberId)){
             throw new MemberHandler(ErrorStatus.FORBIDDEN);
-        } else if (followRepository.findByFollowerIdAndFollowingId(myId,memberId).isPresent()) {
+        } else if (followRepository.findByFollowerIdAndFollowingId(loginMember.getId(),memberId).isPresent()) {
             throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_FOLLOWING);
-        } else if (blockMemberRepository.findByMemberIdAndBlockMemberId(myId, memberId).isPresent()) {
+        } else if (blockMemberRepository.findByMemberIdAndBlockMemberId(loginMember.getId(), memberId).isPresent()) {
             throw new MemberHandler(ErrorStatus.BLOCKING_MEMBER);
-        } else if (blockMemberRepository.findByMemberIdAndBlockMemberId(memberId, myId).isPresent()) {
+        } else if (blockMemberRepository.findByMemberIdAndBlockMemberId(memberId, loginMember.getId()).isPresent()) {
             throw new MemberHandler(ErrorStatus.BLOCKED_MEMBER);
         }
 
-        Member follower = memberRepository.findById(myId)
+        Member follower = memberRepository.findById(loginMember.getId())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         Follow follow = new Follow(follower,following);
 
@@ -68,62 +57,45 @@ public class MemberService {
 
         followRepository.save(follow);
 
-        return MemberInfoDTO.toDTO(following);
+        return MemberDTO.MemberInfoDTO.toDTO(following);
     }
 
-    // 언팔로우하기
-    public MemberInfoDTO unfollowMember( Long myId,  Long memberId) {
+    @Override
+    public MemberDTO.MemberInfoDTO unfollowMember(Long memberId) {
 
-        if (Objects.equals(myId, memberId)){
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member loginMember = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        if (Objects.equals(loginMember.getId(), memberId)){
             throw new MemberHandler(ErrorStatus.FORBIDDEN);
-        } else if (followRepository.findByFollowerIdAndFollowingId(myId,memberId).isEmpty()) {
+        } else if (followRepository.findByFollowerIdAndFollowingId(loginMember.getId(),memberId).isEmpty()) {
             throw new MemberHandler(ErrorStatus.NOT_FOLLOWING);
         }
-        Follow follow = followRepository.findByFollowerIdAndFollowingId(myId,memberId)
+        Follow follow = followRepository.findByFollowerIdAndFollowingId(loginMember.getId(),memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.NOT_FOLLOWING));
 
         Member followingMember = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        Member member = memberRepository.findById(myId)
+        Member member = memberRepository.findById(loginMember.getId())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         followingMember.reloadFollower(followingMember.getFollower()-1);
         member.reloadFollowing(member.getFollowing()-1);
 
         followRepository.delete(follow);
-        return MemberInfoDTO.toDTO(followingMember);
+        return MemberDTO.MemberInfoDTO.toDTO(followingMember);
     }
 
-    // 팔로워 목록 불러오기(member를 팔로우하는 사람들)
-    public List<FollowDTO> getFollowerList( Long memberId) {
+/*-------------------------------------------------- 인기 디렉터 --------------------------------------------------*/
 
-        memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+/*-------------------------------------------------- 프로필 --------------------------------------------------*/
 
-        List<Follow> followers = followRepository.findByFollowingId(memberId);
-        return followers.stream()
-                .map(Follow::getFollower)
-                .map(FollowDTO::toDTO)
-                .toList();
-    }
+/*-------------------------------------------------- 회원 차단 --------------------------------------------------*/
 
-    // 팔로잉 목록 불러오기(member가 팔로우하는 사람들)
-    public List<FollowDTO> getFollowingList( Long memberId) {
-
-        memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-        List<Follow> followers = followRepository.findByFollowerId(memberId);
-        return followers.stream()
-                .map(Follow::getFollowing)
-                .map(FollowDTO::toDTO)
-                .toList();
-    }
-
-    // BLOCKED
-
-    // 차단하기
-    public MemberInfoDTO blockMember( Long memberId,  Long blockMemberId) {
+    @Override
+    public MemberDTO.MemberInfoDTO blockMember(Long memberId, Long blockMemberId) {
 
         if (Objects.equals(memberId, blockMemberId)){
             throw new MemberHandler(ErrorStatus.FORBIDDEN);
@@ -155,11 +127,11 @@ public class MemberService {
             member.reloadFollower(member.getFollower()-1);
         }
 
-        return MemberInfoDTO.toDTO(blockMember);
+        return MemberDTO.MemberInfoDTO.toDTO(blockMember);
     }
 
-    // 차단 해제하기
-    public MemberInfoDTO unblockMember( Long memberId, Long blockMemberId) {
+    @Override
+    public MemberDTO.MemberInfoDTO unblockMember(Long memberId, Long blockMemberId) {
 
         if (blockMemberRepository.findByMemberIdAndBlockMemberId(memberId, blockMemberId).isEmpty()) {
             throw new MemberHandler(ErrorStatus.MEMBER_NOT_BLOCKING);
@@ -173,11 +145,9 @@ public class MemberService {
 
         blockMemberRepository.delete(blockMemberRelation);
 
-        return MemberInfoDTO.toDTO(blockMember);
+        return MemberDTO.MemberInfoDTO.toDTO(blockMember);
     }
 
-    public void searchBlockMember( Long memberId, Long blockMemberId) {
-        Member blockMember = memberRepository.findById(blockMemberId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-    }
+    /*-------------------------------------------------- 회원 신고 --------------------------------------------------*/
+
 }

@@ -1,11 +1,9 @@
-package euclid.lyc_spring.service;
+package euclid.lyc_spring.service.social;
 
 import euclid.lyc_spring.dto.response.WeatherDTO;
-import euclid.lyc_spring.dto.response.WeatherDTO.*;
 import euclid.lyc_spring.dto.response.WeatherResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 

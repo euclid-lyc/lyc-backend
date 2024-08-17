@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface LikedPostingRepository extends JpaRepository<LikedPosting, Long> {
 
     List<LikedPosting> findAllByMember_Id(Long memberId);
-    List<LikedPosting> findByMember_IdAndPosting_Id(Long memberId, Long postingId);
-    void deleteByMember_IdAndPosting_Id(Long memberId, Long postingId);
+    List<LikedPosting> findByMemberIdAndPostingId(Long memberId, Long postingId);
+    void deleteByMemberIdAndPostingId(Long memberId, Long postingId);
+
 }
