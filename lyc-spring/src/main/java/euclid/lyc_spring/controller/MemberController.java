@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Member", description = "회원 관련 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/lyc/members")
+@RequestMapping("/lyc")
 public class MemberController {
 
     private final MemberQueryService memberQueryService;
@@ -21,31 +21,31 @@ public class MemberController {
     @Operation(summary = "회원 정보 불러오기", description = """
             
             """)
-    @GetMapping("/{memberId}/info")
+    @GetMapping("/members/{memberId}/info")
     public void getMemberInfo(@PathVariable("memberId") Long memberId) {}
 
     @Operation(summary = "회원 정보 변경하기", description = """
             
             """)
-    @PatchMapping("/{memberId}/info")
+    @PatchMapping("/members/{memberId}/info")
     public void updateMemberInfo(@PathVariable("memberId") Long memberId) {}
 
     @Operation(summary = "배송지 정보 불러오기", description = """
             
             """)
-    @GetMapping("/{memberId}/delivery")
+    @GetMapping("/members/{memberId}/delivery")
     public void getDeliveryInfo(@PathVariable("memberId") Long memberId) {}
 
     @Operation(summary = "배송지 정보 변경하기", description = """
             
             """)
-    @PatchMapping("/{memberId}/delivery")
+    @PatchMapping("/members/{memberId}/delivery")
     public void updateDeliveryInfo(@PathVariable("memberId") Long memberId) {}
 
     @Operation(summary = "패스워드 변경하기", description = """
             
             """)
-    @PatchMapping("/{memberId}/pw-info")
+    @PatchMapping("/members/{memberId}/pw-info")
     public void updateLoginPw(@PathVariable("memberId") Long memberId) {}
 
 /*-------------------------------------------------- 푸시알림 설정 --------------------------------------------------*/
@@ -53,13 +53,13 @@ public class MemberController {
     @Operation(summary = "기존 푸시알림 설정 불러오기", description = """
             
             """)
-    @GetMapping("/{memberId}/push-sets")
+    @GetMapping("/members/{memberId}/push-sets")
     public void getPushSet(@PathVariable Long memberId) {}
 
     @Operation(summary = "푸시알림 설정 변경하기", description = """
             
             """)
-    @GetMapping("/{memberId}/push-sets")
+    @PatchMapping("/members/{memberId}/push-sets")
     public void updatePushSet(@PathVariable Long memberId) {}
 
 }

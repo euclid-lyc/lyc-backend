@@ -10,10 +10,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 public class WeatherService {
 
-    @Value("${weather.api.url}")
+    //@Value("${weather.api.url}")
     private String apiUrl;
 
-    @Value("${weather.api.key}")
+   // @Value("${weather.api.key}")
     private String apiKey;
 
     public WeatherDTO getTodayWeather(String city) {

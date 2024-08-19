@@ -10,6 +10,7 @@ import euclid.lyc_spring.repository.FollowRepository;
 import euclid.lyc_spring.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class SocialQueryServiceImpl implements SocialQueryService {
 
     private final MemberRepository memberRepository;

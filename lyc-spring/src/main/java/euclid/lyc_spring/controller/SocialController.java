@@ -26,7 +26,7 @@ public class SocialController {
     @Tag(name = "Social - Follow", description = "팔로우 & 팔로잉 관련 API")
     @Operation(summary = "팔로워 목록 불러오기", description = "팔로워 목록을 불러옵니다.")
     @GetMapping("/members/{memberId}/followers")
-    ApiResponse<List<MemberDTO.FollowDTO>> getFollowers(@PathVariable("memberId") Long memberId) {
+    public ApiResponse<List<MemberDTO.FollowDTO>> getFollowers(@PathVariable("memberId") Long memberId) {
         List<MemberDTO.FollowDTO> Followers = socialQueryService.getFollowerList(memberId);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOLLOWER_FOUND, Followers);
     }
@@ -34,14 +34,14 @@ public class SocialController {
     @Tag(name = "Social - Follow", description = "팔로우 & 팔로잉 관련 API")
     @Operation(summary = "팔로잉 목록 불러오기", description = "팔로잉 목록을 불러옵니다.")
     @GetMapping("/members/{memberId}/followings")
-    ApiResponse<List<MemberDTO.FollowDTO>> getFollowings(@PathVariable("memberId") Long memberId) {
+    public ApiResponse<List<MemberDTO.FollowDTO>> getFollowings(@PathVariable("memberId") Long memberId) {
         List<MemberDTO.FollowDTO> Followings = socialQueryService.getFollowingList(memberId);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOLLOWING_FOUND, Followings);
     }
     @Tag(name = "Social - Follow", description = "팔로우 & 팔로잉 관련 API")
     @Operation(summary = "팔로우하기", description = "유저를 팔로우합니다.")
     @PostMapping("/members/{memberId}/followings")
-    ApiResponse<MemberDTO.MemberInfoDTO> followMember(@PathVariable("memberId") Long memberId) {
+    public ApiResponse<MemberDTO.MemberInfoDTO> followMember(@PathVariable("memberId") Long memberId) {
         MemberDTO.MemberInfoDTO memberInfoDTO = socialCommandService.followMember(memberId);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOLLOWED, memberInfoDTO);
     }
@@ -49,7 +49,7 @@ public class SocialController {
     @Tag(name = "Social - Follow", description = "팔로우 & 팔로잉 관련 API")
     @Operation(summary = "언팔로우하기", description = "유저를 언팔로우합니다.")
     @DeleteMapping("/members/{memberId}/followings")
-    ApiResponse<MemberDTO.MemberInfoDTO>  unfollowMember(@PathVariable("memberId") Long memberId) {
+    public ApiResponse<MemberDTO.MemberInfoDTO>  unfollowMember(@PathVariable("memberId") Long memberId) {
         MemberDTO.MemberInfoDTO memberInfoDTO = socialCommandService.unfollowMember(memberId);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOLLOWING_DELETED, memberInfoDTO);
     }
@@ -59,17 +59,22 @@ public class SocialController {
     @Tag(name = "Social - Director", description = "인기 회원(디렉터) 관련 API")
     @Operation(summary = "오늘의 디렉터 불러오기", description = "홈화면에 오늘의 디렉터 10명을 불러옵니다.")
     @GetMapping("/directors/preview")
-    ApiResponse<List<MemberDTO.TodayDirectorDTO>> getTodayDirectorList() {
+    public ApiResponse<List<MemberDTO.TodayDirectorDTO>> getTodayDirectorList() {
         List<MemberDTO.TodayDirectorDTO> todayDirectorDTOList = socialQueryService.getTodayDirectorList();
         return ApiResponse.onSuccess(SuccessStatus._TODAY_DIRECTOR_FETCHED, todayDirectorDTOList);
     }
+
+    @Tag(name = "Social - Director", description = "인기 회원(디렉터) 관련 API")
+    @Operation(summary = "디렉터 목록 불러오기 (인기순)", description = "디렉터 찾기 화면에 표시할 디렉터 랭킹을 불러옵니다.")
+    @GetMapping("/directors")
+    public void getPopularDirectors() {}
 
 /*-------------------------------------------------- 프로필 --------------------------------------------------*/
 
     @Tag(name = "Social - Member Info", description = "소셜 회원 정보 관련 API")
     @Operation(summary = "프로필 불러오기", description = "회원의 기본 정보를 불러옵니다.")
     @GetMapping("/members/{memberId}")
-    ApiResponse<MemberDTO.MemberInfoDTO> getProfile(@PathVariable("memberId") Long memberId) {
+    public ApiResponse<MemberDTO.MemberInfoDTO> getProfile(@PathVariable("memberId") Long memberId) {
         MemberDTO.MemberInfoDTO memberInfoDTO = socialQueryService.getMemberInfoDTO(memberId);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOUND, memberInfoDTO);
     }
