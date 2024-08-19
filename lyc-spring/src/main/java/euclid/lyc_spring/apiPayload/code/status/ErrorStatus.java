@@ -24,6 +24,7 @@ public enum ErrorStatus implements BaseErrorCode {
     JWT_NULL_TOKEN(HttpStatus.UNAUTHORIZED, "AA4005", "토큰이 존재하지 않습니다."),
     LOGIN_ID_NOT_MATCHED(HttpStatus.NOT_FOUND, "AA4006", "로그인 아이디가 일치하지 않습니다."),
     LOGIN_PW_NOT_MATCHED(HttpStatus.NOT_FOUND, "AA4007", "로그인 패스워드가 일치하지 않습니다."),
+    JWT_ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AA4008", "액세스 토큰이 만료되었습니다."),
 
     // member
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER4001", "사용자가 존재하지 않습니다."),
