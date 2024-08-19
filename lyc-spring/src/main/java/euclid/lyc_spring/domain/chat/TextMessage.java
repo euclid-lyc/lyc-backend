@@ -1,4 +1,4 @@
-package euclid.lyc_spring.domain;
+package euclid.lyc_spring.domain.chat;
 
 import euclid.lyc_spring.domain.mapping.MemberChat;
 import jakarta.persistence.*;
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class Message {
+public class TextMessage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

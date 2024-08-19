@@ -1,7 +1,6 @@
-package euclid.lyc_spring.domain.commission.commission_info;
+package euclid.lyc_spring.domain.chat.commission.commission_info;
 
 import euclid.lyc_spring.domain.enums.Fit;
-import euclid.lyc_spring.domain.info.Info;
 import jakarta.persistence.*;
 import lombok.Getter;
 

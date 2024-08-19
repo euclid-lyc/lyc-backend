@@ -1,7 +1,7 @@
 package euclid.lyc_spring.domain;
 
 import euclid.lyc_spring.domain.clothes.Clothes;
-import euclid.lyc_spring.domain.commission.Commission;
+import euclid.lyc_spring.domain.chat.commission.Commission;
 import euclid.lyc_spring.domain.enums.Role;
 import euclid.lyc_spring.domain.info.Info;
 import euclid.lyc_spring.domain.mapping.LikedPosting;

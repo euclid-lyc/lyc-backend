@@ -1,13 +1,12 @@
-package euclid.lyc_spring.domain.commission.commission_info;
+package euclid.lyc_spring.domain.chat.commission.commission_info;
 
-import euclid.lyc_spring.domain.enums.Material;
-import euclid.lyc_spring.domain.info.Info;
+import euclid.lyc_spring.domain.enums.BodyType;
 import jakarta.persistence.*;
 import lombok.Getter;
 
 @Getter
 @Entity
-public class CommissionInfoMaterial {
+public class CommissionInfoBodyType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,13 +15,12 @@ public class CommissionInfoMaterial {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Material material;
+    private BodyType bodyType;
 
     @Column(nullable = false)
-    private Boolean isPrefer;
+    private Boolean isGood;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "commission_info_id", nullable = false)
     private CommissionInfo commissionInfo;
-
 }

@@ -1,10 +1,9 @@
-package euclid.lyc_spring.domain.commission;
+package euclid.lyc_spring.domain.chat.commission;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Getter
 @Entity

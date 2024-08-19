@@ -1,4 +1,4 @@
-package euclid.lyc_spring.domain.commission;
+package euclid.lyc_spring.domain.chat.commission;
 
 import euclid.lyc_spring.domain.enums.Color;
 import euclid.lyc_spring.domain.enums.Fit;

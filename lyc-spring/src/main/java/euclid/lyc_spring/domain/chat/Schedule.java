@@ -1,4 +1,4 @@
-package euclid.lyc_spring.domain.commission;
+package euclid.lyc_spring.domain.chat;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -21,6 +21,6 @@ public class Schedule {
     private String memo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "commission_id", nullable = false)
-    private Commission commission;
+    @JoinColumn(name = "chat_id", nullable = false)
+    private Chat chat;
 }

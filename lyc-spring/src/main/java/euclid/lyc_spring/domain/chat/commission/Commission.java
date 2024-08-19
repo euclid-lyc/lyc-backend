@@ -1,7 +1,9 @@
-package euclid.lyc_spring.domain.commission;
+package euclid.lyc_spring.domain.chat.commission;
 
 import euclid.lyc_spring.domain.Member;
-import euclid.lyc_spring.domain.commission.commission_info.CommissionInfo;
+import euclid.lyc_spring.domain.chat.Chat;
+import euclid.lyc_spring.domain.chat.Schedule;
+import euclid.lyc_spring.domain.chat.commission.commission_info.CommissionInfo;
 import euclid.lyc_spring.domain.enums.CommissionStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -33,8 +35,8 @@ public class Commission {
     @Column
     private LocalDateTime finishedAt;
 
-    @OneToMany(mappedBy = "commission", cascade = CascadeType.ALL)
-    private List<Schedule> scheduleList;
+    @OneToOne(mappedBy = "commission", cascade = CascadeType.ALL)
+    private Chat chat;
 
     @OneToMany(mappedBy = "commission", cascade = CascadeType.ALL)
     private List<CommissionInfo> commissionInfoList;

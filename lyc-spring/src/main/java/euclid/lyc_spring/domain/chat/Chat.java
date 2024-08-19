@@ -1,5 +1,6 @@
-package euclid.lyc_spring.domain;
+package euclid.lyc_spring.domain.chat;
 
+import euclid.lyc_spring.domain.chat.commission.Commission;
 import euclid.lyc_spring.domain.mapping.MemberChat;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -28,6 +29,14 @@ public class Chat {
     @Column
     private LocalDateTime updatedAt;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private Commission commission;
+
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
+    private List<Schedule> scheduleList;
+
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
     private List<MemberChat> memberChatList;
+
 }
