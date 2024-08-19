@@ -86,7 +86,7 @@ public class ChatController {
     public void getChatImage(
             @PathVariable Long chatId, @PathVariable Long imageId) {}
 
-    @Tag(name = "12. Chat - Image", description = "채팅방 사진 관련 API")
+    @Tag(name = "Chat - Image", description = "채팅방 사진 관련 API")
     @Operation(summary = "사진 및 동영상 미리보기 불러오기", description = """
             """)
     @GetMapping("/chats/{chatId}/images/{imageId}/preview")
