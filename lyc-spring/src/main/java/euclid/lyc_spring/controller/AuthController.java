@@ -26,13 +26,13 @@ public class AuthController {
 /*-------------------------------------------------- 회원가입 및 탈퇴 --------------------------------------------------*/
 
     @Operation(summary = "회원가입 하기", description = """
-            
+    
             """)
     @PostMapping("/sign-up")
-    public ApiResponse<MemberDTO.MemberInfoDTO> register(@RequestBody RegisterDTO.RegisterMemberDTO registerMemberDTO){
-
-        MemberDTO.MemberInfoDTO memberInfoDTO = authCommandService.join(registerMemberDTO);
-        return ApiResponse.onSuccess(SuccessStatus._MEMBER_CREATED, memberInfoDTO);
+    public ApiResponse<MemberDTO.MemberInfoDTO> signUp(
+            @RequestBody RegisterDTO.RegisterMemberDTO registerMemberDTO) {
+        MemberDTO.MemberInfoDTO responseDTO = authCommandService.join(registerMemberDTO);
+        return ApiResponse.onSuccess(SuccessStatus._MEMBER_CREATED, responseDTO);
     }
 
     @Operation(summary = "회원 탈퇴하기", description = """

@@ -45,34 +45,34 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     @Transactional
     public MemberDTO.MemberInfoDTO join(RegisterDTO.RegisterMemberDTO registerMemberDTO) {
 
-        MemberRequestDTO.MemberInfoDTO memberInfoDTO = registerMemberDTO.getMemberInfo();
-        InfoRequestDTO.BasicInfoDTO basicInfoDTO = registerMemberDTO.getBasicInfo();
+        MemberRequestDTO.MemberDTO memberDTO = registerMemberDTO.getMember();
+        InfoRequestDTO.BasicInfoDTO basicInfoDTO = registerMemberDTO.getInfo();
 
-        String image = memberInfoDTO.getProfileImage();
+        String image = memberDTO.getProfileImage();
 
-        if(memberInfoDTO.getProfileImage().isEmpty())
+        if(memberDTO.getProfileImage().isEmpty())
             image = "default url";
 
         // 이미 회원가입이 되어있음
-        if (memberRepository.findByEmail(memberInfoDTO.getEmail()).isPresent()) {
+        if (memberRepository.findByEmail(memberDTO.getEmail()).isPresent()) {
             throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_EXIST);
         }
         // 중복된 아이디가 있음
-        if (memberRepository.findByLoginId(memberInfoDTO.getLoginId()).isPresent()) {
+        if (memberRepository.findByLoginId(memberDTO.getLoginId()).isPresent()) {
             throw new MemberHandler(ErrorStatus.MEMBER_DUPLICATED_LOGIN_ID);
         }
         // 비밀번호와 비밀번호 확인이 일치하지 않음
-        if (!memberInfoDTO.getLoginPw().equals(memberInfoDTO.getLoginPwCheck())) {
+        if (!memberDTO.getLoginPw().equals(memberDTO.getLoginPwCheck())) {
             throw new MemberHandler(ErrorStatus.MEMBER_INVALID_LOGIN_PW);
         }
 
         Member member = Member.builder()
-                .name(memberInfoDTO.getName())
-                .loginId(memberInfoDTO.getLoginId())
-                .loginPw(bCryptPasswordEncoder.encode(memberInfoDTO.getLoginPw()))
-                .email(memberInfoDTO.getEmail())
-                .nickname(memberInfoDTO.getNickname())
-                .introduction(memberInfoDTO.getIntroduction())
+                .name(memberDTO.getName())
+                .loginId(memberDTO.getLoginId())
+                .loginPw(bCryptPasswordEncoder.encode(memberDTO.getLoginPw()))
+                .email(memberDTO.getEmail())
+                .nickname(memberDTO.getNickname())
+                .introduction(memberDTO.getIntroduction())
                 .profileImage(image)
                 .role(Role.MEMBER)
                 .build();
@@ -81,7 +81,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
         createInfo(member, basicInfoDTO);
 
-        return MemberDTO.MemberInfoDTO.toDTO(member);
+        return euclid.lyc_spring.dto.response.MemberDTO.MemberInfoDTO.toDTO(member);
 
     }
 
