@@ -1,7 +1,9 @@
 package euclid.lyc_spring.domain.clothes;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Entity
@@ -15,10 +17,15 @@ public class ClothesImage {
     @Column(nullable = false)
     private String image;
 
-    @Column(length = 100)
-    private String text;
-
+    @Setter
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clothes_id", nullable = false)
     private Clothes clothes;
+
+    protected ClothesImage() {}
+
+    @Builder
+    public ClothesImage(String image) {
+        this.image = image;
+    }
 }
