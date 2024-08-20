@@ -1,89 +1,65 @@
 package euclid.lyc_spring.controller;
 
-import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
-import euclid.lyc_spring.service.MemberService;
-import euclid.lyc_spring.apiPayload.ApiResponse;
-import euclid.lyc_spring.dto.response.MemberDTO.*;
+import euclid.lyc_spring.service.member.MemberCommandService;
+import euclid.lyc_spring.service.member.MemberQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-@Tag(name = "Member", description = "회원 기능 관련 API")
+@Tag(name = "Member", description = "회원 관련 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/lyc")
 public class MemberController {
 
-    private final MemberService memberService;
+    private final MemberQueryService memberQueryService;
+    private final MemberCommandService memberCommandService;
 
-    /**
-     * GET API
-     */
+/*-------------------------------------------------- 회원정보 설정 --------------------------------------------------*/
 
-    @Operation(summary = "오늘의 디렉터 불러오기", description = "홈화면에 오늘의 디렉터 10명을 불러옵니다.")
-    @GetMapping("/members/follower-order")
-    ApiResponse<List<TodayDirectorDTO>> getTodayDirectorList() {
-        List<TodayDirectorDTO> todayDirectorDTOList = memberService.getTodayDirectorList();
-        return ApiResponse.onSuccess(SuccessStatus._TODAY_DIRECTOR_FETCHED, todayDirectorDTOList);
-    }
+    @Operation(summary = "회원 정보 불러오기", description = """
+            
+            """)
+    @GetMapping("/members/{memberId}/info")
+    public void getMemberInfo(@PathVariable("memberId") Long memberId) {}
 
-    @Operation(summary = "유저 정보 불러오기", description = "유저의 정보를 불러옵니다.")
-    @GetMapping("/members/{memberId}")
-    ApiResponse<MemberInfoDTO> getMember(@PathVariable("memberId") long memberId) {
-        MemberInfoDTO memberInfoDTO = memberService.getMemberInfoDTO(memberId);
-        return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOUND, memberInfoDTO);
-    }
+    @Operation(summary = "회원 정보 변경하기", description = """
+            
+            """)
+    @PatchMapping("/members/{memberId}/info")
+    public void updateMemberInfo(@PathVariable("memberId") Long memberId) {}
 
-    @Operation(summary = "팔로워 목록 불러오기", description = "팔로워 목록을 불러옵니다.")
-    @GetMapping("/members/{memberId}/followers")
-    ApiResponse<List<FollowDTO>> getFollowers(@PathVariable("memberId") long memberId) {
-        List<FollowDTO> Followers = memberService.getFollowerList(memberId);
-        return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOLLOWER_FOUND, Followers);
-    }
+    @Operation(summary = "배송지 정보 불러오기", description = """
+            
+            """)
+    @GetMapping("/members/{memberId}/delivery")
+    public void getDeliveryInfo(@PathVariable("memberId") Long memberId) {}
 
-    @Operation(summary = "팔로잉 목록 불러오기", description = "팔로잉 목록을 불러옵니다.")
-    @GetMapping("/members/{memberId}/followings")
-    ApiResponse<List<FollowDTO>> getFollowings(@PathVariable("memberId") long memberId) {
-        List<FollowDTO> Followings = memberService.getFollowingList(memberId);
-        return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOLLOWING_FOUND, Followings);
-    }
+    @Operation(summary = "배송지 정보 변경하기", description = """
+            
+            """)
+    @PatchMapping("/members/{memberId}/delivery")
+    public void updateDeliveryInfo(@PathVariable("memberId") Long memberId) {}
 
-    /**
-     * POST API
-     */
+    @Operation(summary = "패스워드 변경하기", description = """
+            
+            """)
+    @PatchMapping("/members/{memberId}/pw-info")
+    public void updateLoginPw(@PathVariable("memberId") Long memberId) {}
 
-    @Operation(summary = "팔로우하기", description = "유저를 팔로우합니다.")
-    @PostMapping("/followings/{memberId}")
-    ApiResponse<MemberInfoDTO> followMember(@RequestParam("myId") Long myId, @PathVariable("memberId") Long memberId) {
-        MemberInfoDTO memberInfoDTO = memberService.followMember(myId, memberId);
-        return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOLLOWED, memberInfoDTO);
-    }
+/*-------------------------------------------------- 푸시알림 설정 --------------------------------------------------*/
 
-    @Operation(summary = "차단하기", description = "해당 유저를 차단합니다.")
-    @PostMapping("/block-members/{memberId}")
-    ApiResponse<MemberInfoDTO> blockMember(@RequestParam("myId") Long myId, @PathVariable("memberId") Long memberId) {
-        MemberInfoDTO memberInfoDTO = memberService.blockMember(myId, memberId);
-        return ApiResponse.onSuccess(SuccessStatus._MEMBER_BLOCKED, memberInfoDTO);
-    }
+    @Operation(summary = "기존 푸시알림 설정 불러오기", description = """
+            
+            """)
+    @GetMapping("/members/{memberId}/push-sets")
+    public void getPushSet(@PathVariable Long memberId) {}
 
-    /**
-     * DELETE API
-     */
+    @Operation(summary = "푸시알림 설정 변경하기", description = """
+            
+            """)
+    @PatchMapping("/members/{memberId}/push-sets")
+    public void updatePushSet(@PathVariable Long memberId) {}
 
-    @Operation(summary = "언팔로우하기", description = "유저를 언팔로우합니다.")
-    @DeleteMapping("/followings/{memberId}")
-    ApiResponse<MemberInfoDTO>  unfollowMember(@RequestParam("myId") Long myId, @PathVariable("memberId") Long memberId) {
-        MemberInfoDTO memberInfoDTO = memberService.unfollowMember(myId, memberId);
-        return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOLLOWING_DELETED, memberInfoDTO);
-    }
-
-    @Operation(summary = "차단 해제하기", description = "해당 유저의 차단을 해제합니다.")
-    @DeleteMapping("/block-members/{memberId}")
-    ApiResponse<MemberInfoDTO> unblockMember(@RequestParam("myId") Long myId, @PathVariable("memberId") Long memberId) {
-        MemberInfoDTO memberInfoDTO = memberService.unblockMember(myId, memberId);
-        return ApiResponse.onSuccess(SuccessStatus._MEMBER_BLOCK_CANCELED, memberInfoDTO);
-    }
 }

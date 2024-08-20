@@ -19,7 +19,6 @@ import org.springframework.util.StringUtils;
 import javax.crypto.SecretKey;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 
 @Component
 public class JwtProvider {

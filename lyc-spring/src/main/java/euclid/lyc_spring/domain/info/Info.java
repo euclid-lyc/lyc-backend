@@ -46,6 +46,9 @@ public class Info {
     @Column(columnDefinition = "text")
     private String text;
 
+    @Column(columnDefinition = "BIT DEFAULT 0")
+    private Boolean isPublic;
+
     @OneToMany(mappedBy = "info", cascade = CascadeType.ALL)
     private List<InfoStyle> infoStyleList;
 
@@ -77,6 +80,7 @@ public class Info {
         this.address = address;
         this.detailAddress = detailAddress;
         this.text = text;
+        this.isPublic = false;
         infoStyleList = new ArrayList<>();
         infoMaterialList = new ArrayList<>();
         infoFitList = new ArrayList<>();

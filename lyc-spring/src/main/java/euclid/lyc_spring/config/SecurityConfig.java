@@ -55,8 +55,8 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // use stateless session
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/api/register", "/api/sign-in").permitAll()
-                        .requestMatchers("/api/**").authenticated()
+                        .requestMatchers("/lyc/auths/sign-up", "/lyc/auths/sign-in").permitAll()
+                        .requestMatchers("/lyc/**").authenticated()
                         .anyRequest().denyAll()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider, jwtGenerator), UsernamePasswordAuthenticationFilter.class)

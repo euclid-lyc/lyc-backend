@@ -29,6 +29,9 @@ public class Clothes {
     @Column(length = 100)
     private String text;
 
+    @Column(columnDefinition = "BIT DEFAULT 0")
+    private Boolean isText;
+
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
@@ -42,10 +45,11 @@ public class Clothes {
 
     protected Clothes() {}
 
-    public Clothes(Member member, String title, String text) {
+    public Clothes(Member member, String title, String text, Boolean isText) {
         this.member = member;
         this.title = title;
         this.text = text;
+        this.isText = isText;
     }
 
     //=== add Methods ===//

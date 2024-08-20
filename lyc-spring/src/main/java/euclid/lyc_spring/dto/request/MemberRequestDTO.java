@@ -11,7 +11,7 @@ public class MemberRequestDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class MemberInfoDTO {
+    public static class MemberDTO {
 
         private String name;
         private String loginId;

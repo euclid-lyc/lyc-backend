@@ -11,7 +11,7 @@ import java.util.Optional;
 @Repository
 public interface PostingRepository extends JpaRepository<Posting, Long> {
 
-    List<Posting> findByToMember_Id(Long memberId);
-    List<Posting> findByFromMember_Id(Long memberId);
+    List<Posting> findByToMemberId(Long memberId);
+    List<Posting> findByFromMemberId(Long memberId);
     Optional<Posting> findByIdAndWriter(Long id, Member writer);
 }
