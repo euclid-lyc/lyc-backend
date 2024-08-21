@@ -4,6 +4,7 @@ import euclid.lyc_spring.dto.request.RegisterDTO;
 import euclid.lyc_spring.dto.request.SignRequestDTO;
 import euclid.lyc_spring.dto.response.MemberDTO;
 import euclid.lyc_spring.dto.response.SignDTO;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 public interface AuthCommandService {
@@ -13,4 +14,5 @@ public interface AuthCommandService {
 
     SignDTO.SignInDTO signIn(SignRequestDTO.SignInDTO signInRequestDTO, HttpServletResponse response);
     MemberDTO.MemberInfoDTO join(RegisterDTO.RegisterMemberDTO registerMemberDTO);
+    SignDTO.SignOutDTO signOut(HttpServletRequest request);
 }

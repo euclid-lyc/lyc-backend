@@ -12,7 +12,7 @@ public class SignDTO {
 
     @Getter
     @Builder(access = AccessLevel.PRIVATE)
-    @RequiredArgsConstructor
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     public static class SignInDTO {
 
         private final Long memberId;
@@ -26,6 +26,22 @@ public class SignDTO {
                     .loginId(member.getLoginId())
                     .nickname(member.getNickname())
                     .role(member.getRole())
+                    .build();
+        }
+    }
+
+    @Getter
+    @Builder(access = AccessLevel.PRIVATE)
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class SignOutDTO {
+
+        private final Long memberId;
+        private final String nickname;
+
+        public static SignOutDTO toDTO(Member member) {
+            return SignOutDTO.builder()
+                    .memberId(member.getId())
+                    .nickname(member.getNickname())
                     .build();
         }
     }

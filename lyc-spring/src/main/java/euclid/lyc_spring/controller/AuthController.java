@@ -10,6 +10,7 @@ import euclid.lyc_spring.service.auth.AuthCommandService;
 import euclid.lyc_spring.service.auth.AuthQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +45,9 @@ public class AuthController {
 /*-------------------------------------------------- 로그인 및 로그아웃 --------------------------------------------------*/
 
     @Operation(summary = "로그인 하기", description = """
+            회원 id와 비밀번호르 입력 받아 일치 여부를 확인한 후, 회원 정보가 일치하는 경우 토큰을 반환합니다.
             
+            access token은 회원이 API를 사용하는 데 필요한 인증 정보입니다. 클라이언트에서 별도로 관리 바랍니다.
             """)
     @PostMapping("/sign-in")
     public ApiResponse<SignDTO.SignInDTO> signIn(@RequestBody SignRequestDTO.SignInDTO signInRequestDTO, HttpServletResponse response) {
@@ -53,10 +56,13 @@ public class AuthController {
     }
 
     @Operation(summary = "로그아웃 하기", description = """
-            
+            로그인한 회원의 인증을 해제하고 Refresh Token을 삭제합니다.
             """)
     @PostMapping("/sign-out")
-    public void signOut() {}
+    public ApiResponse<SignDTO.SignOutDTO> signOut(HttpServletRequest request) {
+        SignDTO.SignOutDTO signOutResponseDTO = authCommandService.signOut(request);
+        return ApiResponse.onSuccess(SuccessStatus._MEMBER_SIGNED_OUT, signOutResponseDTO);
+    }
 
     @Operation(summary = "아이디 찾기 - 가입정보 확인하기", description = """
             

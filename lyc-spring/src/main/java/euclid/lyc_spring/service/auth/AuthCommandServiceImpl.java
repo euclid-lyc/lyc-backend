@@ -3,6 +3,8 @@ package euclid.lyc_spring.service.auth;
 import euclid.lyc_spring.apiPayload.code.status.ErrorStatus;
 import euclid.lyc_spring.apiPayload.exception.handler.MemberHandler;
 import euclid.lyc_spring.auth.JwtGenerator;
+import euclid.lyc_spring.auth.JwtProvider;
+import euclid.lyc_spring.auth.SecurityUtils;
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.RefreshToken;
 import euclid.lyc_spring.domain.enums.Role;
@@ -15,8 +17,12 @@ import euclid.lyc_spring.dto.response.MemberDTO;
 import euclid.lyc_spring.dto.response.SignDTO;
 import euclid.lyc_spring.dto.token.JwtTokenDTO;
 import euclid.lyc_spring.repository.*;
+import euclid.lyc_spring.repository.token.RefreshTokenRepository;
+import euclid.lyc_spring.repository.token.TokenBlackListRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +41,8 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final InfoBodyTypeRepository infoBodyTypeRepository;
 
     private final JwtGenerator jwtGenerator;
+    private final JwtProvider jwtProvider;
+    private final TokenBlackListRepository tokenBlackListRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final MemberRepository memberRepository;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -239,6 +247,29 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private void setHeader(JwtTokenDTO jwtTokenDTO, HttpServletResponse response) {
         response.addHeader("Access-Token", jwtTokenDTO.getAccessToken());
         response.addHeader("Refresh-Token", jwtTokenDTO.getRefreshToken());
+    }
+
+    @Override
+    public SignDTO.SignOutDTO signOut(HttpServletRequest request) {
+
+        String accessToken = jwtProvider.resolveToken(request);
+
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // SecurityContextHolder에 저장된 로그인 정보 삭제
+        SecurityContextHolder.clearContext();
+
+        // accessToken을 블랙리스트에 추가
+        tokenBlackListRepository.addTokenToBlackList(accessToken);
+
+        // DB에 저장된 Refresh Token 삭제
+        RefreshToken refreshToken = refreshTokenRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.LOGIN_ID_NOT_MATCHED));
+        refreshTokenRepository.delete(refreshToken);
+
+        return SignDTO.SignOutDTO.toDTO(member);
     }
 
 }
