@@ -1,4 +1,4 @@
-package euclid.lyc_spring.repository;
+package euclid.lyc_spring.repository.token;
 
 import euclid.lyc_spring.domain.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;

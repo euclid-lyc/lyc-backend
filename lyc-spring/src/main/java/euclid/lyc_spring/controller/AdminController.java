@@ -10,4 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/lyc/admin")
 public class AdminController {
+
+/*-------------------------------------------------- Auth --------------------------------------------------*/
+
+
 }
