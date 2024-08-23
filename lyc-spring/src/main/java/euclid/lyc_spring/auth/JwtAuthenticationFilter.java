@@ -31,7 +31,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         // 필터가 적용되지 않는 URI
-        if (request.getRequestURI().equals("/lyc/auths/sign-up") || request.getRequestURI().equals("/lyc/auths/sign-in") ||
+        if (request.getRequestURI().equals("/lyc/auths/sign-up") || request.getRequestURI().startsWith("/lyc/auths/sign-in") ||
                 request.getRequestURI().startsWith("/swagger-ui") || request.getRequestURI().startsWith("/v3/api-docs")) {
             filterChain.doFilter(request, response);
             return ;

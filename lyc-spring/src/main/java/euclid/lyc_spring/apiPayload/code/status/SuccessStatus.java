@@ -31,6 +31,9 @@ public enum SuccessStatus implements BaseCode {
     _MEMBER_BLOCKED(HttpStatus.CREATED, "MEMBER2009", "회원 차단 완료"),
     _MEMBER_BLOCK_CANCELED(HttpStatus.OK, "MEMBER2010", "회원 차단 해제 완료"),
     _MEMBER_SIGNED_OUT(HttpStatus.CREATED, "MEMBER2011", "로그아웃 완료"),
+    _MEMBER_WITHDRAWN(HttpStatus.OK, "MEMBER2012", "회원 탈퇴 완료"),
+    _MEMBER_LOGIN_ID_FOUND(HttpStatus.OK, "MEMBER2013", "회원 아이디 조회 완료"),
+    _MEMBER_PW_CHANGED(HttpStatus.OK, "MEMBER2014", "회원 패스워드 변경 완료"),
 
     // coordie
     _MEMBER_COORDIES_FETCHED(HttpStatus.OK, "COORDIE2001", "유저의 코디 목록 불러오기 완료"),

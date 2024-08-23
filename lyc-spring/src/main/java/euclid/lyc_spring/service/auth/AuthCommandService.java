@@ -1,5 +1,6 @@
 package euclid.lyc_spring.service.auth;
 
+import euclid.lyc_spring.dto.request.MemberRequestDTO;
 import euclid.lyc_spring.dto.request.RegisterDTO;
 import euclid.lyc_spring.dto.request.SignRequestDTO;
 import euclid.lyc_spring.dto.response.MemberDTO;
@@ -10,9 +11,15 @@ import jakarta.servlet.http.HttpServletResponse;
 public interface AuthCommandService {
 
 /*-------------------------------------------------- 회원가입 및 탈퇴 --------------------------------------------------*/
+
+    MemberDTO.MemberInfoDTO join(RegisterDTO.RegisterMemberDTO registerMemberDTO);
+    MemberDTO.MemberPreviewDTO withdraw();
+
 /*-------------------------------------------------- 로그인 및 로그아웃 --------------------------------------------------*/
 
     SignDTO.SignInDTO signIn(SignRequestDTO.SignInDTO signInRequestDTO, HttpServletResponse response);
-    MemberDTO.MemberInfoDTO join(RegisterDTO.RegisterMemberDTO registerMemberDTO);
     SignDTO.SignOutDTO signOut(HttpServletRequest request);
+    MemberDTO.MemberPreviewDTO findId(MemberRequestDTO.MemberAuthDTO memberAuthDTO);
+    MemberDTO.MemberPreviewDTO checkInfoToFindPw(MemberRequestDTO.MemberPwAuthDTO memberPwAuthDTO);
+    MemberDTO.MemberPreviewDTO findPw(SignRequestDTO.PasswordDTO passwordDTO);
 }
