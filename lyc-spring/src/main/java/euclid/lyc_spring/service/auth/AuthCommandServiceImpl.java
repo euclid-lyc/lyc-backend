@@ -3,6 +3,8 @@ package euclid.lyc_spring.service.auth;
 import euclid.lyc_spring.apiPayload.code.status.ErrorStatus;
 import euclid.lyc_spring.apiPayload.exception.handler.MemberHandler;
 import euclid.lyc_spring.auth.JwtGenerator;
+import euclid.lyc_spring.auth.JwtProvider;
+import euclid.lyc_spring.auth.SecurityUtils;
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.RefreshToken;
 import euclid.lyc_spring.domain.enums.Role;
@@ -15,12 +17,17 @@ import euclid.lyc_spring.dto.response.MemberDTO;
 import euclid.lyc_spring.dto.response.SignDTO;
 import euclid.lyc_spring.dto.token.JwtTokenDTO;
 import euclid.lyc_spring.repository.*;
+import euclid.lyc_spring.repository.token.RefreshTokenRepository;
+import euclid.lyc_spring.repository.token.TokenBlackListRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -35,6 +42,8 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final InfoBodyTypeRepository infoBodyTypeRepository;
 
     private final JwtGenerator jwtGenerator;
+    private final JwtProvider jwtProvider;
+    private final TokenBlackListRepository tokenBlackListRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final MemberRepository memberRepository;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -61,6 +70,10 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         if (memberRepository.findByLoginId(memberDTO.getLoginId()).isPresent()) {
             throw new MemberHandler(ErrorStatus.MEMBER_DUPLICATED_LOGIN_ID);
         }
+        // 중복된 이메일이 있음
+        if (memberRepository.findByLoginId(memberDTO.getEmail()).isPresent()) {
+            throw new MemberHandler(ErrorStatus.MEMBER_DUPLICATED_EMAIL);
+        }
         // 비밀번호와 비밀번호 확인이 일치하지 않음
         if (!memberDTO.getLoginPw().equals(memberDTO.getLoginPwCheck())) {
             throw new MemberHandler(ErrorStatus.MEMBER_INVALID_LOGIN_PW);
@@ -71,6 +84,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                 .loginId(memberDTO.getLoginId())
                 .loginPw(bCryptPasswordEncoder.encode(memberDTO.getLoginPw()))
                 .email(memberDTO.getEmail())
+                .phone(memberDTO.getPhone())
                 .nickname(memberDTO.getNickname())
                 .introduction(memberDTO.getIntroduction())
                 .profileImage(image)
@@ -201,6 +215,20 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                 });
     }
 
+    @Override
+    public MemberDTO.MemberPreviewDTO withdraw() {
+
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        LocalDateTime now = LocalDateTime.now();
+        member.setInactive(now);
+        memberRepository.save(member);
+
+        return MemberDTO.MemberPreviewDTO.toDTO(member);
+    }
+
 /*-------------------------------------------------- 회원가입 및 탈퇴 --------------------------------------------------*/
 
     @Override
@@ -213,6 +241,10 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         // 로그인 비밀번호가 일치하지 않으면 에러 발생
         if (!bCryptPasswordEncoder.matches(signInRequestDTO.getLoginPw(), member.getLoginPw())) {
             throw new MemberHandler(ErrorStatus.LOGIN_PW_NOT_MATCHED);
+        }
+        // 비활성화된 회원이면 에러 발생
+        if (memberRepository.existsByIdAndInactiveIsNotNull(member.getId())) {
+            throw new MemberHandler(ErrorStatus.MEMBER_IS_INACTIVE);
         }
 
         // 토큰 생성
@@ -239,6 +271,73 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private void setHeader(JwtTokenDTO jwtTokenDTO, HttpServletResponse response) {
         response.addHeader("Access-Token", jwtTokenDTO.getAccessToken());
         response.addHeader("Refresh-Token", jwtTokenDTO.getRefreshToken());
+    }
+
+    @Override
+    public SignDTO.SignOutDTO signOut(HttpServletRequest request) {
+
+        String accessToken = jwtProvider.resolveToken(request);
+
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // SecurityContextHolder에 저장된 로그인 정보 삭제
+        SecurityContextHolder.clearContext();
+
+        // accessToken을 블랙리스트에 추가
+        tokenBlackListRepository.addTokenToBlackList(accessToken);
+
+        // DB에 저장된 Refresh Token 삭제
+        RefreshToken refreshToken = refreshTokenRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.LOGIN_ID_NOT_MATCHED));
+        refreshTokenRepository.delete(refreshToken);
+
+        return SignDTO.SignOutDTO.toDTO(member);
+    }
+
+    @Override
+    public MemberDTO.MemberPreviewDTO findId(MemberRequestDTO.MemberAuthDTO memberAuthDTO) {
+
+        if (memberAuthDTO.getMethod().equals(MemberRequestDTO.AuthMethod.PHONE)) {
+            Member member = memberRepository.findByNameAndPhone(memberAuthDTO.getName(), memberAuthDTO.getAuthInfo())
+                    .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+            return MemberDTO.MemberPreviewDTO.toDTO(member);
+        } else {
+            Member member = memberRepository.findByNameAndEmail(memberAuthDTO.getName(), memberAuthDTO.getAuthInfo())
+                    .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+            return MemberDTO.MemberPreviewDTO.toDTO(member);
+        }
+
+    }
+
+    @Override
+    public MemberDTO.MemberPreviewDTO checkInfoToFindPw(MemberRequestDTO.MemberPwAuthDTO memberPwAuthDTO) {
+
+        if (memberPwAuthDTO.getMethod().equals(MemberRequestDTO.AuthMethod.PHONE)) {
+            Member member = memberRepository.findByNameAndLoginIdAndPhone(memberPwAuthDTO.getName(), memberPwAuthDTO.getLoginId(), memberPwAuthDTO.getAuthInfo())
+                    .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+            return MemberDTO.MemberPreviewDTO.toDTO(member);
+        } else {
+            Member member = memberRepository.findByNameAndLoginIdAndEmail(memberPwAuthDTO.getName(), memberPwAuthDTO.getLoginId(), memberPwAuthDTO.getAuthInfo())
+                    .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+            return MemberDTO.MemberPreviewDTO.toDTO(member);
+        }
+    }
+
+    @Override
+    public MemberDTO.MemberPreviewDTO findPw(SignRequestDTO.PasswordDTO passwordDTO) {
+
+        if (!passwordDTO.getPassword().equals(passwordDTO.getPasswordConfirmation())) {
+            throw new MemberHandler(ErrorStatus.MEMBER_PW_NOT_MATCHED);
+        }
+
+        Member member = memberRepository.findByLoginId(passwordDTO.getLoginId())
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        member.changeLoginPw(passwordDTO.getPassword(), bCryptPasswordEncoder);
+
+        memberRepository.save(member);
+        return MemberDTO.MemberPreviewDTO.toDTO(member);
     }
 
 }

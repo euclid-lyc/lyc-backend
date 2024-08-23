@@ -4,6 +4,7 @@ import euclid.lyc_spring.domain.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
 public class MemberDTO {
@@ -113,4 +114,23 @@ public class MemberDTO {
         }
     }
 
+    @Getter
+    @Builder(access = AccessLevel.PRIVATE)
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class MemberPreviewDTO {
+
+        private final Long memberId;
+        private final String loginId;
+        private final String profileImage;
+        private final String nickname;
+
+        public static MemberPreviewDTO toDTO(Member member) {
+            return MemberPreviewDTO.builder()
+                    .memberId(member.getId())
+                    .loginId(member.getLoginId())
+                    .profileImage(member.getProfileImage())
+                    .nickname(member.getNickname())
+                    .build();
+        }
+    }
 }

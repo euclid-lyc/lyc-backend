@@ -3,6 +3,7 @@ package euclid.lyc_spring.config;
 import euclid.lyc_spring.auth.JwtAuthenticationFilter;
 import euclid.lyc_spring.auth.JwtGenerator;
 import euclid.lyc_spring.auth.JwtProvider;
+import euclid.lyc_spring.repository.token.TokenBlackListRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +26,7 @@ public class SecurityConfig {
 
     private final JwtProvider jwtProvider;
     private final JwtGenerator jwtGenerator;
+    private final TokenBlackListRepository tokenBlackListRepository;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -55,12 +57,13 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // use stateless session
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/lyc/auths/sign-up", "/lyc/auths/sign-in").permitAll()
+                        .requestMatchers("/lyc/auths/sign-up", "/lyc/auths/sign-in/**").permitAll()
                         .requestMatchers("/lyc/**").authenticated()
                         .anyRequest().denyAll()
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider, jwtGenerator), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider, jwtGenerator, tokenBlackListRepository), UsernamePasswordAuthenticationFilter.class)
                 .build();
 
     }
+
 }

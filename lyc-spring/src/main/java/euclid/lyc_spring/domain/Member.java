@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -41,6 +42,9 @@ public class Member {
     @Column(length = 30, nullable = false)
     private String email;
 
+    @Column(length = 30, nullable = false)
+    private String phone;
+
     @Column(length = 10, nullable = false)
     private String nickname;
 
@@ -58,6 +62,7 @@ public class Member {
     private LocalDateTime createdAt;
 
     @Column
+    @Setter
     private LocalDateTime inactive;
 
     @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
@@ -136,13 +141,14 @@ public class Member {
     }
 
     @Builder
-    public Member(String name, String loginId, String loginPw,
-                  String email, String nickname, String introduction,
+    public Member(String name, String loginId, String loginPw, String email,
+                  String phone, String nickname, String introduction,
                   String profileImage, Role role) {
         this.name = name;
         this.loginId = loginId;
         this.loginPw = loginPw;
         this.email = email;
+        this.phone = phone;
         this.nickname = nickname;
         this.introduction = introduction;
         this.profileImage = profileImage;
@@ -269,5 +275,9 @@ public class Member {
 
     public void reloadFollower(Long follower) {
         this.follower = follower;
+    }
+
+    public void changeLoginPw(String password, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.loginPw = bCryptPasswordEncoder.encode(password);
     }
 }

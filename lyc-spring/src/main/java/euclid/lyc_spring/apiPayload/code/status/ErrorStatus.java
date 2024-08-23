@@ -35,7 +35,11 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_DUPLICATED_LOGIN_ID(HttpStatus.BAD_REQUEST, "MEMBER4006", "로그인 아이디가 이미 존재합니다."),
     MEMBER_INVALID_LOGIN_PW(HttpStatus.BAD_REQUEST, "MEMBER4007", "패스워드와 패스워드 확인이 일치하지 않습니다."),
     MEMBER_ALREADY_FOLLOWING(HttpStatus.FORBIDDEN, "MEMBER4008", "이미 팔로우 중인 멤버입니다."),
-    BLOCKED_MEMBER(HttpStatus.FORBIDDEN, "MEMBER4009", "차단 당한 멤버입니다."),
+    BLOCKED_MEMBER(HttpStatus.FORBIDDEN, "MEMBER4009", "차단 당한 회원입니다."),
+    MEMBER_IS_INACTIVE(HttpStatus.BAD_REQUEST, "MEMBER4010", "비활성화된 회원입니다."),
+    MEMBER_NOT_ADMIN(HttpStatus.BAD_REQUEST, "MEMBER4011", "관리자만 사용 가능한 API입니다."),
+    MEMBER_DUPLICATED_EMAIL(HttpStatus.BAD_REQUEST, "MEMBER4012", "이메일이 이미 존재합니다."),
+    MEMBER_PW_NOT_MATCHED(HttpStatus.BAD_REQUEST, "MEMBER4013", "패스워드와 패스워드 확인이 일치하지 않습니다."),
 
     // posting
     POSTING_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4041", "포스팅이 존재하지 않습니다."),
