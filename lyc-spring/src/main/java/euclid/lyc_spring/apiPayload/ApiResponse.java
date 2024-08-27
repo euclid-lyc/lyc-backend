@@ -3,6 +3,7 @@ package euclid.lyc_spring.apiPayload;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import euclid.lyc_spring.apiPayload.code.BaseCode;
+import euclid.lyc_spring.apiPayload.code.BaseErrorCode;
 import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,5 +33,9 @@ public class ApiResponse<T> {
     // Fail
     public static <T> ApiResponse<T> onFailure(String code, String message, T data) {
         return new ApiResponse<>(false, code, message, data);
+    }
+
+    public static <T> ApiResponse<T> onFailure(BaseErrorCode code) {
+        return new ApiResponse<>(false, code.getReasonHttpStatus().getCode(), code.getReason().getMessage());
     }
 }
