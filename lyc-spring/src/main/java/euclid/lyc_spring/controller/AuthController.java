@@ -1,14 +1,17 @@
 package euclid.lyc_spring.controller;
 
 import euclid.lyc_spring.apiPayload.ApiResponse;
+import euclid.lyc_spring.apiPayload.code.status.ErrorStatus;
 import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
 import euclid.lyc_spring.dto.request.MemberRequestDTO;
 import euclid.lyc_spring.dto.request.RegisterDTO;
 import euclid.lyc_spring.dto.request.SignRequestDTO;
+import euclid.lyc_spring.dto.request.VerificationRequestDTO;
 import euclid.lyc_spring.dto.response.MemberDTO;
 import euclid.lyc_spring.dto.response.SignDTO;
 import euclid.lyc_spring.service.auth.AuthCommandService;
 import euclid.lyc_spring.service.auth.AuthQueryService;
+import euclid.lyc_spring.service.mail.MailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +27,7 @@ public class AuthController {
 
     private final AuthQueryService authQueryService;
     private final AuthCommandService authCommandService;
+    private final MailService mailService;
 
 /*-------------------------------------------------- 회원가입 및 탈퇴 --------------------------------------------------*/
 
@@ -72,49 +76,70 @@ public class AuthController {
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_SIGNED_OUT, signOutResponseDTO);
     }
 
-    @Operation(summary = "아이디 찾기", description = """
+    @Operation(summary = "아이디 찾기 - 이메일 인증 코드 전송", description = """
+            가입된 이메일로 인증 코드를 전송합니다.
+            """)
+    @PostMapping("/sign-in/find-id/send-verification-code")
+    public ApiResponse<Void> sendVerificationCodeToFindId(
+            HttpServletRequest request, HttpServletResponse response,
+            @RequestBody VerificationRequestDTO.FindIdDTO findIdDTO) {
+        if (findIdDTO.getEmail() != null && !findIdDTO.getEmail().isEmpty()) {
+            mailService.checkEmail(findIdDTO);
+            mailService.sendMailToFindId(request, response, findIdDTO.getEmail());
+            return ApiResponse.onSuccess(SuccessStatus._VERIFICATION_CODE_SENT);
+        } else {
+            return ApiResponse.onFailure(ErrorStatus.UNABLE_TO_SEND_VERIFICATION_CODE);
+        }
+    }
+
+    @Operation(summary = "아이디 찾기 - 인증 코드 검증", description = """
             이름과 이메일(혹은 전화번호)를 RequestBody로 받아 회원의 아이디를 반환합니다.
             
-            RequestBody의 "method"에는 ["EMAIL", "PHONE"] 중 하나가 입력되어야 합니다.
+            해당 API는 클라이언트에서 이메일 인증을 먼저 수행한 후 송신 가능합니다.
             
-            해당 API는 반드시 클라이언트에서 이메일 인증(혹은 전화번호 인증)을 마친 후 송신 바랍니다.
-            
-            임시 토큰 발급을 해야 할 것 같은데 어떻게 해야 될지 모르겠어서 일단 패스함
+            Request Header에는 반드시 임시 토큰이 포함되어 있어야 합니다.
             """)
-    @PostMapping("/sign-in/find-id")
+    @PostMapping("/find-id")
     public ApiResponse<MemberDTO.MemberPreviewDTO> findId(
-            @RequestBody MemberRequestDTO.MemberAuthDTO memberAuthDTO) {
-        MemberDTO.MemberPreviewDTO memberPreviewDTO = authCommandService.findId(memberAuthDTO);
+            HttpServletRequest request, @RequestBody VerificationRequestDTO.IdVerificationDTO idVerificationDTO) {
+        MemberDTO.MemberPreviewDTO memberPreviewDTO = authCommandService.findId(request, idVerificationDTO);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_LOGIN_ID_FOUND, memberPreviewDTO);
     }
 
-    @Operation(summary = "비밀번호 찾기 - 가입정보 확인하기", description = """
-            이름과 아이디, 이메일(혹은 전화번호)를 RequestBody로 받아 가입 정보를 확인합니다.
-            
-            RequestBody의 "method"에는 ["EMAIL", "PHONE"] 중 하나가 입력되어야 합니다.
-            
-            해당 API는 반드시 클라이언트에서 이메일 인증(혹은 전화번호 인증)을 마친 후 송신 바랍니다.
-            
-            임시 토큰 발급을 해야 할 것 같은데 어떻게 해야 될지 모르겠어서 일단 패스함
+    @Operation(summary = "비밀번호 찾기 - 이메일 인증 코드 전송", description = """
+            가입된 이메일로 인증 코드를 전송합니다.
             """)
-    @PostMapping("/sign-in/find-pw/infos")
-    public ApiResponse<MemberDTO.MemberPreviewDTO> checkInfoToFindPw(
-            @RequestBody MemberRequestDTO.MemberPwAuthDTO memberPwAuthDTO) {
-        MemberDTO.MemberPreviewDTO memberPreviewDTO = authCommandService.checkInfoToFindPw(memberPwAuthDTO);
-        return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOUND, memberPreviewDTO);
+    @PostMapping("/sign-in/find-pw/send-verification-code")
+    public ApiResponse<Void> sendVerificationCodeToFindPw(
+            HttpServletRequest request, HttpServletResponse response,
+            @RequestBody VerificationRequestDTO.FindPwDTO findPwDTO) {
+        mailService.checkEmail(findPwDTO);
+        mailService.sendMailToFindPw(request, response, findPwDTO.getEmail(), findPwDTO.getLoginId());
+        return ApiResponse.onSuccess(SuccessStatus._VERIFICATION_CODE_SENT);
+    }
+
+    @Operation(summary = "비밀번호 찾기 - 인증 코드 검증", description = """
+            인증 코드 및 회원 정보를 확인합니다.
+            
+            해당 API는 클라이언트에서 이메일 인증을 먼저 수행한 후 송신 가능합니다.
+            
+            Request Header에는 반드시 임시 토큰이 포함되어 있어야 합니다.
+         
+            """)
+    @PostMapping("/find-pw")
+    public ApiResponse<Void> findPw(
+            HttpServletRequest request, @RequestParam String code) {
+        authCommandService.findPw(request, code);
+        return ApiResponse.onSuccess(SuccessStatus._VERIFICATION_CODE_CHECKED);
     }
 
     @Operation(summary = "비밀번호 찾기 - 비밀번호 변경", description = """
-            비밀번호와 비밀번호 확인을 RequestBody로 받아 비밀번호를 변경합니다.
-            
-            Request Header에는 반드시 임시 토큰이 포함되어 있어야 합니다.
-            
-            그래서 임시 토큰 발급을 해야 할 것 같은데 어떻게 해야 될지 모르겠어서 일단 패스함
+            비밀번호와 비밀번호 확인을 RequestBody로 받아 비밀번호르 변경합니다.
             """)
-    @PatchMapping("sign-in/find-pw")
-    public ApiResponse<MemberDTO.MemberPreviewDTO> findPw(
-            @RequestBody SignRequestDTO.PasswordDTO passwordDTO) {
-        MemberDTO.MemberPreviewDTO memberPreviewDTO = authCommandService.findPw(passwordDTO);
+    @PatchMapping("/find-pw/update")
+    public ApiResponse<MemberDTO.MemberPreviewDTO> updatePw(
+            HttpServletRequest request, @RequestBody VerificationRequestDTO.PwVerificationDTO pwVerificationDTO) {
+        MemberDTO.MemberPreviewDTO memberPreviewDTO = authCommandService.updatePw(request, pwVerificationDTO);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_PW_CHANGED, memberPreviewDTO);
     }
 
