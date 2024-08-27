@@ -52,6 +52,18 @@ public enum SuccessStatus implements BaseCode {
     // FEED
     _RECENT_TEN_FEEDS_FETCHED(HttpStatus.OK, "FEED2001", "최신 피드 10개 불러오기 완료"),
 
+    // COMMISSION
+    _COMMISSION_CREATED(HttpStatus.CREATED, "COMMISSION2001", "의뢰서 작성 완료"),
+    _COMMISSION_LIST_FETCHED(HttpStatus.OK, "COMMISSION2002", "의뢰함 불러오기 완료"),
+    _COMMISSION_ACCEPTED(HttpStatus.ACCEPTED, "COMMISSION2003", "의뢰 승낙 완료"),
+    _COMMISSION_DECLINED(HttpStatus.OK, "COMMISSION2004", "의뢰 거절 완료"),
+    _COMMISSION_FETCHED(HttpStatus.OK, "COMMISSION2005", "의뢰서 불러오기 완료"),
+    _COMMISSION_UPDATED(HttpStatus.OK, "COMMISSION2006", "의뢰서 수정 완료"),
+    _COMMISSION_REQUEST_TERMINATION(HttpStatus.OK, "COMMISSION2007", "의뢰 종료 요청 완료"),
+    _COMMISSION_TERMINATION(HttpStatus.OK, "COMMISSION2008", "의뢰 종료 승낙 완료"),
+    _COMMISSION_TERMINATION_DECLINED(HttpStatus.OK, "COMMISSION2009", "의뢰 종료 거절 완료"),
+
+
     // WEATHER
     _WEATHER_FETCHED(HttpStatus.OK, "WEATHER2001", "오늘 날씨 불러오기 완료")
 

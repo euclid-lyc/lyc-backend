@@ -1,7 +1,9 @@
 package euclid.lyc_spring.domain.chat;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
@@ -20,7 +22,16 @@ public class Schedule {
     @Column(columnDefinition = "text")
     private String memo;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_id", nullable = false)
     private Chat chat;
+
+    protected Schedule(){}
+
+    @Builder
+    public Schedule(LocalDate date, String memo) {
+        this.date = date;
+        this.memo = memo;
+    }
 }

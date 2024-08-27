@@ -2,17 +2,17 @@ package euclid.lyc_spring.domain.chat.commission;
 
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.chat.Chat;
-import euclid.lyc_spring.domain.chat.Schedule;
 import euclid.lyc_spring.domain.chat.commission.commission_info.CommissionInfo;
+import euclid.lyc_spring.domain.chat.commission.commission_style.CommissionStyle;
 import euclid.lyc_spring.domain.enums.CommissionStatus;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Entity
@@ -38,14 +38,14 @@ public class Commission {
     @OneToOne(mappedBy = "commission", cascade = CascadeType.ALL)
     private Chat chat;
 
-    @OneToMany(mappedBy = "commission", cascade = CascadeType.ALL)
-    private List<CommissionInfo> commissionInfoList;
+    @OneToOne(mappedBy = "commission", cascade = CascadeType.ALL)
+    private CommissionInfo commissionInfo;
 
-    @OneToMany(mappedBy = "commission", cascade = CascadeType.ALL)
-    private List<CommissionOther> commissionOtherList;
+    @OneToOne(mappedBy = "commission", cascade = CascadeType.ALL)
+    private CommissionOther commissionOther;
 
-    @OneToMany(mappedBy = "commission", cascade = CascadeType.ALL)
-    private List<CommissionStyle> commissionStyleList;
+    @OneToOne(mappedBy = "commission", cascade = CascadeType.ALL)
+    private CommissionStyle commissionStyle;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
@@ -55,5 +55,51 @@ public class Commission {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "director_id", nullable = false)
     private Member director;
+
+    protected Commission() {}
+
+    @Builder
+    public Commission(CommissionStatus status, LocalDateTime createdAt, Member member, Member director){
+        this.status = status;
+        this.createdAt = createdAt;
+        this.finishedAt = null;
+        this.member = member;
+        this.director = director;
+
+    }
+
+    //=== Add Methods ===//
+
+    public void setChat(Chat chat) {
+        this.chat = chat;
+        chat.setCommission(this);
+    }
+
+    public void setCommissionInfo(CommissionInfo commissionInfo) {
+        this.commissionInfo = commissionInfo;
+        commissionInfo.setCommission(this);
+    }
+
+    public void setCommissionOther(CommissionOther commissionOther) {
+        this.commissionOther = commissionOther;
+        commissionOther.setCommission(this);
+    }
+
+    public void setCommissionStyle(CommissionStyle commissionStyle) {
+        this.commissionStyle = commissionStyle;
+        commissionStyle.setCommission(this);
+    }
+
+    public void reloadStatus(CommissionStatus status){
+        this.status = status;
+    }
+
+    public void reloadFinishedAt(LocalDateTime finishedAt){
+        this.finishedAt = finishedAt;
+    }
+
+    public void reloadCreatedAt(LocalDateTime createdAt){
+        this.createdAt = createdAt;
+    }
 
 }

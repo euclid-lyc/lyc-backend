@@ -1,11 +1,17 @@
 package euclid.lyc_spring.controller;
 
+import euclid.lyc_spring.apiPayload.ApiResponse;
+import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
+import euclid.lyc_spring.dto.request.CommissionRequestDTO;
+import euclid.lyc_spring.dto.response.CommissionDTO;
 import euclid.lyc_spring.service.commission.CommissionCommandService;
 import euclid.lyc_spring.service.commission.CommissionQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,37 +27,58 @@ public class CommissionController {
     @Operation(summary = "의뢰서 작성하기", description = """
             """)
     @PostMapping("/chats/commissions")
-    public void writeCommission() {}
+    public ApiResponse<CommissionDTO.CommissionViewDTO> writeCommission(
+            @RequestBody CommissionRequestDTO.CommissionDTO commissionRequestDTO) {
+        CommissionDTO.CommissionViewDTO responseDTO = commissionCommandService.writeCommission(commissionRequestDTO);
+        return ApiResponse.onSuccess(SuccessStatus._COMMISSION_CREATED, responseDTO);
+    }
 
     @Tag(name = "Commission - Request", description = "의뢰서 관련 API")
     @Operation(summary = "의뢰 목록(의뢰함) 불러오기", description = """
             """)
-    @GetMapping("/chats/commissions")
-    public void getAllCommissions() {}
+    @GetMapping("/chats/commissions/{directorId}")
+    public ApiResponse<List<CommissionDTO.CommissionViewDTO>> getAllCommissions(@PathVariable("directorId") Long directorId) {
+        List<CommissionDTO.CommissionViewDTO> responseDTO = commissionQueryService.getAllCommissionList(directorId);
+        return ApiResponse.onSuccess(SuccessStatus._COMMISSION_LIST_FETCHED, responseDTO);
+    }
 
     @Tag(name = "Commission - Request", description = "의뢰서 관련 API")
     @Operation(summary = "의뢰서 확인하기", description = """
             """)
-    @GetMapping("/chats/commissions/{commissionId}")
-    public void getCommission(@PathVariable Long commissionId) {}
+    @GetMapping("/chats/commissions/commission/{commissionId}")
+    public ApiResponse<CommissionDTO.CommissionInfoDTO> getCommission(@PathVariable Long commissionId) {
+        CommissionDTO.CommissionInfoDTO responseDTO = commissionQueryService.getCommission(commissionId);
+        return ApiResponse.onSuccess(SuccessStatus._COMMISSION_FETCHED, responseDTO);
+    }
 
     @Tag(name = "Commission - Request", description = "의뢰서 관련 API")
     @Operation(summary = "의뢰 승낙하기", description = """
             """)
     @PatchMapping("/chats/commissions/{commissionId}/accept")
-    public void acceptCommission(@PathVariable Long commissionId) {}
+    public ApiResponse<CommissionDTO.CommissionViewDTO> acceptCommission(@PathVariable Long commissionId) {
+        CommissionDTO.CommissionViewDTO responseDTO = commissionCommandService.acceptCommission(commissionId);
+        return ApiResponse.onSuccess(SuccessStatus._COMMISSION_ACCEPTED, responseDTO);
+    }
 
     @Tag(name = "Commission - Request", description = "의뢰서 관련 API")
     @Operation(summary = "의뢰 거절하기", description = """
             """)
     @PatchMapping("/chats/commissions/{commissionId}/decline")
-    public void declineCommission(@PathVariable Long commissionId) {}
+    public ApiResponse<CommissionDTO.CommissionViewDTO> declineCommission(@PathVariable Long commissionId) {
+        CommissionDTO.CommissionViewDTO responseDTO = commissionCommandService.declineCommission(commissionId);
+        return ApiResponse.onSuccess(SuccessStatus._COMMISSION_DECLINED, responseDTO);
+    }
 
     @Tag(name = "Commission - Request", description = "의뢰서 관련 API")
     @Operation(summary = "의뢰서 수정하기", description = """
             """)
-    @PatchMapping("/chats/{chatId}/commissions")
-    public void updateCommission() {}
+    // 의뢰가 승낙되기 전에 수정할 수도 있지않나.. 그래서 commissionId로 바꿔봄
+    @PatchMapping("/chats/{commissionId}/commissions")
+    public ApiResponse<CommissionDTO.CommissionViewDTO> updateCommission(
+            @RequestBody CommissionRequestDTO.CommissionDTO commissionRequestDTO, @PathVariable Long commissionId) {
+        CommissionDTO.CommissionViewDTO responseDTO = commissionCommandService.updateCommission(commissionId, commissionRequestDTO);
+        return ApiResponse.onSuccess(SuccessStatus._COMMISSION_UPDATED, responseDTO);
+    }
 
 /*-------------------------------------------------- 저장한 옷 --------------------------------------------------*/
 
@@ -92,18 +119,27 @@ public class CommissionController {
     @Operation(summary = "의뢰 종료 요청하기", description = """
             """)
     @PatchMapping("/chats/{chatId}/commissions/termination-request")
-    public void requestCommissionTermination(@PathVariable Long chatId) {}
+    public ApiResponse<CommissionDTO.CommissionViewDTO> requestCommissionTermination(@PathVariable Long chatId) {
+        CommissionDTO.CommissionViewDTO responseDTO = commissionCommandService.requestCommissionTermination(chatId);
+        return ApiResponse.onSuccess(SuccessStatus._COMMISSION_REQUEST_TERMINATION, responseDTO);
+    }
 
     @Tag(name = "Commission - Termination", description = "의뢰 종료 관련 API")
     @Operation(summary = "의뢰 종료 승낙하기", description = """
             """)
     @PatchMapping("/chats/{chatId}/commissions/termination")
-    public void terminateCommission(@PathVariable Long chatId) {}
+    public ApiResponse<CommissionDTO.CommissionViewDTO> terminateCommission(@PathVariable Long chatId) {
+        CommissionDTO.CommissionViewDTO responseDTO = commissionCommandService.terminateCommission(chatId);
+        return ApiResponse.onSuccess(SuccessStatus._COMMISSION_TERMINATION, responseDTO);
+    }
 
     @Tag(name = "Commission - Termination", description = "의뢰 종료 관련 API")
     @Operation(summary = "의뢰 종료 거절하기", description = """
             """)
     @PatchMapping("/chats/{chatId}/commissions/termination-cancel")
-    public void declineComissionTermination(@PathVariable Long chatId) {}
+    public ApiResponse<CommissionDTO.CommissionViewDTO> declineCommissionTermination(@PathVariable Long chatId) {
+        CommissionDTO.CommissionViewDTO responseDTO = commissionCommandService.declineCommissionTermination(chatId);
+        return ApiResponse.onSuccess(SuccessStatus._COMMISSION_TERMINATION, responseDTO);
+    }
 
 }
