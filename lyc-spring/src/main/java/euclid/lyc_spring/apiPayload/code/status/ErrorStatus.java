@@ -25,6 +25,11 @@ public enum ErrorStatus implements BaseErrorCode {
     LOGIN_ID_NOT_MATCHED(HttpStatus.NOT_FOUND, "AA4006", "로그인 아이디가 일치하지 않습니다."),
     LOGIN_PW_NOT_MATCHED(HttpStatus.NOT_FOUND, "AA4007", "로그인 패스워드가 일치하지 않습니다."),
     JWT_ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AA4008", "액세스 토큰이 만료되었습니다."),
+    UNABLE_TO_SEND_VERIFICATION_CODE(HttpStatus.BAD_REQUEST, "AA4009", "인증 코드를 전송할 수 없습니다."),
+    UNABLE_TO_SEND_EMAIL(HttpStatus.BAD_REQUEST, "AA4010", "이메일을 전송할 수 없습니다."),
+    UNABLE_TO_LOAD_MAIL_FORM(HttpStatus.INTERNAL_SERVER_ERROR, "AA4011", "이메일 인증 폼을 불러올 수 없습니다."),
+    UNKNOWN_MAIL_SENDER(HttpStatus.INTERNAL_SERVER_ERROR, "AA4012", "송신자 이메일이 존재하지 않습니다."),
+    MAIL_NOT_VERIFIED(HttpStatus.UNAUTHORIZED, "AA4013", "이메일 인증에 실패했습니다."),
 
     // member
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER4001", "사용자가 존재하지 않습니다."),
