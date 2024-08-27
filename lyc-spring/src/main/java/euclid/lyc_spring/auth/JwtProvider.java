@@ -3,7 +3,7 @@ package euclid.lyc_spring.auth;
 import euclid.lyc_spring.apiPayload.code.status.ErrorStatus;
 import euclid.lyc_spring.apiPayload.exception.handler.JwtHandler;
 import euclid.lyc_spring.domain.RefreshToken;
-import euclid.lyc_spring.repository.RefreshTokenRepository;
+import euclid.lyc_spring.repository.token.RefreshTokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

@@ -5,6 +5,7 @@ import euclid.lyc_spring.apiPayload.ApiResponse;
 import euclid.lyc_spring.apiPayload.code.ErrorReasonDTO;
 import euclid.lyc_spring.apiPayload.code.status.ErrorStatus;
 import euclid.lyc_spring.dto.token.JwtTokenDTO;
+import euclid.lyc_spring.repository.token.TokenBlackListRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,59 +22,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
     private final JwtGenerator jwtGenerator;
+    private final TokenBlackListRepository tokenBlackListRepository;
 
 /* ---------------------------------------- 요청이 서버로 들어올 때마다 필터 실행 ---------------------------------------- */
-
-    //@Override
-    //public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
-//
-    //    HttpServletRequest request = (HttpServletRequest) req;
-    //    HttpServletResponse response = (HttpServletResponse) res;
-    //    String requestURI = request.getRequestURI();
-//
-    //    // 필터가 적용되지 않는 URI
-    //    if (requestURI.equals("/api/auths/sign-up") || requestURI.equals("/api/auths/sign-in") ||
-    //        requestURI.startsWith("/swagger-ui") || requestURI.startsWith("/v3/api-docs")) {
-    //        chain.doFilter(req, res);
-    //        return ;
-    //    }
-//
-    //    // Request Header에서 Authorization(토큰) 추출
-    //    String accessToken = jwtProvider.resolveToken(request);
-//
-    //    if (accessToken != null) {
-    //        // 요청 헤더에 access 토큰 값이 존재
-    //         if (jwtProvider.validateToken(accessToken)) {
-    //             // access 토큰이 유효하면 보안 컨텍스트에 인증 정보 저장
-    //             setAuthentication(accessToken);
-    //         } else {
-    //             // access 토큰이 유효하지 않으면 refresh 토큰 확인
-    //             if (jwtProvider.validateRefreshToken(accessToken)) {
-    //                 // access 토큰은 유효하지 않지만 refresh 토큰이 유효하다면 새로운 token 발급 후 저장
-    //                 String loginId = jwtProvider.getClaims(accessToken).getSubject();
-    //                 JwtTokenDTO newAccessTokenDTO = jwtGenerator.generateToken(loginId);
-    //                 jwtProvider.updateRefreshToken(newAccessTokenDTO.getRefreshToken());
-    //                 // 헤더에 토큰 삽입 후 보안 컨텍스트에 인증 정보 저장
-    //                 setHeader(newAccessTokenDTO, response);
-    //                 setAuthentication(accessToken);
-    //             } else {
-    //                 // access 토큰과 refresh 토큰 모두 유효하지 않은 경우
-    //                 throw new JwtHandler(ErrorStatus.JWT_INVALID_TOKEN);
-    //             }
-    //         }
-    //    } else {
-//
-    //    }
-//
-    //    chain.doFilter(req, res);
-    //}
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
         // 필터가 적용되지 않는 URI
-        if (request.getRequestURI().equals("/lyc/auths/sign-up") || request.getRequestURI().equals("/lyc/auths/sign-in") ||
+        if (request.getRequestURI().equals("/lyc/auths/sign-up") || request.getRequestURI().startsWith("/lyc/auths/sign-in") ||
                 request.getRequestURI().startsWith("/swagger-ui") || request.getRequestURI().startsWith("/v3/api-docs")) {
             filterChain.doFilter(request, response);
             return ;
@@ -85,8 +43,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (accessToken != null) {
             // 요청 헤더에 access 토큰 값이 존재
             if (jwtProvider.validateToken(accessToken)) {
-                // access 토큰이 유효하면 보안 컨텍스트에 인증 정보 저장
-                setAuthentication(accessToken);
+                if (!tokenBlackListRepository.isBlackListed(accessToken)) {
+                    // access 토큰이 유효하면 보안 컨텍스트에 인증 정보 저장
+                    setAuthentication(accessToken);
+                }else {
+                    // access 토큰이 유효하지만 로그아웃 되었을 경우(블랙리스트에 존재하는 경우)
+                    sendResponse(response, ErrorStatus.JWT_ACCESS_TOKEN_EXPIRED.getReasonHttpStatus());
+                    return ;
+                }
+
             } else {
                 // access 토큰이 유효하지 않으면 refresh 토큰 확인
                 if (jwtProvider.validateRefreshToken(accessToken)) {
