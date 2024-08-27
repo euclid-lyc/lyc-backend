@@ -23,30 +23,4 @@ public class MemberRequestDTO {
         private String introduction;
         private String profileImage;
     }
-
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class MemberAuthDTO {
-
-        private String name;
-        private AuthMethod method;
-        private String authInfo;
-    }
-
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class MemberPwAuthDTO {
-
-        private String name;
-        private String loginId;
-        private AuthMethod method;
-        private String authInfo;
-    }
-
-    public enum AuthMethod {
-        EMAIL, PHONE
-    }
-
 }
