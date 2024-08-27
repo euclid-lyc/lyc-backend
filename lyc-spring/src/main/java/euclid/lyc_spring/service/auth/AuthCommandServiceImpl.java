@@ -9,14 +9,12 @@ import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.RefreshToken;
 import euclid.lyc_spring.domain.enums.Role;
 import euclid.lyc_spring.domain.info.*;
-import euclid.lyc_spring.dto.request.InfoRequestDTO;
-import euclid.lyc_spring.dto.request.MemberRequestDTO;
-import euclid.lyc_spring.dto.request.RegisterDTO;
-import euclid.lyc_spring.dto.request.SignRequestDTO;
+import euclid.lyc_spring.dto.request.*;
 import euclid.lyc_spring.dto.response.MemberDTO;
 import euclid.lyc_spring.dto.response.SignDTO;
 import euclid.lyc_spring.dto.token.JwtTokenDTO;
 import euclid.lyc_spring.repository.*;
+import euclid.lyc_spring.repository.mail.VerificationCodeRepository;
 import euclid.lyc_spring.repository.token.RefreshTokenRepository;
 import euclid.lyc_spring.repository.token.TokenBlackListRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -40,6 +38,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final InfoFitRepository infoFitRepository;
     private final InfoMaterialRepository infoMaterialRepository;
     private final InfoBodyTypeRepository infoBodyTypeRepository;
+    private final VerificationCodeRepository verificationCodeRepository;
 
     private final JwtGenerator jwtGenerator;
     private final JwtProvider jwtProvider;
@@ -297,46 +296,64 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     }
 
     @Override
-    public MemberDTO.MemberPreviewDTO findId(MemberRequestDTO.MemberAuthDTO memberAuthDTO) {
+    public MemberDTO.MemberPreviewDTO findId(HttpServletRequest request, VerificationRequestDTO.IdVerificationDTO idVerificationDTO) {
 
-        if (memberAuthDTO.getMethod().equals(MemberRequestDTO.AuthMethod.PHONE)) {
-            Member member = memberRepository.findByNameAndPhone(memberAuthDTO.getName(), memberAuthDTO.getAuthInfo())
-                    .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-            return MemberDTO.MemberPreviewDTO.toDTO(member);
-        } else {
-            Member member = memberRepository.findByNameAndEmail(memberAuthDTO.getName(), memberAuthDTO.getAuthInfo())
-                    .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-            return MemberDTO.MemberPreviewDTO.toDTO(member);
+        String tempToken = jwtProvider.resolveToken(request);
+        SecurityUtils.checkTempAuthorization();
+
+        // 인증 코드 확인
+        if (!idVerificationDTO.getVerificationCode().equals(verificationCodeRepository.getVerificationCode(tempToken))) {
+            throw new MemberHandler(ErrorStatus.MAIL_NOT_VERIFIED);
+        }
+
+        Member member = memberRepository.findByNameAndEmail(idVerificationDTO.getName(), idVerificationDTO.getEmail())
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // 임시 인증 정보 삭제
+        verificationCodeRepository.removeVerificationCode(tempToken);
+
+        return MemberDTO.MemberPreviewDTO.toDTO(member);
+
+    }
+
+    @Override
+    public void findPw(HttpServletRequest request, String code) {
+
+        String tempToken = jwtProvider.resolveToken(request);
+        SecurityUtils.checkTempAuthorization();
+
+        // 인증 코드 확인
+        if (!code.equals(verificationCodeRepository.getVerificationCode(tempToken))) {
+            throw new MemberHandler(ErrorStatus.MAIL_NOT_VERIFIED);
         }
 
     }
 
     @Override
-    public MemberDTO.MemberPreviewDTO checkInfoToFindPw(MemberRequestDTO.MemberPwAuthDTO memberPwAuthDTO) {
+    public MemberDTO.MemberPreviewDTO updatePw(HttpServletRequest request, VerificationRequestDTO.PwVerificationDTO pwVerificationDTO) {
 
-        if (memberPwAuthDTO.getMethod().equals(MemberRequestDTO.AuthMethod.PHONE)) {
-            Member member = memberRepository.findByNameAndLoginIdAndPhone(memberPwAuthDTO.getName(), memberPwAuthDTO.getLoginId(), memberPwAuthDTO.getAuthInfo())
-                    .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-            return MemberDTO.MemberPreviewDTO.toDTO(member);
-        } else {
-            Member member = memberRepository.findByNameAndLoginIdAndEmail(memberPwAuthDTO.getName(), memberPwAuthDTO.getLoginId(), memberPwAuthDTO.getAuthInfo())
-                    .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-            return MemberDTO.MemberPreviewDTO.toDTO(member);
+        String tempToken = jwtProvider.resolveToken(request);
+        SecurityUtils.checkTempAuthorization();
+
+        // 인증 코드 확인
+        if (!pwVerificationDTO.getVerificationCode().equals(verificationCodeRepository.getVerificationCode(tempToken))) {
+            throw new MemberHandler(ErrorStatus.MAIL_NOT_VERIFIED);
         }
-    }
 
-    @Override
-    public MemberDTO.MemberPreviewDTO findPw(SignRequestDTO.PasswordDTO passwordDTO) {
-
-        if (!passwordDTO.getPassword().equals(passwordDTO.getPasswordConfirmation())) {
+        // 비밀번호 확인
+        if (!pwVerificationDTO.getPassword().equals(pwVerificationDTO.getPasswordConfirmation())) {
             throw new MemberHandler(ErrorStatus.MEMBER_PW_NOT_MATCHED);
         }
 
-        Member member = memberRepository.findByLoginId(passwordDTO.getLoginId())
+        Member member = memberRepository.findByLoginId(pwVerificationDTO.getLoginId())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        member.changeLoginPw(passwordDTO.getPassword(), bCryptPasswordEncoder);
+        member.changeLoginPw(pwVerificationDTO.getPassword(), bCryptPasswordEncoder);
 
         memberRepository.save(member);
+
+        // 임시 인증 정보 삭제
+        verificationCodeRepository.removeVerificationCode(tempToken);
+
         return MemberDTO.MemberPreviewDTO.toDTO(member);
     }
 
