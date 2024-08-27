@@ -21,6 +21,7 @@ public enum SuccessStatus implements BaseCode {
 
     // authentication & authorization
     _VERIFICATION_CODE_SENT(HttpStatus.CREATED, "AA2001", "인증 코드 전송 완료"),
+    _VERIFICATION_CODE_CHECKED(HttpStatus.OK, "AA2002", "인증 코드 검증 완료"),
 
     // member
     _MEMBER_CREATED(HttpStatus.CREATED, "MEMBER2001", "회원가입 완료"),
