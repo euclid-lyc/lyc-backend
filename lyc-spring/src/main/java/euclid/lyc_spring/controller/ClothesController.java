@@ -43,8 +43,11 @@ public class ClothesController {
     }
 
     @Operation(summary = "옷장 게시글 삭제하기", description = "옷장 게시글을 삭제합니다(이미지 & 텍스트 공통).")
-    @PostMapping("/clothes/{clothesId}")
-    void deleteClothes(@PathVariable String clothesId) {}
+    @DeleteMapping("/clothes/{clothesId}")
+    ApiResponse<ClothesDTO.ClothesPreviewDTO> deleteClothes(@PathVariable Long clothesId) {
+        ClothesDTO.ClothesPreviewDTO clothesPreviewDTO = clothesCommandService.deleteClothes(clothesId);
+        return ApiResponse.onSuccess(SuccessStatus._CLOTHES_DELETED, clothesPreviewDTO);
+    }
 
     @Operation(summary = "옷장 게시글 목록 불러오기", description = "옷장 게시글 목록을 불러옵니다.")
     @GetMapping("/clothes/members/{memberId}")

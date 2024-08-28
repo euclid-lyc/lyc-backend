@@ -64,10 +64,11 @@ public enum ErrorStatus implements BaseErrorCode {
     POSTING_CANNOT_SAVED_BY_WRITER(HttpStatus.BAD_REQUEST, "POST4049", "자신의 게시글을 저장할 수 업습니다."),
 
     // clothes
-    CLOTHES_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4041", "옷장 게시들이 존재하지 않습니다."),
+    CLOTHES_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4041", "옷장 게시글이 존재하지 않습니다."),
     CLOTHES_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4001", "옷장 이미지를 찾을 수 없습니다."),
     CLOTHES_TEXT_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4002", "옷장 텍스트를 찾을 수 없습니다."),
     CLOTHES_BAD_QUERY(HttpStatus.BAD_REQUEST, "CLOTHES4003", "type 쿼리에는 image와 text만 입력할 수 있습니다."),
+    CLOTHES_WRITER_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4004", "옷장 게시글의 작성자가 아닙니다."),
 
     // WEATHER
     _WEATHER_NOT_FOUND(HttpStatus.NOT_FOUND, "WEATHER4001", "날씨 정보를 찾을 수 없습")

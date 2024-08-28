@@ -9,6 +9,7 @@ import euclid.lyc_spring.domain.enums.Material;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
@@ -155,6 +156,22 @@ public class ClothesDTO {
                     .fit(clothes.getClothesText() != null ? clothes.getClothesText().getFit() : null)
                     .material(clothes.getClothesText() != null ? clothes.getClothesText().getMaterial() : null)
                     .image(clothes.getClothesImage() != null ? clothes.getClothesImage().getImage() : null)
+                    .build();
+        }
+    }
+
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class ClothesPreviewDTO {
+
+        private final Long clothesId;
+        private final String title;
+
+        public static ClothesPreviewDTO toDTO(Clothes clothes){
+            return ClothesPreviewDTO.builder()
+                    .clothesId(clothes.getId())
+                    .title(clothes.getTitle())
                     .build();
         }
     }

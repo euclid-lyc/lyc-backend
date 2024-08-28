@@ -7,4 +7,5 @@ public interface ClothesCommandService {
 
     ClothesDTO.ClothesImageResponseDTO createClothesByImage(ClothesRequestDTO.ClothesByImageDTO clothesByImageDTO, String imageUrl);
     ClothesDTO.ClothesTextResponseDTO createClothesByText(ClothesRequestDTO.ClothesByTextDTO clothesByTextDTO);
+    ClothesDTO.ClothesPreviewDTO deleteClothes(Long clothesId);
 }

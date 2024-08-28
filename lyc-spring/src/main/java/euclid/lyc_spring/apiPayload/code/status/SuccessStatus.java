@@ -18,6 +18,7 @@ public enum SuccessStatus implements BaseCode {
     _CLOTHES_BY_TEXT_CREATED(HttpStatus.CREATED, "CLOTHES2002", "옷장 게시글(텍스트) 작성 완료"),
     _CLOTHES_LIST_FETCHED(HttpStatus.OK, "CLOTHES2003", "옷장 게시글 목록 불러오기 완료"),
     _CLOTHES_FETCHED(HttpStatus.OK, "CLOTHES2003", "옷장 게시글 불러오기 완료"),
+    _CLOTHES_DELETED(HttpStatus.OK, "CLOTHES2004", "옷장 게시글 삭제 완료"),
 
     // authentication & authorization
     _VERIFICATION_CODE_SENT(HttpStatus.CREATED, "AA2001", "인증 코드 전송 완료"),
