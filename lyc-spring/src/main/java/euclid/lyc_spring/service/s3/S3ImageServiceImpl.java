@@ -35,25 +35,19 @@ public class S3ImageServiceImpl implements S3ImageService {
     private String bucketName;
 
     @Override
-    public S3DTO.ImageListDTO uploadImagesToBucket(List<MultipartFile> images) {
+    public List<String> uploadImagesToBucket(List<MultipartFile> images) {
 
-        List<S3DTO.ImageDTO> imageUrls = new ArrayList<>();
+        List<String> imageUrls = new ArrayList<>();
 
         for (MultipartFile image : images) {
-            String upload = this.upload(image);
-            imageUrls.add(S3DTO.ImageDTO.builder()
-                    .imageUrl(upload)
-                    .uploadAt(LocalDateTime.now())
-                    .build());
+            String imageUrl = this.upload(image);
+            imageUrls.add(imageUrl);
         }
         if (imageUrls.isEmpty()) {
             throw new S3Handler(ErrorStatus._PUT_OBJECT_EXCEPTION);
         }
 
-        return S3DTO.ImageListDTO.builder()
-                .imageCount(imageUrls.size())
-                .imageUrls(imageUrls)
-                .build();
+        return imageUrls;
     }
 
     @Override
