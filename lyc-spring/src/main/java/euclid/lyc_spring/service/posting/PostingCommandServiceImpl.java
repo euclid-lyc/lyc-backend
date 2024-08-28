@@ -13,6 +13,7 @@ import euclid.lyc_spring.domain.posting.Posting;
 import euclid.lyc_spring.dto.request.PostingRequestDTO;
 import euclid.lyc_spring.dto.response.PostingDTO;
 import euclid.lyc_spring.repository.*;
+import euclid.lyc_spring.service.s3.S3ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,8 @@ public class PostingCommandServiceImpl implements PostingCommandService {
     private final LikedPostingRepository likedPostingRepository;
     private final ImageRepository imageRepository;
     private final ImageUrlRepository imageUrlRepository;
+
+    private final S3ImageService s3ImageService;
 
 /*-------------------------------------------------- 게시글 공통 --------------------------------------------------*/
 
@@ -113,6 +116,7 @@ public class PostingCommandServiceImpl implements PostingCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.WRITER_ONLY_ALLOWED));
 
         posting.getImageList().forEach(image -> {
+            s3ImageService.deleteImageFromS3(image.getImage());
             imageUrlRepository.deleteAll(image.getImageUrlList());
             imageRepository.delete(image);
         });
