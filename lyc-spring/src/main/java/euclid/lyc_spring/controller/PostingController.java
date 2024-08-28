@@ -2,14 +2,22 @@ package euclid.lyc_spring.controller;
 
 import euclid.lyc_spring.apiPayload.ApiResponse;
 import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
+import euclid.lyc_spring.dto.request.ImageRequestDTO;
 import euclid.lyc_spring.dto.request.PostingRequestDTO;
 import euclid.lyc_spring.dto.response.PostingDTO;
 import euclid.lyc_spring.service.posting.PostingCommandService;
 import euclid.lyc_spring.service.posting.PostingQueryService;
+import euclid.lyc_spring.service.s3.S3ImageService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Tag(name = "Posting", description = "게시글 관련 API")
 @RestController
@@ -19,6 +27,7 @@ public class PostingController {
 
     private final PostingQueryService postingQueryService;
     private final PostingCommandService postingCommandService;
+    private final S3ImageService s3ImageService;
 
 /*-------------------------------------------------- 피드 --------------------------------------------------*/
 
@@ -44,10 +53,23 @@ public class PostingController {
 /*-------------------------------------------------- 게시글 공통 --------------------------------------------------*/
 
     @Operation(summary = "게시글(코디 or 리뷰) 작성하기", description = "게시글을 작성합니다.")
-    @PostMapping("/postings")
+    @PostMapping(value = "/postings", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ApiResponse<PostingDTO.PostingViewDTO> createPosting(
-            @RequestBody PostingRequestDTO.PostingSaveDTO postingSaveDTO) {
+            @RequestPart PostingRequestDTO.PostingSaveDTO postingSaveDTO) {
         PostingDTO.PostingViewDTO postingViewDTO = postingCommandService.createPosting(postingSaveDTO);
+        return ApiResponse.onSuccess(SuccessStatus._POSTING_CREATED, postingViewDTO);
+    }
+
+    @Operation(summary = "게시글(코디 or 리뷰) 작성하기 - 이미지 업로드", description = "게시글을 작성합니다.")
+    @PostMapping(value = "/postings/{postingId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ApiResponse<PostingDTO.PostingViewDTO> createPostingImage(
+            @PathVariable Long postingId,
+            @RequestPart ImageRequestDTO.LinkDTO linkDTO,
+            @RequestPart(required = false) List<MultipartFile> multipartFiles) {
+            List<String> images = multipartFiles.stream()
+                    .map(s3ImageService::upload)
+                    .toList();
+        PostingDTO.PostingViewDTO postingViewDTO = postingCommandService.createPostingImage(postingId, linkDTO.getLinks(), images);
         return ApiResponse.onSuccess(SuccessStatus._POSTING_CREATED, postingViewDTO);
     }
 

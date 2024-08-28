@@ -10,7 +10,6 @@ import euclid.lyc_spring.domain.mapping.SavedPosting;
 import euclid.lyc_spring.domain.posting.Image;
 import euclid.lyc_spring.domain.posting.ImageUrl;
 import euclid.lyc_spring.domain.posting.Posting;
-import euclid.lyc_spring.dto.request.ImageRequestDTO;
 import euclid.lyc_spring.dto.request.PostingRequestDTO;
 import euclid.lyc_spring.dto.response.PostingDTO;
 import euclid.lyc_spring.repository.*;
@@ -63,36 +62,40 @@ public class PostingCommandServiceImpl implements PostingCommandService {
 
         posting = postingRepository.save(posting);
 
-        createImage(posting, postingSaveDTO);
-
         return PostingDTO.PostingViewDTO.toDTO(posting);
     }
 
-    private void createImage(Posting posting, PostingRequestDTO.PostingSaveDTO postingSaveDTO) {
+    @Override
+    public PostingDTO.PostingViewDTO createPostingImage(Long postingId, List<List<String>> links, List<String> images) {
+        Posting posting = postingRepository.findById(postingId)
+                .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
 
-        postingSaveDTO.getImageList()
-                .forEach(imageSaveDTO -> {
-                    Image image = Image.builder()
-                            .image(imageSaveDTO.getImage())
-                            .posting(posting)
-                            .build();
-                    posting.addImage(image);
-                    imageRepository.save(image);
-                    createImageUrl(image, imageSaveDTO);
-                });
-
+        createImage(posting, links, images);
+        return PostingDTO.PostingViewDTO.toDTO(posting);
     }
 
-    private void createImageUrl(Image image, ImageRequestDTO.ImageSaveDTO imageSaveDTO) {
-        imageSaveDTO.getImageUrlList()
-                .forEach(link -> {
-                    ImageUrl imageUrl = ImageUrl.builder()
-                            .link(imageSaveDTO.getImage())
-                            .image(image)
-                            .build();
-                    image.addImageUrl(imageUrl);
-                    imageUrlRepository.save(imageUrl);
-                });
+    private void createImage(Posting posting, List<List<String>> links, List<String> images) {
+        for (int i=0; i<images.size(); i++) {
+            Image image = Image.builder()
+                    .image(images.get(i))
+                    .posting(posting)
+                    .build();
+            posting.addImage(image);
+            imageRepository.save(image);
+
+            links.get(i).forEach(link -> {
+                createLink(image, link);
+            });
+        }
+    }
+
+    private void createLink(Image image, String link) {
+        ImageUrl imageUrl = ImageUrl.builder()
+                .link(link)
+                .image(image)
+                .build();
+        image.addImageUrl(imageUrl);
+        imageUrlRepository.save(imageUrl);
     }
 
     @Override
