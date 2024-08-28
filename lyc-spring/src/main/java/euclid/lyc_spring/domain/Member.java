@@ -39,7 +39,7 @@ public class Member {
     @Column(nullable = false)
     private String loginPw;
 
-    @Column(length = 30, nullable = false)
+    @Column(length = 30, nullable = false, unique = true)
     private String email;
 
     @Column(length = 30, nullable = false)

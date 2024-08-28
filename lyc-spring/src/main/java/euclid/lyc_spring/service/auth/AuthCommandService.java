@@ -1,8 +1,8 @@
 package euclid.lyc_spring.service.auth;
 
-import euclid.lyc_spring.dto.request.MemberRequestDTO;
 import euclid.lyc_spring.dto.request.RegisterDTO;
 import euclid.lyc_spring.dto.request.SignRequestDTO;
+import euclid.lyc_spring.dto.request.VerificationRequestDTO;
 import euclid.lyc_spring.dto.response.MemberDTO;
 import euclid.lyc_spring.dto.response.SignDTO;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +19,7 @@ public interface AuthCommandService {
 
     SignDTO.SignInDTO signIn(SignRequestDTO.SignInDTO signInRequestDTO, HttpServletResponse response);
     SignDTO.SignOutDTO signOut(HttpServletRequest request);
-    MemberDTO.MemberPreviewDTO findId(MemberRequestDTO.MemberAuthDTO memberAuthDTO);
-    MemberDTO.MemberPreviewDTO checkInfoToFindPw(MemberRequestDTO.MemberPwAuthDTO memberPwAuthDTO);
-    MemberDTO.MemberPreviewDTO findPw(SignRequestDTO.PasswordDTO passwordDTO);
+    MemberDTO.MemberPreviewDTO findId(HttpServletRequest request, VerificationRequestDTO.IdVerificationDTO memberAuthDTO);
+    void findPw(HttpServletRequest request, String code);
+    MemberDTO.MemberPreviewDTO updatePw(HttpServletRequest request, VerificationRequestDTO.PwVerificationDTO pwVerificationDTO);
 }

@@ -31,8 +31,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         // 필터가 적용되지 않는 URI
-        if (request.getRequestURI().equals("/lyc/auths/sign-up") || request.getRequestURI().startsWith("/lyc/auths/sign-in") ||
-                request.getRequestURI().startsWith("/swagger-ui") || request.getRequestURI().startsWith("/v3/api-docs")) {
+        if (request.getRequestURI().startsWith("/lyc/auths/sign-up") || request.getRequestURI().startsWith("/lyc/auths/sign-in") ||
+            request.getRequestURI().startsWith("/swagger-ui") || request.getRequestURI().startsWith("/v3/api-docs")) {
+            filterChain.doFilter(request, response);
+            return ;
+        }
+
+        // 임시 토큰이 적용되는 URI
+        if (request.getRequestURI().equals("/lyc/auths/find-id") || request.getRequestURI().equals("/lyc/auths/find-pw")) {
+            String accessToken = jwtProvider.resolveToken(request);
+            if (accessToken != null && jwtProvider.validateToken(accessToken)) {
+                setAuthentication(accessToken);
+            } else {
+                sendResponse(response, ErrorStatus.JWT_INVALID_TOKEN.getReasonHttpStatus());
+                return ;
+            }
             filterChain.doFilter(request, response);
             return ;
         }
@@ -51,7 +64,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     sendResponse(response, ErrorStatus.JWT_ACCESS_TOKEN_EXPIRED.getReasonHttpStatus());
                     return ;
                 }
-
             } else {
                 // access 토큰이 유효하지 않으면 refresh 토큰 확인
                 if (jwtProvider.validateRefreshToken(accessToken)) {
