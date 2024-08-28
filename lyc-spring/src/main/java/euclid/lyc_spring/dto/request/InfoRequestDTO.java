@@ -9,58 +9,53 @@ import java.util.List;
 public class InfoRequestDTO {
 
     @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
+    @RequiredArgsConstructor
     public static class BasicInfoDTO {
 
-        private Short height;
-        private Short weight;
-        private TopSize topSize;
-        private BottomSize bottomSize;
-        private Integer postalCode;
-        private String address;
-        private String detailAddress;
-        private String text;
-        private InfoStyleListDTO infoStyle;
-        private InfoFitListDTO infoFit;
-        private InfoMaterialListDTO infoMaterial;
-        private InfoBodyTypeListDTO infoBodyType;
+        private final Short height;
+        private final Short weight;
+        private final TopSize topSize;
+        private final BottomSize bottomSize;
+        private final Integer postalCode;
+        private final String address;
+        private final String detailAddress;
+        private final String text;
+        private final InfoStyleListDTO infoStyle;
+        private final InfoFitListDTO infoFit;
+        private final InfoMaterialListDTO infoMaterial;
+        private final InfoBodyTypeListDTO infoBodyType;
     }
 
     @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
+    @RequiredArgsConstructor
     public static class InfoStyleListDTO {
 
-        private List<Style> preferredStyleList;
-        private List<Style> nonPreferredStyleList;
+        private final List<Style> preferredStyleList;
+        private final List<Style> nonPreferredStyleList;
     }
 
     @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
+    @RequiredArgsConstructor
     public static class InfoFitListDTO {
 
-        private List<Fit> preferredFitList;
-        private List<Fit> nonPreferredFitList;
+        private final List<Fit> preferredFitList;
+        private final List<Fit> nonPreferredFitList;
     }
 
     @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
+    @RequiredArgsConstructor
     public static class InfoMaterialListDTO {
 
-        private List<Material> preferredMaterialList;
-        private List<Material> nonPreferredMaterialList;
+        private final List<Material> preferredMaterialList;
+        private final List<Material> nonPreferredMaterialList;
     }
 
     @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
+    @RequiredArgsConstructor
     public static class InfoBodyTypeListDTO {
 
-        private List<BodyType> goodBodyTypeList;
-        private List<BodyType> badBodyTypeList;
+        private final List<BodyType> goodBodyTypeList;
+        private final List<BodyType> badBodyTypeList;
     }
 
 }
