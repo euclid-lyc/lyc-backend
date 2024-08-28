@@ -51,15 +51,15 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     @Override
     @Transactional
-    public MemberDTO.MemberInfoDTO join(RegisterDTO.RegisterMemberDTO registerMemberDTO) {
+    public MemberDTO.MemberInfoDTO join(RegisterDTO.RegisterMemberDTO registerMemberDTO, String imageUrl) {
 
         MemberRequestDTO.MemberDTO memberDTO = registerMemberDTO.getMember();
         InfoRequestDTO.BasicInfoDTO basicInfoDTO = registerMemberDTO.getInfo();
 
-        String image = memberDTO.getProfileImage();
+        if(imageUrl == null || imageUrl.isEmpty()) {
+            imageUrl = "default url";
+        }
 
-        if(memberDTO.getProfileImage().isEmpty())
-            image = "default url";
 
         // 이미 회원가입이 되어있음
         if (memberRepository.findByEmail(memberDTO.getEmail()).isPresent()) {
@@ -86,7 +86,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                 .phone(memberDTO.getPhone())
                 .nickname(memberDTO.getNickname())
                 .introduction(memberDTO.getIntroduction())
-                .profileImage(image)
+                .profileImage(imageUrl)
                 .role(Role.MEMBER)
                 .build();
 

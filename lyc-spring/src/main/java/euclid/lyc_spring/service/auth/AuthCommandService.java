@@ -12,7 +12,7 @@ public interface AuthCommandService {
 
 /*-------------------------------------------------- 회원가입 및 탈퇴 --------------------------------------------------*/
 
-    MemberDTO.MemberInfoDTO join(RegisterDTO.RegisterMemberDTO registerMemberDTO);
+    MemberDTO.MemberInfoDTO join(RegisterDTO.RegisterMemberDTO registerMemberDTO, String imageUrl);
     MemberDTO.MemberPreviewDTO withdraw();
 
 /*-------------------------------------------------- 로그인 및 로그아웃 --------------------------------------------------*/
