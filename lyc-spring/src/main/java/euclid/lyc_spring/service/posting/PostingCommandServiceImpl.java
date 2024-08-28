@@ -71,7 +71,10 @@ public class PostingCommandServiceImpl implements PostingCommandService {
     @Override
     public PostingDTO.PostingViewDTO createPostingImage(Long postingId, List<List<String>> links, List<String> images) {
         Posting posting = postingRepository.findById(postingId)
-                .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
+                .orElseThrow(() -> {
+                    images.forEach(s3ImageService::deleteImageFromS3);
+                    return new PostingHandler(ErrorStatus.POSTING_NOT_FOUND);
+                });
 
         createImage(posting, links, images);
         return PostingDTO.PostingViewDTO.toDTO(posting);
