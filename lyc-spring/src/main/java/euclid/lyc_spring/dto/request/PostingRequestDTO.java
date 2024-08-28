@@ -2,9 +2,7 @@ package euclid.lyc_spring.dto.request;
 
 import euclid.lyc_spring.domain.enums.Style;
 import euclid.lyc_spring.dto.request.ImageRequestDTO.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -20,10 +18,17 @@ public class PostingRequestDTO {
         private Short maxTemp;
         private Style style;
         private String content;
-        private List<ImageSaveDTO> imageList;
+        //private List<LinkDTO> images;
         private Long fromMemberId;
         private Long toMemberId;
         private Long writerId;
+    }
 
+    @Getter
+    @RequiredArgsConstructor
+    @Builder
+    public static class ImageSaveDTO {
+        private final String imageUrl;
+        private final List<String> links;
     }
 }
