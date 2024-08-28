@@ -9,5 +9,6 @@ public interface S3ImageService {
 
     S3DTO.ImageListDTO uploadImagesToBucket(List<MultipartFile> images);
     String upload(MultipartFile image);
+    void deleteImageFromS3(String imageAddress);
 
 }
