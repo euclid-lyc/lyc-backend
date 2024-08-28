@@ -16,6 +16,12 @@ public enum ErrorStatus implements BaseErrorCode {
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED,"COMMON401","인증이 필요합니다."),
     FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403", "금지된 요청입니다."),
 
+    // S3
+    _FILE_IS_NULL(HttpStatus.BAD_REQUEST, "S34001", "파일이 입력되지 않았습니다."),
+    _IO_EXCEPTION(HttpStatus.BAD_REQUEST, "S34002", "IO 오류가 발생했습니다."),
+    _BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S34003", "잘못된 확장자입니다."),
+    _PUT_OBJECT_EXCEPTION(HttpStatus.BAD_REQUEST, "S34004", "이미지 업로드하는 과정에서 오류가 발생했습니다."),
+
     // Authentication & Authorization
     JWT_EXPIRED(HttpStatus.UNAUTHORIZED, "AA4001", "토큰이 만료되었습니다."),
     JWT_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "AA4002", "인증에 실패하였습니다."),
