@@ -28,7 +28,7 @@ public class ClothesCommandServiceImpl implements ClothesCommandService {
     private final ClothesTextRepository clothesTextRepository;
 
     @Override
-    public ClothesDTO.ClothesImageResponseDTO createClothesByImage(ClothesRequestDTO.ClothesByImageDTO clothesByImageDTO) {
+    public ClothesDTO.ClothesImageResponseDTO createClothesByImage(ClothesRequestDTO.ClothesByImageDTO clothesByImageDTO, String imageUrl) {
 
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
@@ -39,15 +39,15 @@ public class ClothesCommandServiceImpl implements ClothesCommandService {
 
         member.addClothes(clothes);
         clothes = clothesRepository.save(clothes);
-        createClothesImage(clothes, clothesByImageDTO);
+        createClothesImage(clothes, imageUrl);
 
         return ClothesDTO.ClothesImageResponseDTO.toDTO(clothes);
     }
 
-    private void createClothesImage(Clothes clothes, ClothesRequestDTO.ClothesByImageDTO clothesByImageDTO) {
+    private void createClothesImage(Clothes clothes, String imageUrl) {
 
         ClothesImage clothesImage = ClothesImage.builder()
-                .image(clothesByImageDTO.getImage())
+                .image(imageUrl)
                 .build();
 
         clothes.addClothesImage(clothesImage);

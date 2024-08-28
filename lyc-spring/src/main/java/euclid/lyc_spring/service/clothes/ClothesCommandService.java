@@ -5,6 +5,6 @@ import euclid.lyc_spring.dto.response.ClothesDTO;
 
 public interface ClothesCommandService {
 
-    ClothesDTO.ClothesImageResponseDTO createClothesByImage(ClothesRequestDTO.ClothesByImageDTO clothesByImageDTO);
+    ClothesDTO.ClothesImageResponseDTO createClothesByImage(ClothesRequestDTO.ClothesByImageDTO clothesByImageDTO, String imageUrl);
     ClothesDTO.ClothesTextResponseDTO createClothesByText(ClothesRequestDTO.ClothesByTextDTO clothesByTextDTO);
 }
