@@ -38,6 +38,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
     private final MemberRepository memberRepository;
     private final CommissionRepository commissionRepository;
     private final ChatRepository chatRepository;
+    private final ScheduleRepository scheduleRepository;
 
     private final MemberChatRepository memberChatRepository;
 
@@ -123,9 +124,10 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
 
         Schedule schedule = Schedule.builder()
                 .date(commission.getCommissionOther().getDesiredDate())
-                .memo(null)
+                .memo("수령 희망 날짜")
                 .build();
-         chat.addScheduleList(schedule);
+        scheduleRepository.save(schedule);
+        chat.addScheduleList(schedule);
 
         return CommissionDTO.CommissionViewDTO.toDTO(commission);
     }
