@@ -2,12 +2,14 @@ package euclid.lyc_spring.dto.response;
 
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.chat.Chat;
+import euclid.lyc_spring.domain.chat.Schedule;
 import euclid.lyc_spring.domain.mapping.MemberChat;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -88,5 +90,20 @@ public class ChatResponseDTO {
     @Builder
     public static class ChatInactiveDTO {
         private final LocalDateTime inactive;
+    }
+
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class ScheduleDTO {
+        private final LocalDate date;
+        private final String memo;
+
+        public static ScheduleDTO toDTO(Schedule schedule) {
+            return ScheduleDTO.builder()
+                    .date(schedule.getDate())
+                    .memo(schedule.getMemo())
+                    .build();
+        }
     }
 }
