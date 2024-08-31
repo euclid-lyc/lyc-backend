@@ -45,6 +45,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         List<ChatResponseDTO.ChatPreviewDTO> chatPreviewDTOS = memberChatRepository.findAllByMemberId(member.getId()).stream()
+                .filter(memberChat -> memberChat.getChat().getInactive() == null)
                 .map(memberChat ->getChatMemberPreviewDTO(memberChat.getChat()))
                 .toList();
 
@@ -57,7 +58,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         String loginId = SecurityUtils.getAuthorizedLoginId();
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        Chat chat = chatRepository.findById(chatId)
+        Chat chat = chatRepository.findByIdAndInactive(chatId, null)
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
 
         // 채팅에 참여 중인 회원만 대화상대 목록 조회 가능
