@@ -95,7 +95,24 @@ public class ChatResponseDTO {
     @Getter
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     @Builder(access = AccessLevel.PRIVATE)
+    public static class ScheduleListDTO {
+
+        private final List<ScheduleDTO> schedules;
+
+        public static ScheduleListDTO toDTO(List<Schedule> schedules) {
+            return ScheduleListDTO.builder()
+                    .schedules(schedules.stream()
+                            .map(ScheduleDTO::toDTO)
+                            .toList())
+                    .build();
+        }
+    }
+
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
     public static class ScheduleDTO {
+
         private final LocalDate date;
         private final String memo;
 
