@@ -27,8 +27,8 @@ public class ChatController {
             오프셋 기반 페이징이 적용됩니다.
             """)
     @GetMapping("/chats")
-    public ApiResponse<ChatResponseDTO.ChatMemberPreviewListDTO> getAllChats() {
-        ChatResponseDTO.ChatMemberPreviewListDTO chatMemberPreviewDTO = chatQueryService.getAllChats();
+    public ApiResponse<ChatResponseDTO.ChatPreviewListDTO> getAllChats() {
+        ChatResponseDTO.ChatPreviewListDTO chatMemberPreviewDTO = chatQueryService.getAllChats();
         return ApiResponse.onSuccess(SuccessStatus._CHAT_LIST_FOUND, chatMemberPreviewDTO);
     }
 
@@ -44,7 +44,10 @@ public class ChatController {
             채팅에 참여하는 회원의 목록을 반환합니다.
             """)
     @GetMapping("/chats/{chatId}/members")
-    public void getChatMembers(@PathVariable Long chatId) {}
+    public ApiResponse<ChatResponseDTO.ChatMemberListDTO> getChatMembers(@PathVariable Long chatId) {
+        ChatResponseDTO.ChatMemberListDTO chatMemberListDTO = chatQueryService.getChatMembers(chatId);
+        return ApiResponse.onSuccess(SuccessStatus._CHAT_MEMBERS_FOUND, chatMemberListDTO);
+    }
 
     @Tag(name = "Chat - General", description = "채팅방 관련 API")
     @Operation(summary = "채팅방 나가기", description = """
