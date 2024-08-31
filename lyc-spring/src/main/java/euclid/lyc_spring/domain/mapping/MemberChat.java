@@ -5,13 +5,14 @@ import euclid.lyc_spring.domain.chat.Chat;
 import euclid.lyc_spring.domain.chat.ImageMessage;
 import euclid.lyc_spring.domain.chat.TextMessage;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberChat {
 
     @Id
@@ -34,4 +35,13 @@ public class MemberChat {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_id", nullable = false)
     private Chat chat;
+
+
+    @Builder
+    public MemberChat(Member member, Chat chat) {
+        this.textMessageList = new ArrayList<>();
+        this.imageMessageList = new ArrayList<>();
+        this.member = member;
+        this.chat = chat;
+    }
 }

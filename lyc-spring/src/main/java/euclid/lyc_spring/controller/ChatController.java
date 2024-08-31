@@ -1,5 +1,8 @@
 package euclid.lyc_spring.controller;
 
+import euclid.lyc_spring.apiPayload.ApiResponse;
+import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
+import euclid.lyc_spring.dto.response.ChatResponseDTO;
 import euclid.lyc_spring.service.chat.ChatCommandService;
 import euclid.lyc_spring.service.chat.ChatQueryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,9 +22,15 @@ public class ChatController {
 
     @Tag(name = "Chat - General", description = "채팅방 관련 API")
     @Operation(summary = "채팅방 목록 불러오기", description = """
+            로그인한 회원과 채팅을 주고받은 회원 목록을 최근 메시지를 주고받은 순으로 불러옵니다.
+            
+            오프셋 기반 페이징이 적용됩니다.
             """)
     @GetMapping("/chats")
-    public void getAllChats() {}
+    public ApiResponse<ChatResponseDTO.ChatMemberPreviewListDTO> getAllChats() {
+        ChatResponseDTO.ChatMemberPreviewListDTO chatMemberPreviewDTO = chatQueryService.getAllChats();
+        return ApiResponse.onSuccess(SuccessStatus._CHAT_LIST_FOUND, chatMemberPreviewDTO);
+    }
 
     @Tag(name = "Chat - General", description = "채팅방 관련 API")
     @Operation(summary = "채팅방 불러오기", description = """
