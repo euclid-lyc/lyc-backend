@@ -97,6 +97,11 @@ public class SocialCommandServiceImpl implements SocialCommandService {
     @Override
     public MemberDTO.MemberInfoDTO blockMember(Long memberId, Long blockMemberId) {
 
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
         if (Objects.equals(memberId, blockMemberId)){
             throw new MemberHandler(ErrorStatus.FORBIDDEN);
         } else if (blockMemberRepository.findByMemberIdAndBlockMemberId(memberId, blockMemberId).isPresent()) {
@@ -132,6 +137,11 @@ public class SocialCommandServiceImpl implements SocialCommandService {
 
     @Override
     public MemberDTO.MemberInfoDTO unblockMember(Long memberId, Long blockMemberId) {
+
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         if (blockMemberRepository.findByMemberIdAndBlockMemberId(memberId, blockMemberId).isEmpty()) {
             throw new MemberHandler(ErrorStatus.MEMBER_NOT_BLOCKING);
