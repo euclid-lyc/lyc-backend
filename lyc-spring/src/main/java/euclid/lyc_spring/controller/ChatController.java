@@ -9,6 +9,7 @@ import euclid.lyc_spring.service.chat.ChatQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -81,10 +82,25 @@ public class ChatController {
 /*-------------------------------------------------- 일정 --------------------------------------------------*/
 
     @Tag(name = "Chat - Schedule", description = "채팅방 일정 관련 API")
-    @Operation(summary = "월별 일정 불러오기", description = """
+    @Operation(summary = "일정 불러오기", description = """
+            채팅방에 추가한 일정 목록을 불러옵니다.
+            
+            쿼리 값에 따라 날짜별로 일정을 불러오거나 월별로 일정을 불러올 수 있습니다.
             """)
     @GetMapping("/chats/{chatId}/schedules")
-    public void getMonthlySchedule(@PathVariable Long chatId) {}
+    public ApiResponse<ChatResponseDTO.ScheduleListDTO> getSchedules(
+            @PathVariable Long chatId,
+            @RequestParam @Range(min = -999999999, max = 999999999) Integer year,
+            @RequestParam @Range(min = 1, max = 12)Integer month,
+            @RequestParam(required = false) @Range(min = 1, max = 31) Integer day) {
+        ChatResponseDTO.ScheduleListDTO scheduleListDTO;
+        if (day == null) {
+            scheduleListDTO = chatQueryService.getSchedules(chatId, year, month);
+        } else {
+            scheduleListDTO = chatQueryService.getSchedules(chatId, year, month, day);
+        }
+        return ApiResponse.onSuccess(SuccessStatus._CHAT_COMMISSION_SCHEDULE_FOUND, scheduleListDTO);
+    }
 
     @Tag(name = "Chat - Schedule", description = "채팅방 일정 관련 API")
     @Operation(summary = "일정 생성하기", description = """

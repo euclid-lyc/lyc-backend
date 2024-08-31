@@ -9,7 +9,11 @@ public interface ChatQueryService {
 
     ChatResponseDTO.ChatMemberListDTO getChatMembers(Long chatId);
 
-/*-------------------------------------------------- 메시지 --------------------------------------------------*/
+    ChatResponseDTO.ScheduleListDTO getSchedules(Long chatId, Integer year, Integer month);
+
+    ChatResponseDTO.ScheduleListDTO getSchedules(Long chatId, Integer year, Integer month, Integer day);
+
+    /*-------------------------------------------------- 메시지 --------------------------------------------------*/
 /*-------------------------------------------------- 일정 --------------------------------------------------*/
 /*-------------------------------------------------- 사진 및 동영상 --------------------------------------------------*/
 }

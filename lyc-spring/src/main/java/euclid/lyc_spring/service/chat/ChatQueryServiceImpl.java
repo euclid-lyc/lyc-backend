@@ -7,6 +7,7 @@ import euclid.lyc_spring.auth.SecurityUtils;
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.chat.Chat;
 import euclid.lyc_spring.domain.chat.ImageMessage;
+import euclid.lyc_spring.domain.chat.Schedule;
 import euclid.lyc_spring.domain.chat.TextMessage;
 import euclid.lyc_spring.domain.mapping.MemberChat;
 import euclid.lyc_spring.dto.response.ChatResponseDTO;
@@ -108,5 +109,51 @@ public class ChatQueryServiceImpl implements ChatQueryService {
 
 /*-------------------------------------------------- 메시지 --------------------------------------------------*/
 /*-------------------------------------------------- 일정 --------------------------------------------------*/
-/*-------------------------------------------------- 사진 및 동영상 --------------------------------------------------*/
+
+    @Override
+    public ChatResponseDTO.ScheduleListDTO getSchedules(Long chatId, Integer year, Integer month) {
+
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Chat chat = chatRepository.findByIdAndInactive(chatId, null)
+                .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
+
+        // 채팅에 참여 중인 회원만 대화상대 목록 조회 가능
+        if (!memberChatRepository.existsByMemberIdAndChatId(member.getId(), chatId)) {
+            throw new ChatHandler(ErrorStatus.CHAT_PARTICIPANTS_ONLY_ALLOWED);
+        }
+
+        List<Schedule> schedules = chat.getScheduleList().stream()
+                .filter(schedule -> schedule.getDate().getYear() == year && schedule.getDate().getMonthValue() == month)
+                .sorted(Comparator.comparing(Schedule::getDate))
+                .toList();
+
+        return ChatResponseDTO.ScheduleListDTO.toDTO(schedules);
+    }
+
+    @Override
+    public ChatResponseDTO.ScheduleListDTO getSchedules(Long chatId, Integer year, Integer month, Integer day) {
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Chat chat = chatRepository.findByIdAndInactive(chatId, null)
+                .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
+
+        // 채팅에 참여 중인 회원만 대화상대 목록 조회 가능
+        if (!memberChatRepository.existsByMemberIdAndChatId(member.getId(), chatId)) {
+            throw new ChatHandler(ErrorStatus.CHAT_PARTICIPANTS_ONLY_ALLOWED);
+        }
+
+        List<Schedule> schedules = chat.getScheduleList().stream()
+                .filter(schedule -> schedule.getDate().getYear() == year &&
+                                    schedule.getDate().getMonthValue() == month &&
+                                    schedule.getDate().getDayOfMonth() == day)
+                .sorted(Comparator.comparing(Schedule::getDate))
+                .toList();
+
+        return ChatResponseDTO.ScheduleListDTO.toDTO(schedules);
+    }
+
+    /*-------------------------------------------------- 사진 및 동영상 --------------------------------------------------*/
 }
