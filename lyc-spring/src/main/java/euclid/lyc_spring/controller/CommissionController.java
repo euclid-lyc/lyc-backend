@@ -73,7 +73,8 @@ public class CommissionController {
     @Operation(summary = "의뢰서 수정하기", description = """
             """)
     // 의뢰가 승낙되기 전에 수정할 수도 있지않나.. 그래서 commissionId로 바꿔봄
-    @PatchMapping("/chats/{commissionId}/commissions")
+    // 그래야 할 것 같긴 한데 근데 이거 수정을 어디서 함?
+    @PatchMapping("/chats/commissions/{commissionId}")
     public ApiResponse<CommissionDTO.CommissionViewDTO> updateCommission(
             @RequestBody CommissionRequestDTO.CommissionDTO commissionRequestDTO, @PathVariable Long commissionId) {
         CommissionDTO.CommissionViewDTO responseDTO = commissionCommandService.updateCommission(commissionId, commissionRequestDTO);
