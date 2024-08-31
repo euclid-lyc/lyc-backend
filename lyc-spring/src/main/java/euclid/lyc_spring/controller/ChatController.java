@@ -26,7 +26,7 @@ public class ChatController {
     @Operation(summary = "채팅방 목록 불러오기", description = """
             로그인한 회원과 채팅을 주고받은 회원 목록을 최근 메시지를 주고받은 순으로 불러옵니다.
             
-            오프셋 기반 페이징이 적용됩니다.
+            커서 기반 페이징이 적용됩니다.
             """)
     @GetMapping("/chats")
     public ApiResponse<ChatResponseDTO.ChatPreviewListDTO> getAllChats() {
@@ -120,7 +120,7 @@ public class ChatController {
     @Operation(summary = "사진 및 동영상 목록 불러오기", description = """
             채팅방에 전송한 사진 및 동영상의 목록을 조회합니다. (근데 우리 사진만 보내게 하면 안 될까...)
             
-            오프셋 기반 페이징이 적용됩니다.
+            커서 기반 페이징이 적용됩니다.
             """)
     @GetMapping("/chats/{chatId}/images")
     public ApiResponse<ChatResponseDTO.ImageListDTO> getAllChatImages(@PathVariable Long chatId) {
