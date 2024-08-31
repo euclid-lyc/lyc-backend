@@ -82,4 +82,11 @@ public class ChatResponseDTO {
                     .build();
         }
     }
+
+    @Getter
+    @RequiredArgsConstructor
+    @Builder
+    public static class ChatInactiveDTO {
+        private final LocalDateTime inactive;
+    }
 }

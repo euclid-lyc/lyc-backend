@@ -51,9 +51,17 @@ public class ChatController {
 
     @Tag(name = "Chat - General", description = "채팅방 관련 API")
     @Operation(summary = "채팅방 나가기", description = """
+            현재 진행중인 채팅을 종료합니다.
+            
+            의뢰가 종료되지 않은 경우 의뢰를 먼저 종료한 후 채팅을 종료할 수 있습니다.
+            
+            채팅 종료 시 Chat이 비활성화 되며 30일 이후 DB에서 자동으로 삭제됩니다.
             """)
     @PatchMapping("/chats/{chatId}")
-    public void terminateChat() {}
+    public ApiResponse<ChatResponseDTO.ChatInactiveDTO> terminateChat(@PathVariable Long chatId) {
+        ChatResponseDTO.ChatInactiveDTO chatInactiveDTO = chatCommandService.terminateChat(chatId);
+        return ApiResponse.onSuccess(SuccessStatus._CHAT_DISABLED, chatInactiveDTO);
+    }
 
 /*-------------------------------------------------- 메시지 --------------------------------------------------*/
 
