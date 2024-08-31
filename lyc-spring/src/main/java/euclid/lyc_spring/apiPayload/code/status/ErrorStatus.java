@@ -70,7 +70,8 @@ public enum ErrorStatus implements BaseErrorCode {
     CLOTHES_BAD_QUERY(HttpStatus.BAD_REQUEST, "CLOTHES4003", "type 쿼리에는 image와 text만 입력할 수 있습니다."),
 
     // CHAT
-    CHAT_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT4041", "채팅을 찾을 수 없습니다."),
+    CHAT_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT4001", "채팅을 찾을 수 없습니다."),
+    CHAT_MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT4002", "채팅방 메시지를 찾을 수 없습니다."),
 
     // WEATHER
     _WEATHER_NOT_FOUND(HttpStatus.NOT_FOUND, "WEATHER4001", "날씨 정보를 찾을 수 없습")
