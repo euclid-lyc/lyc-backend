@@ -11,15 +11,13 @@ import euclid.lyc_spring.domain.chat.Schedule;
 import euclid.lyc_spring.domain.chat.TextMessage;
 import euclid.lyc_spring.domain.mapping.MemberChat;
 import euclid.lyc_spring.dto.response.ChatResponseDTO;
-import euclid.lyc_spring.repository.ChatRepository;
-import euclid.lyc_spring.repository.CommissionRepository;
-import euclid.lyc_spring.repository.MemberChatRepository;
-import euclid.lyc_spring.repository.MemberRepository;
+import euclid.lyc_spring.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +32,8 @@ public class ChatQueryServiceImpl implements ChatQueryService {
     private final CommissionRepository commissionRepository;
 
     private final MemberChatRepository memberChatRepository;
+    private final TextMessageRepository textMessageRepository;
+    private final ImageMessageRepository imageMessageRepository;
 
 /*-------------------------------------------------- 채팅방 --------------------------------------------------*/
 
@@ -155,5 +155,28 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         return ChatResponseDTO.ScheduleListDTO.toDTO(schedules);
     }
 
-    /*-------------------------------------------------- 사진 및 동영상 --------------------------------------------------*/
+/*-------------------------------------------------- 사진 및 동영상 --------------------------------------------------*/
+
+    @Override
+    public ChatResponseDTO.ImageListDTO getAllChatImages(Long chatId) {
+
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Chat chat = chatRepository.findByIdAndInactive(chatId, null)
+                .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
+
+        // 채팅에 참여 중인 회원만 대화상대 목록 조회 가능
+        if (!memberChatRepository.existsByMemberIdAndChatId(member.getId(), chatId)) {
+            throw new ChatHandler(ErrorStatus.CHAT_PARTICIPANTS_ONLY_ALLOWED);
+        }
+
+        List<ImageMessage> imageMessages = chat.getMemberChatList().stream()
+                .flatMap(memberChat -> memberChat.getImageMessageList().stream())
+                .sorted(Comparator.comparing(ImageMessage::getCreatedAt).reversed())
+                .toList();
+
+        return ChatResponseDTO.ImageListDTO.toDTO(imageMessages);
+    }
+
 }

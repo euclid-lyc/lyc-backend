@@ -111,7 +111,7 @@ public class ChatController {
             @PathVariable Long chatId,
             @RequestBody ChatRequestDTO.ScheduleReqDTO scheduleReqDTO) {
         ChatResponseDTO.ScheduleDTO scheduleDTO = chatCommandService.createSchedule(chatId, scheduleReqDTO);
-        return ApiResponse.onSuccess(SuccessStatus._CHAT_COMMISSION_SCHEDUlE_CREATED, scheduleDTO);
+        return ApiResponse.onSuccess(SuccessStatus._CHAT_COMMISSION_SCHEDULE_CREATED, scheduleDTO);
     }
 
 /*-------------------------------------------------- 사진 및 동영상 --------------------------------------------------*/
@@ -120,7 +120,10 @@ public class ChatController {
     @Operation(summary = "사진 및 동영상 목록 불러오기", description = """
             """)
     @GetMapping("/chats/{chatId}/images")
-    public void getAllChatImages(@PathVariable Long chatId) {}
+    public ApiResponse<ChatResponseDTO.ImageListDTO> getAllChatImages(@PathVariable Long chatId) {
+        ChatResponseDTO.ImageListDTO imageListDTO = chatQueryService.getAllChatImages(chatId);
+        return ApiResponse.onSuccess(SuccessStatus._CHAT_IMAGE_LIST_FOUND, imageListDTO);
+    }
 
     @Tag(name = "Chat - Image", description = "채팅방 사진 관련 API")
     @Operation(summary = "사진 및 동영상 불러오기", description = """
