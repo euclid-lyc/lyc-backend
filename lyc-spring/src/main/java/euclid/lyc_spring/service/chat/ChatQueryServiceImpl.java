@@ -119,7 +119,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         Chat chat = chatRepository.findByIdAndInactive(chatId, null)
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
 
-        // 채팅에 참여 중인 회원만 대화상대 목록 조회 가능
+        // 채팅에 참여 중인 회원만 일정 목록 조회 가능
         if (!memberChatRepository.existsByMemberIdAndChatId(member.getId(), chatId)) {
             throw new ChatHandler(ErrorStatus.CHAT_PARTICIPANTS_ONLY_ALLOWED);
         }
@@ -140,7 +140,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         Chat chat = chatRepository.findByIdAndInactive(chatId, null)
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
 
-        // 채팅에 참여 중인 회원만 대화상대 목록 조회 가능
+        // 채팅에 참여 중인 회원만 일정 목록 조회 가능
         if (!memberChatRepository.existsByMemberIdAndChatId(member.getId(), chatId)) {
             throw new ChatHandler(ErrorStatus.CHAT_PARTICIPANTS_ONLY_ALLOWED);
         }
@@ -166,7 +166,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         Chat chat = chatRepository.findByIdAndInactive(chatId, null)
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
 
-        // 채팅에 참여 중인 회원만 대화상대 목록 조회 가능
+        // 채팅에 참여 중인 회원만 사진 목록 조회 가능
         if (!memberChatRepository.existsByMemberIdAndChatId(member.getId(), chatId)) {
             throw new ChatHandler(ErrorStatus.CHAT_PARTICIPANTS_ONLY_ALLOWED);
         }
@@ -177,6 +177,26 @@ public class ChatQueryServiceImpl implements ChatQueryService {
                 .toList();
 
         return ChatResponseDTO.ImageListDTO.toDTO(imageMessages);
+    }
+
+    @Override
+    public ChatResponseDTO.ChatImageDTO getChatImage(Long chatId, Long imageId) {
+
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        chatRepository.findByIdAndInactive(chatId, null)
+                .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
+
+        // 채팅에 참여 중인 회원만 사진 조회 가능
+        if (!memberChatRepository.existsByMemberIdAndChatId(member.getId(), chatId)) {
+            throw new ChatHandler(ErrorStatus.CHAT_PARTICIPANTS_ONLY_ALLOWED);
+        }
+
+        ImageMessage imageMessage = imageMessageRepository.findById(imageId)
+                .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_IMAGE_NOT_FOUND));
+
+        return ChatResponseDTO.ChatImageDTO.toDTO(imageMessage);
     }
 
 }
