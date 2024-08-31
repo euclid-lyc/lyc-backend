@@ -2,6 +2,7 @@ package euclid.lyc_spring.dto.response;
 
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.chat.Chat;
+import euclid.lyc_spring.domain.chat.ImageMessage;
 import euclid.lyc_spring.domain.chat.Schedule;
 import euclid.lyc_spring.domain.mapping.MemberChat;
 import lombok.AccessLevel;
@@ -120,6 +121,40 @@ public class ChatResponseDTO {
             return ScheduleDTO.builder()
                     .date(schedule.getDate())
                     .memo(schedule.getMemo())
+                    .build();
+        }
+    }
+
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class ImageListDTO {
+
+        private final List<ChatImageDTO> images;
+
+        public static ImageListDTO toDTO(List<ImageMessage> imageMessages) {
+            return ImageListDTO.builder()
+                    .images(imageMessages.stream()
+                            .map(ChatImageDTO::toDTO)
+                            .toList())
+                    .build();
+        }
+    }
+
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class ChatImageDTO {
+
+        private final Long imageId;
+        private final String imageUrl;
+        private final LocalDateTime createdAt;
+
+        public static ChatImageDTO toDTO(ImageMessage imageMessage) {
+            return ChatImageDTO.builder()
+                    .imageId(imageMessage.getId())
+                    .imageUrl(imageMessage.getImageUrl())
+                    .createdAt(imageMessage.getCreatedAt())
                     .build();
         }
     }
