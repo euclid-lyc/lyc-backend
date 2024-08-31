@@ -2,6 +2,7 @@ package euclid.lyc_spring.controller;
 
 import euclid.lyc_spring.apiPayload.ApiResponse;
 import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
+import euclid.lyc_spring.dto.request.ChatRequestDTO;
 import euclid.lyc_spring.dto.response.ChatResponseDTO;
 import euclid.lyc_spring.service.chat.ChatCommandService;
 import euclid.lyc_spring.service.chat.ChatQueryService;
@@ -87,9 +88,15 @@ public class ChatController {
 
     @Tag(name = "Chat - Schedule", description = "채팅방 일정 관련 API")
     @Operation(summary = "일정 생성하기", description = """
+            채팅방에 의뢰와 관련된 일정을 추가합니다.
             """)
     @PostMapping("/chats/{chatId}/schedules")
-    public void createSchedule(@PathVariable Long chatId) {}
+    public ApiResponse<ChatResponseDTO.ScheduleDTO> createSchedule(
+            @PathVariable Long chatId,
+            @RequestBody ChatRequestDTO.ScheduleReqDTO scheduleReqDTO) {
+        ChatResponseDTO.ScheduleDTO scheduleDTO = chatCommandService.createSchedule(chatId, scheduleReqDTO);
+        return ApiResponse.onSuccess(SuccessStatus._CHAT_COMMISSION_SCHEDUlE_CREATED, scheduleDTO);
+    }
 
 /*-------------------------------------------------- 사진 및 동영상 --------------------------------------------------*/
 
