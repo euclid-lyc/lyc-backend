@@ -72,6 +72,7 @@ public enum ErrorStatus implements BaseErrorCode {
     // CHAT
     CHAT_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT4001", "채팅을 찾을 수 없습니다."),
     CHAT_MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT4002", "채팅방 메시지를 찾을 수 없습니다."),
+    CHAT_PARTICIPANTS_ONLY_ALLOWED(HttpStatus.FORBIDDEN, "CHAT4003", "채팅방에 참여하고 있지 않습니다."),
 
     // WEATHER
     _WEATHER_NOT_FOUND(HttpStatus.NOT_FOUND, "WEATHER4001", "날씨 정보를 찾을 수 없습")

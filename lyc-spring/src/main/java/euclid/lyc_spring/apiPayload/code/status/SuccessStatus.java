@@ -76,6 +76,7 @@ public enum SuccessStatus implements BaseCode {
 
     // CHAT
     _CHAT_LIST_FOUND(HttpStatus.OK, "CHAT2001", "채팅방 목록 조회 성공"),
+    _CHAT_MEMBERS_FOUND(HttpStatus.OK, "CHAT2002", "채팅방 대화 상대 목록 조회 성공"),
 
     ;
 
