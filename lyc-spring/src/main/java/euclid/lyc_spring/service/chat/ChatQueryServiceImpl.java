@@ -60,6 +60,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         Chat chat = chatRepository.findById(chatId)
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
 
+        // 채팅에 참여 중인 회원만 대화상대 목록 조회 가능
         if (!memberChatRepository.existsByMemberIdAndChatId(member.getId(), chatId)) {
             throw new ChatHandler(ErrorStatus.CHAT_PARTICIPANTS_ONLY_ALLOWED);
         }
