@@ -33,6 +33,10 @@ public class Chat {
     private LocalDateTime updatedAt;
 
     @Setter
+    @Column
+    private LocalDateTime inactive;
+
+    @Setter
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private Commission commission;
