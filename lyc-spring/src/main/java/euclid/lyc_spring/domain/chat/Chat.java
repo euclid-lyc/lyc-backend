@@ -58,9 +58,8 @@ public class Chat {
         this.memberChatList = new ArrayList<>();
     }
 
-    public void addScheduleList(Schedule schedule){
+    public void addSchedule(Schedule schedule){
         scheduleList.add(schedule);
-        schedule.setChat(this);
     }
 
 }
