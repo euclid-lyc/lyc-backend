@@ -75,8 +75,9 @@ public enum SuccessStatus implements BaseCode {
     _WEATHER_FETCHED(HttpStatus.OK, "WEATHER2001", "오늘 날씨 불러오기 완료"),
 
     // CHAT
-    _CHAT_LIST_FOUND(HttpStatus.OK, "CHAT2001", "채팅방 목록 조회 성공"),
-    _CHAT_MEMBERS_FOUND(HttpStatus.OK, "CHAT2002", "채팅방 대화 상대 목록 조회 성공"),
+    _CHAT_LIST_FOUND(HttpStatus.OK, "CHAT2001", "채팅방 목록 조회 완료"),
+    _CHAT_MEMBERS_FOUND(HttpStatus.OK, "CHAT2002", "채팅방 대화 상대 목록 조회 완료"),
+    _CHAT_DISABLED(HttpStatus.OK, "CHAT2003", "채팅방 종료 완료"),
 
     ;
 
