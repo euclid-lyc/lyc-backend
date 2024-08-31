@@ -12,10 +12,6 @@ import euclid.lyc_spring.domain.chat.commission.Commission;
 import euclid.lyc_spring.domain.chat.commission.CommissionOther;
 import euclid.lyc_spring.domain.chat.commission.commission_style.*;
 import euclid.lyc_spring.domain.chat.commission.commission_info.*;
-import euclid.lyc_spring.domain.enums.Color;
-import euclid.lyc_spring.domain.enums.Fit;
-import euclid.lyc_spring.domain.enums.Material;
-import euclid.lyc_spring.domain.enums.Style;
 import euclid.lyc_spring.domain.mapping.MemberChat;
 import euclid.lyc_spring.dto.request.CommissionRequestDTO;
 import euclid.lyc_spring.dto.request.InfoRequestDTO;
@@ -125,9 +121,10 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
         Schedule schedule = Schedule.builder()
                 .date(commission.getCommissionOther().getDesiredDate())
                 .memo("수령 희망 날짜")
+                .chat(chat)
                 .build();
-        scheduleRepository.save(schedule);
-        chat.addScheduleList(schedule);
+        schedule = scheduleRepository.save(schedule);
+        chat.addSchedule(schedule);
 
         return CommissionDTO.CommissionViewDTO.toDTO(commission);
     }
