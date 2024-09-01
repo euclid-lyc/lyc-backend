@@ -2,6 +2,7 @@ package euclid.lyc_spring.service.social;
 
 import euclid.lyc_spring.apiPayload.code.status.ErrorStatus;
 import euclid.lyc_spring.apiPayload.exception.handler.MemberHandler;
+import euclid.lyc_spring.auth.SecurityUtils;
 import euclid.lyc_spring.domain.Follow;
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.dto.response.MemberDTO;
@@ -30,6 +31,11 @@ public class SocialQueryServiceImpl implements SocialQueryService {
     @Override
     public List<MemberDTO.FollowDTO> getFollowerList(Long memberId) {
 
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
         memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
@@ -42,6 +48,11 @@ public class SocialQueryServiceImpl implements SocialQueryService {
 
     @Override
     public List<MemberDTO.FollowDTO> getFollowingList(Long memberId) {
+
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
@@ -57,6 +68,12 @@ public class SocialQueryServiceImpl implements SocialQueryService {
 
     @Override
     public List<MemberDTO.TodayDirectorDTO> getTodayDirectorList() {
+
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
         return memberRepository.findAll().stream()
                 .sorted(Comparator.comparing(Member::getFollower).reversed())
                 .map(MemberDTO.TodayDirectorDTO::toDTO)
@@ -69,9 +86,15 @@ public class SocialQueryServiceImpl implements SocialQueryService {
 
     @Override
     public MemberDTO.MemberInfoDTO getMemberInfoDTO(Long memberId) {
+
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        return MemberDTO.MemberInfoDTO.toDTO(Objects.requireNonNull(member));
+        return MemberDTO.MemberInfoDTO.toDTO(member);
     }
 
 /*-------------------------------------------------- 회원 차단 --------------------------------------------------*/
