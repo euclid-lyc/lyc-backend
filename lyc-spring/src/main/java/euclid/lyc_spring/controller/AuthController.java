@@ -3,21 +3,21 @@ package euclid.lyc_spring.controller;
 import euclid.lyc_spring.apiPayload.ApiResponse;
 import euclid.lyc_spring.apiPayload.code.status.ErrorStatus;
 import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
-import euclid.lyc_spring.dto.request.MemberRequestDTO;
-import euclid.lyc_spring.dto.request.RegisterDTO;
-import euclid.lyc_spring.dto.request.SignRequestDTO;
-import euclid.lyc_spring.dto.request.VerificationRequestDTO;
+import euclid.lyc_spring.dto.request.*;
 import euclid.lyc_spring.dto.response.MemberDTO;
 import euclid.lyc_spring.dto.response.SignDTO;
 import euclid.lyc_spring.service.auth.AuthCommandService;
 import euclid.lyc_spring.service.auth.AuthQueryService;
 import euclid.lyc_spring.service.mail.MailService;
+import euclid.lyc_spring.service.s3.S3ImageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "Auth", description = "인증 관련 API")
 @RestController
@@ -27,6 +27,7 @@ public class AuthController {
 
     private final AuthQueryService authQueryService;
     private final AuthCommandService authCommandService;
+    private final S3ImageService s3ImageService;
     private final MailService mailService;
 
 /*-------------------------------------------------- 회원가입 및 탈퇴 --------------------------------------------------*/
@@ -34,10 +35,12 @@ public class AuthController {
     @Operation(summary = "회원가입 하기", description = """
     
             """)
-    @PostMapping("/sign-up")
+    @PostMapping(value = "/sign-up", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<MemberDTO.MemberInfoDTO> signUp(
-            @RequestBody RegisterDTO.RegisterMemberDTO registerMemberDTO) {
-        MemberDTO.MemberInfoDTO responseDTO = authCommandService.join(registerMemberDTO);
+            @RequestPart RegisterDTO.RegisterMemberDTO registerMemberDTO,
+            @RequestPart(required = false) MultipartFile image) {
+        String imageUrl = s3ImageService.upload(image);
+        MemberDTO.MemberInfoDTO responseDTO = authCommandService.join(registerMemberDTO, imageUrl);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_CREATED, responseDTO);
     }
 

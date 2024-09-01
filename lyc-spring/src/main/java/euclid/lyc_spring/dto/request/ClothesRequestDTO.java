@@ -14,8 +14,6 @@ public class ClothesRequestDTO {
     @AllArgsConstructor
     public static class ClothesByImageDTO {
 
-        private Long memberId;
-        private String image;
         private String text;
         private String title;
     }
@@ -25,7 +23,6 @@ public class ClothesRequestDTO {
     @AllArgsConstructor
     public static class ClothesByTextDTO {
 
-        private Long memberId;
         private String title;
         private String text;
         private Material material;

@@ -10,10 +10,10 @@ import euclid.lyc_spring.domain.mapping.SavedPosting;
 import euclid.lyc_spring.domain.posting.Image;
 import euclid.lyc_spring.domain.posting.ImageUrl;
 import euclid.lyc_spring.domain.posting.Posting;
-import euclid.lyc_spring.dto.request.ImageRequestDTO;
 import euclid.lyc_spring.dto.request.PostingRequestDTO;
 import euclid.lyc_spring.dto.response.PostingDTO;
 import euclid.lyc_spring.repository.*;
+import euclid.lyc_spring.service.s3.S3ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +31,8 @@ public class PostingCommandServiceImpl implements PostingCommandService {
     private final LikedPostingRepository likedPostingRepository;
     private final ImageRepository imageRepository;
     private final ImageUrlRepository imageUrlRepository;
+
+    private final S3ImageService s3ImageService;
 
 /*-------------------------------------------------- 게시글 공통 --------------------------------------------------*/
 
@@ -63,36 +65,43 @@ public class PostingCommandServiceImpl implements PostingCommandService {
 
         posting = postingRepository.save(posting);
 
-        createImage(posting, postingSaveDTO);
-
         return PostingDTO.PostingViewDTO.toDTO(posting);
     }
 
-    private void createImage(Posting posting, PostingRequestDTO.PostingSaveDTO postingSaveDTO) {
-
-        postingSaveDTO.getImageList()
-                .forEach(imageSaveDTO -> {
-                    Image image = Image.builder()
-                            .image(imageSaveDTO.getImage())
-                            .posting(posting)
-                            .build();
-                    posting.addImage(image);
-                    imageRepository.save(image);
-                    createImageUrl(image, imageSaveDTO);
+    @Override
+    public PostingDTO.PostingViewDTO createPostingImage(Long postingId, List<List<String>> links, List<String> images) {
+        Posting posting = postingRepository.findById(postingId)
+                .orElseThrow(() -> {
+                    images.forEach(s3ImageService::deleteImageFromS3);
+                    return new PostingHandler(ErrorStatus.POSTING_NOT_FOUND);
                 });
 
+        createImage(posting, links, images);
+        return PostingDTO.PostingViewDTO.toDTO(posting);
     }
 
-    private void createImageUrl(Image image, ImageRequestDTO.ImageSaveDTO imageSaveDTO) {
-        imageSaveDTO.getImageUrlList()
-                .forEach(link -> {
-                    ImageUrl imageUrl = ImageUrl.builder()
-                            .link(imageSaveDTO.getImage())
-                            .image(image)
-                            .build();
-                    image.addImageUrl(imageUrl);
-                    imageUrlRepository.save(imageUrl);
-                });
+    private void createImage(Posting posting, List<List<String>> links, List<String> images) {
+        for (int i=0; i<images.size(); i++) {
+            Image image = Image.builder()
+                    .image(images.get(i))
+                    .posting(posting)
+                    .build();
+            posting.addImage(image);
+            imageRepository.save(image);
+
+            links.get(i).forEach(link -> {
+                createLink(image, link);
+            });
+        }
+    }
+
+    private void createLink(Image image, String link) {
+        ImageUrl imageUrl = ImageUrl.builder()
+                .link(link)
+                .image(image)
+                .build();
+        image.addImageUrl(imageUrl);
+        imageUrlRepository.save(imageUrl);
     }
 
     @Override
@@ -110,6 +119,7 @@ public class PostingCommandServiceImpl implements PostingCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.WRITER_ONLY_ALLOWED));
 
         posting.getImageList().forEach(image -> {
+            s3ImageService.deleteImageFromS3(image.getImage());
             imageUrlRepository.deleteAll(image.getImageUrlList());
             imageRepository.delete(image);
         });
