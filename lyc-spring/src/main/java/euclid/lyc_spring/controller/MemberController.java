@@ -18,31 +18,31 @@ public class MemberController {
 
 /*-------------------------------------------------- 회원정보 설정 --------------------------------------------------*/
 
-    @Operation(summary = "회원 정보 불러오기", description = """
+    @Operation(summary = "[구현중] 회원 정보 불러오기", description = """
             
             """)
     @GetMapping("/members/{memberId}/info")
     public void getMemberInfo(@PathVariable("memberId") Long memberId) {}
 
-    @Operation(summary = "회원 정보 변경하기", description = """
+    @Operation(summary = "[구현중] 회원 정보 변경하기", description = """
             
             """)
     @PatchMapping("/members/{memberId}/info")
     public void updateMemberInfo(@PathVariable("memberId") Long memberId) {}
 
-    @Operation(summary = "배송지 정보 불러오기", description = """
+    @Operation(summary = "[구현중] 배송지 정보 불러오기", description = """
             
             """)
     @GetMapping("/members/{memberId}/delivery")
     public void getDeliveryInfo(@PathVariable("memberId") Long memberId) {}
 
-    @Operation(summary = "배송지 정보 변경하기", description = """
+    @Operation(summary = "[구현중] 배송지 정보 변경하기", description = """
             
             """)
     @PatchMapping("/members/{memberId}/delivery")
     public void updateDeliveryInfo(@PathVariable("memberId") Long memberId) {}
 
-    @Operation(summary = "패스워드 변경하기", description = """
+    @Operation(summary = "[구현중] 패스워드 변경하기", description = """
             
             """)
     @PatchMapping("/members/{memberId}/pw-info")
@@ -50,13 +50,13 @@ public class MemberController {
 
 /*-------------------------------------------------- 푸시알림 설정 --------------------------------------------------*/
 
-    @Operation(summary = "기존 푸시알림 설정 불러오기", description = """
+    @Operation(summary = "[구현중] 기존 푸시알림 설정 불러오기", description = """
             
             """)
     @GetMapping("/members/{memberId}/push-sets")
     public void getPushSet(@PathVariable Long memberId) {}
 
-    @Operation(summary = "푸시알림 설정 변경하기", description = """
+    @Operation(summary = "[구현중] 푸시알림 설정 변경하기", description = """
             
             """)
     @PatchMapping("/members/{memberId}/push-sets")

@@ -32,8 +32,12 @@ public class AuthController {
 
 /*-------------------------------------------------- 회원가입 및 탈퇴 --------------------------------------------------*/
 
-    @Operation(summary = "회원가입 하기", description = """
-    
+    @Operation(summary = "[구현완료] 회원가입 하기", description = """
+            회원가입 데이터를 입력받아 member 테이블에 새로운 회원을 추가합니다.
+            
+            동시에 member와 연결된 info, info_style, info_fit, info_material, info_body_type도 초기화됩니다.
+            
+            이미지 요청 형식은 'multipart/form-data', 나머지 데이터의 요청 형식은 'application/json'입니다.
             """)
     @PostMapping(value = "/sign-up", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<MemberDTO.MemberInfoDTO> signUp(
@@ -44,7 +48,7 @@ public class AuthController {
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_CREATED, responseDTO);
     }
 
-    @Operation(summary = "회원 탈퇴하기", description = """
+    @Operation(summary = "[구현완료] 회원 탈퇴하기", description = """
             요청을 보낸 시점을 기준으로 회원을 비활성화합니다(inactive 값을 지정합니다).
             
             회원 정보는 관리자 API(deleteMember)에 의해 30일 뒤에 DB에서 자동으로 삭제됩니다.
@@ -57,7 +61,7 @@ public class AuthController {
 
 /*-------------------------------------------------- 로그인 및 로그아웃 --------------------------------------------------*/
 
-    @Operation(summary = "로그인 하기", description = """
+    @Operation(summary = "[구현완료] 로그인 하기", description = """
             회원 id와 비밀번호르 입력 받아 일치 여부를 확인한 후, 회원 정보가 일치하는 경우 토큰을 반환합니다.
             
             access token은 회원이 API를 사용하는 데 필요한 인증 정보입니다. 클라이언트에서 별도로 관리 바랍니다.
@@ -68,7 +72,7 @@ public class AuthController {
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_SIGNED_IN, signInResponseDTO);
     }
 
-    @Operation(summary = "로그아웃 하기", description = """
+    @Operation(summary = "[구현완료] 로그아웃 하기", description = """
             로그인한 회원의 인증을 해제하고 Refresh Token을 삭제합니다.
             
             기존의 accessToken은 BlackList에 등록되며, 만료기간이 지나면 자동으로 삭제됩니다.
@@ -79,7 +83,7 @@ public class AuthController {
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_SIGNED_OUT, signOutResponseDTO);
     }
 
-    @Operation(summary = "아이디 찾기 - 이메일 인증 코드 전송", description = """
+    @Operation(summary = "[구현완료] 아이디 찾기 - 이메일 인증 코드 전송", description = """
             가입된 이메일로 인증 코드를 전송합니다.
             """)
     @PostMapping("/sign-in/find-id/send-verification-code")
@@ -95,7 +99,7 @@ public class AuthController {
         }
     }
 
-    @Operation(summary = "아이디 찾기 - 인증 코드 검증", description = """
+    @Operation(summary = "[구현완료] 아이디 찾기 - 인증 코드 검증", description = """
             이름과 이메일(혹은 전화번호)를 RequestBody로 받아 회원의 아이디를 반환합니다.
             
             해당 API는 클라이언트에서 이메일 인증을 먼저 수행한 후 송신 가능합니다.
@@ -109,7 +113,7 @@ public class AuthController {
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_LOGIN_ID_FOUND, memberPreviewDTO);
     }
 
-    @Operation(summary = "비밀번호 찾기 - 이메일 인증 코드 전송", description = """
+    @Operation(summary = "[구현완료] 비밀번호 찾기 - 이메일 인증 코드 전송", description = """
             가입된 이메일로 인증 코드를 전송합니다.
             """)
     @PostMapping("/sign-in/find-pw/send-verification-code")
@@ -121,7 +125,7 @@ public class AuthController {
         return ApiResponse.onSuccess(SuccessStatus._VERIFICATION_CODE_SENT);
     }
 
-    @Operation(summary = "비밀번호 찾기 - 인증 코드 검증", description = """
+    @Operation(summary = "[구현완료] 비밀번호 찾기 - 인증 코드 검증", description = """
             인증 코드 및 회원 정보를 확인합니다.
             
             해당 API는 클라이언트에서 이메일 인증을 먼저 수행한 후 송신 가능합니다.
@@ -136,7 +140,7 @@ public class AuthController {
         return ApiResponse.onSuccess(SuccessStatus._VERIFICATION_CODE_CHECKED);
     }
 
-    @Operation(summary = "비밀번호 찾기 - 비밀번호 변경", description = """
+    @Operation(summary = "[구현완료] 비밀번호 찾기 - 비밀번호 변경", description = """
             비밀번호와 비밀번호 확인을 RequestBody로 받아 비밀번호르 변경합니다.
             """)
     @PatchMapping("/find-pw/update")

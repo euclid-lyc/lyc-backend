@@ -23,7 +23,7 @@ public class ChatController {
 /*-------------------------------------------------- 채팅방 --------------------------------------------------*/
 
     @Tag(name = "Chat - General", description = "채팅방 관련 API")
-    @Operation(summary = "채팅방 목록 불러오기", description = """
+    @Operation(summary = "[구현중] 채팅방 목록 불러오기", description = """
             로그인한 회원과 채팅을 주고받은 회원 목록을 최근 메시지를 주고받은 순으로 불러옵니다.
             
             커서 기반 페이징이 적용됩니다.
@@ -35,14 +35,14 @@ public class ChatController {
     }
 
     @Tag(name = "Chat - General", description = "채팅방 관련 API")
-    @Operation(summary = "채팅방 불러오기", description = """
+    @Operation(summary = "[구현중] 채팅방 불러오기", description = """
             로그인한 회원과 특정 회원의 채팅방 정보 및 메시지 목록을 반환합니다.
             """)
     @GetMapping("/chats/{chatId}")
     public void getChat(@PathVariable Long chatId) {}
 
     @Tag(name = "Chat - General", description = "채팅방 관련 API")
-    @Operation(summary = "대화상대 목록 불러오기", description = """
+    @Operation(summary = "[구현완료] 대화상대 목록 불러오기", description = """
             채팅에 참여하는 회원의 목록을 반환합니다.
             """)
     @GetMapping("/chats/{chatId}/members")
@@ -52,7 +52,7 @@ public class ChatController {
     }
 
     @Tag(name = "Chat - General", description = "채팅방 관련 API")
-    @Operation(summary = "채팅방 나가기", description = """
+    @Operation(summary = "[구현완료] 채팅방 나가기", description = """
             현재 진행중인 채팅을 종료합니다.
             
             의뢰가 종료되지 않은 경우 의뢰를 먼저 종료한 후 채팅을 종료할 수 있습니다.
@@ -68,13 +68,13 @@ public class ChatController {
 /*-------------------------------------------------- 메시지 --------------------------------------------------*/
 
     @Tag(name = "Chat - Message", description = "채팅방 메시지 관련 API")
-    @Operation(summary = "메시지 전송하기 (텍스트)", description = """
+    @Operation(summary = "[구현중] 메시지 전송하기 (텍스트)", description = """
             """)
     @PostMapping("/chats/{chatId}/messages/texts")
     public void sendMessageByText(@PathVariable Long chatId) {}
 
     @Tag(name = "Chat - Message", description = "채팅방 메시지 관련 API")
-    @Operation(summary = "메시지 전송하기 (이미지)", description = """
+    @Operation(summary = "[구현중] 메시지 전송하기 (이미지)", description = """
             """)
     @PostMapping("/chats/{chatId}/messages/images")
     public void sendMessageByImage(@PathVariable Long chatId) {}
@@ -82,7 +82,7 @@ public class ChatController {
 /*-------------------------------------------------- 일정 --------------------------------------------------*/
 
     @Tag(name = "Chat - Schedule", description = "채팅방 일정 관련 API")
-    @Operation(summary = "일정 불러오기", description = """
+    @Operation(summary = "[구현완료] 일정 불러오기", description = """
             채팅방에 추가한 일정 목록을 불러옵니다.
             
             쿼리 값에 따라 날짜별로 일정을 불러오거나 월별로 일정을 불러올 수 있습니다.
@@ -103,7 +103,7 @@ public class ChatController {
     }
 
     @Tag(name = "Chat - Schedule", description = "채팅방 일정 관련 API")
-    @Operation(summary = "일정 생성하기", description = """
+    @Operation(summary = "[구현완료] 일정 생성하기", description = """
             채팅방에 의뢰와 관련된 일정을 추가합니다.
             """)
     @PostMapping("/chats/{chatId}/schedules")
@@ -117,7 +117,7 @@ public class ChatController {
 /*-------------------------------------------------- 사진 및 동영상 --------------------------------------------------*/
 
     @Tag(name = "Chat - Image", description = "채팅방 사진 관련 API")
-    @Operation(summary = "사진 및 동영상 목록 불러오기", description = """
+    @Operation(summary = "[구현중] 사진 및 동영상 목록 불러오기", description = """
             채팅방에 전송한 사진 및 동영상의 목록을 조회합니다. (근데 우리 사진만 보내게 하면 안 될까...)
             
             커서 기반 페이징이 적용됩니다.
@@ -129,7 +129,7 @@ public class ChatController {
     }
 
     @Tag(name = "Chat - Image", description = "채팅방 사진 관련 API")
-    @Operation(summary = "사진 및 동영상 불러오기", description = """
+    @Operation(summary = "[구현완료] 사진 및 동영상 불러오기", description = """
             채팅방에 전송한 특정 사진을 조회합니다.
             """)
     @GetMapping("/chats/{chatId}/images/{imageId}")
@@ -139,10 +139,10 @@ public class ChatController {
         return ApiResponse.onSuccess(SuccessStatus._CHAT_IMAGE_FOUND, chatImageDTO);
     }
 
-    @Tag(name = "Chat - Image", description = "채팅방 사진 관련 API")
-    @Operation(summary = "사진 및 동영상 미리보기 불러오기", description = """
-            """)
-    @GetMapping("/chats/{chatId}/images/{imageId}/preview")
-    public void getChatImagePreview(
-            @PathVariable Long chatId, @PathVariable Long imageId) {}
+    //@Tag(name = "Chat - Image", description = "채팅방 사진 관련 API")
+    //@Operation(summary = "사진 및 동영상 미리보기 불러오기", description = """
+    //        """)
+    //@GetMapping("/chats/{chatId}/images/{imageId}/preview")
+    //public void getChatImagePreview(
+    //        @PathVariable Long chatId, @PathVariable Long imageId) {}
 }
