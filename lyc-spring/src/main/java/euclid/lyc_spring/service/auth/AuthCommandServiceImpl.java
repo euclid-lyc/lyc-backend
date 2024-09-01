@@ -124,6 +124,9 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     private void createInfoStyle(Info info, InfoRequestDTO.InfoStyleListDTO infoStyleListDTO) {
 
+        // null 체크
+        if (infoStyleListDTO == null || infoStyleListDTO.getPreferredStyleList() == null) {return;}
+
         infoStyleListDTO.getPreferredStyleList()
                 .forEach(style -> {
                     InfoStyle infoStyle = InfoStyle.builder()
@@ -146,6 +149,9 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     }
 
     private void createInfoFit(Info info, InfoRequestDTO.InfoFitListDTO infoFitListDTO) {
+
+        // null 체크
+        if (infoFitListDTO == null || infoFitListDTO.getPreferredFitList() == null) {return;}
 
         infoFitListDTO.getPreferredFitList()
                 .forEach(style -> {
@@ -170,6 +176,9 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     private void createInfoMaterial(Info info, InfoRequestDTO.InfoMaterialListDTO infoMaterialListDTO) {
 
+        // null 체크
+        if (infoMaterialListDTO == null || infoMaterialListDTO.getPreferredMaterialList() == null) {return;}
+
         infoMaterialListDTO.getPreferredMaterialList()
                 .forEach(material -> {
                     InfoMaterial infoMaterial = InfoMaterial.builder()
@@ -192,6 +201,9 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     }
 
     private void createInfoBodyType(Info info, InfoRequestDTO.InfoBodyTypeListDTO infoBodyTypeListDTO) {
+
+        // null 체크
+        if (infoBodyTypeListDTO == null || infoBodyTypeListDTO.getGoodBodyTypeList() == null) {return;}
 
         infoBodyTypeListDTO.getGoodBodyTypeList()
                 .forEach(bodyType -> {

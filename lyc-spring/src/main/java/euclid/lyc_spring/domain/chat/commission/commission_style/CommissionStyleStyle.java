@@ -1,4 +1,4 @@
-package euclid.lyc_spring.domain.chat.commission.commission_info;
+package euclid.lyc_spring.domain.chat.commission.commission_style;
 
 import euclid.lyc_spring.domain.enums.Style;
 import jakarta.persistence.*;
@@ -6,9 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
 @Entity
-public class CommissionInfoStyle {
+@Getter
+public class CommissionStyleStyle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,15 +24,15 @@ public class CommissionInfoStyle {
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "commission_info_id", nullable = false)
-    private CommissionInfo commissionInfo;
+    @JoinColumn(name = "commission_style_id", nullable = false)
+    private CommissionStyle commissionStyle;
 
-    protected CommissionInfoStyle() {}
+    protected CommissionStyleStyle() {}
 
     @Builder
-    public CommissionInfoStyle(Style style, Boolean isPrefer, CommissionInfo commissionInfo) {
+    public CommissionStyleStyle(Style style, Boolean isPrefer, CommissionStyle commissionStyle) {
         this.style = style;
         this.isPrefer = isPrefer;
-        this.commissionInfo = commissionInfo;
+        this.commissionStyle = commissionStyle;
     }
 }

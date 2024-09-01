@@ -57,11 +57,20 @@ public enum ErrorStatus implements BaseErrorCode {
     WRITER_ONLY_ALLOWED(HttpStatus.BAD_REQUEST, "POST4048", "게시글 작성자에게만 권한이 부여됩니다."),
     POSTING_CANNOT_SAVED_BY_WRITER(HttpStatus.BAD_REQUEST, "POST4049", "자신의 게시글을 저장할 수 업습니다."),
 
+    // Commission
+    COMMISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMISSION4041", "의뢰를 찾을 수 없습니다."),
+    COMMISSION_OTHER_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMISSION4042", "기타사항을 찾을 수 없습니다."),
+    COMMISSION_STYLE_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMISSION4043", "원하는 스타일을 찾을 수 없습니다."),
+    COMMISSION_INFO_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMISSION4044", "기본 정보를 찾을 수 없습니다."),
+
     // clothes
     CLOTHES_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4041", "옷장 게시들이 존재하지 않습니다."),
     CLOTHES_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4001", "옷장 이미지를 찾을 수 없습니다."),
     CLOTHES_TEXT_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4002", "옷장 텍스트를 찾을 수 없습니다."),
     CLOTHES_BAD_QUERY(HttpStatus.BAD_REQUEST, "CLOTHES4003", "type 쿼리에는 image와 text만 입력할 수 있습니다."),
+
+    // CHAT
+    CHAT_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT4041", "채팅을 찾을 수 없습니다."),
 
     // WEATHER
     _WEATHER_NOT_FOUND(HttpStatus.NOT_FOUND, "WEATHER4001", "날씨 정보를 찾을 수 없습")
