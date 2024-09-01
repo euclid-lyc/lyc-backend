@@ -72,10 +72,17 @@ public enum SuccessStatus implements BaseCode {
     _COMMISSION_TERMINATION(HttpStatus.OK, "COMMISSION2008", "의뢰 종료 승낙 완료"),
     _COMMISSION_TERMINATION_DECLINED(HttpStatus.OK, "COMMISSION2009", "의뢰 종료 거절 완료"),
 
-
     // WEATHER
-    _WEATHER_FETCHED(HttpStatus.OK, "WEATHER2001", "오늘 날씨 불러오기 완료")
+    _WEATHER_FETCHED(HttpStatus.OK, "WEATHER2001", "오늘 날씨 불러오기 완료"),
 
+    // CHAT
+    _CHAT_LIST_FOUND(HttpStatus.OK, "CHAT2001", "채팅방 목록 조회 완료"),
+    _CHAT_MEMBERS_FOUND(HttpStatus.OK, "CHAT2002", "채팅방 대화 상대 목록 조회 완료"),
+    _CHAT_DISABLED(HttpStatus.OK, "CHAT2003", "채팅방 종료 완료"),
+    _CHAT_COMMISSION_SCHEDULE_CREATED(HttpStatus.CREATED, "CHAT2004", "채팅방 의뢰 일정 추가 완료"),
+    _CHAT_COMMISSION_SCHEDULE_FOUND(HttpStatus.OK, "CHAT2005", "채팅방 의뢰 일정 조회 완료"),
+    _CHAT_IMAGE_LIST_FOUND(HttpStatus.OK, "CHAT2006", "채팅방 이미지 목록 조회 완료"),
+    _CHAT_IMAGE_FOUND(HttpStatus.OK, "CHAT2007", "채팅방 이미지 조회 완료"),
 
     ;
 

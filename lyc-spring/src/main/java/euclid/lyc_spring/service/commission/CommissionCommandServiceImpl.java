@@ -12,10 +12,7 @@ import euclid.lyc_spring.domain.chat.commission.Commission;
 import euclid.lyc_spring.domain.chat.commission.CommissionOther;
 import euclid.lyc_spring.domain.chat.commission.commission_style.*;
 import euclid.lyc_spring.domain.chat.commission.commission_info.*;
-import euclid.lyc_spring.domain.enums.Color;
-import euclid.lyc_spring.domain.enums.Fit;
-import euclid.lyc_spring.domain.enums.Material;
-import euclid.lyc_spring.domain.enums.Style;
+import euclid.lyc_spring.domain.mapping.MemberChat;
 import euclid.lyc_spring.dto.request.CommissionRequestDTO;
 import euclid.lyc_spring.dto.request.InfoRequestDTO;
 import euclid.lyc_spring.dto.request.StyleRequestDTO;
@@ -37,6 +34,9 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
     private final MemberRepository memberRepository;
     private final CommissionRepository commissionRepository;
     private final ChatRepository chatRepository;
+    private final ScheduleRepository scheduleRepository;
+
+    private final MemberChatRepository memberChatRepository;
 
     private final CommissionInfoRepository commissionInfoRepository;
     private final CommissionInfoStyleRepository commissionInfoStyleRepository;
@@ -106,11 +106,25 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 .build();
         chatRepository.save(chat);
 
+        MemberChat memberChat1 = MemberChat.builder()
+                .chat(chat)
+                .member(member)
+                .build();
+        memberChatRepository.save(memberChat1);
+
+        MemberChat memberChat2 = MemberChat.builder()
+                .chat(chat)
+                .member(commission.getDirector())
+                .build();
+        memberChatRepository.save(memberChat2);
+
         Schedule schedule = Schedule.builder()
                 .date(commission.getCommissionOther().getDesiredDate())
-                .memo(null)
+                .memo("수령 희망 날짜")
+                .chat(chat)
                 .build();
-         chat.addScheduleList(schedule);
+        schedule = scheduleRepository.save(schedule);
+        chat.addSchedule(schedule);
 
         return CommissionDTO.CommissionViewDTO.toDTO(commission);
     }

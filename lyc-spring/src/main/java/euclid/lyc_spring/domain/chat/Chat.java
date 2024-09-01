@@ -33,6 +33,10 @@ public class Chat {
     private LocalDateTime updatedAt;
 
     @Setter
+    @Column
+    private LocalDateTime inactive;
+
+    @Setter
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private Commission commission;
@@ -54,9 +58,8 @@ public class Chat {
         this.memberChatList = new ArrayList<>();
     }
 
-    public void addScheduleList(Schedule schedule){
+    public void addSchedule(Schedule schedule){
         scheduleList.add(schedule);
-        schedule.setChat(this);
     }
 
 }

@@ -22,7 +22,6 @@ public class Schedule {
     @Column(columnDefinition = "text")
     private String memo;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_id", nullable = false)
     private Chat chat;
@@ -30,8 +29,9 @@ public class Schedule {
     protected Schedule(){}
 
     @Builder
-    public Schedule(LocalDate date, String memo) {
+    public Schedule(LocalDate date, String memo, Chat chat) {
         this.date = date;
         this.memo = memo;
+        this.chat = chat;
     }
 }

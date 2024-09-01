@@ -77,7 +77,10 @@ public enum ErrorStatus implements BaseErrorCode {
     CLOTHES_WRITER_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4004", "옷장 게시글의 작성자가 아닙니다."),
 
     // CHAT
-    CHAT_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT4041", "채팅을 찾을 수 없습니다."),
+    CHAT_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT4001", "채팅을 찾을 수 없습니다."),
+    CHAT_MESSAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT4002", "채팅방 메시지를 찾을 수 없습니다."),
+    CHAT_PARTICIPANTS_ONLY_ALLOWED(HttpStatus.FORBIDDEN, "CHAT4003", "채팅방에 참여하고 있지 않습니다."),
+    CHAT_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT4004", "채팅방에 전송된 사진을 찾을 수 없습니다."),
 
     // WEATHER
     _WEATHER_NOT_FOUND(HttpStatus.NOT_FOUND, "WEATHER4001", "날씨 정보를 찾을 수 없습")
