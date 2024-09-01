@@ -1,9 +1,9 @@
 package euclid.lyc_spring.dto.request;
 
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
@@ -11,12 +11,9 @@ import java.util.List;
 public class ImageRequestDTO {
 
     @Getter
-    @NoArgsConstructor
     @AllArgsConstructor
-    public static class ImageSaveDTO {
-
-        private String image;
-        private List<String> imageUrlList;
-
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class LinkDTO {
+        private List<List<String>> links;
     }
 }

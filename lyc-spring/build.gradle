@@ -57,6 +57,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	// email verification
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	// aws
+	implementation platform('com.amazonaws:aws-java-sdk-bom:1.12.529')
+	implementation 'com.amazonaws:aws-java-sdk-s3'
 }
 
 tasks.named('test') {

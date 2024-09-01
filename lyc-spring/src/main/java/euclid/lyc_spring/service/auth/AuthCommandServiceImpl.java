@@ -17,9 +17,11 @@ import euclid.lyc_spring.repository.*;
 import euclid.lyc_spring.repository.mail.VerificationCodeRepository;
 import euclid.lyc_spring.repository.token.RefreshTokenRepository;
 import euclid.lyc_spring.repository.token.TokenBlackListRepository;
+import euclid.lyc_spring.service.s3.S3ImageService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Transactional
 public class AuthCommandServiceImpl implements AuthCommandService {
+
+    @Value("${cloud.aws.s3.default-profile}")
+    private String defaultProfile;
 
     private final InfoRepository infoRepository;
     private final InfoStyleRepository infoStyleRepository;
@@ -47,35 +52,36 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final MemberRepository memberRepository;
     private final RefreshTokenRepository refreshTokenRepository;
 
+    private final S3ImageService s3ImageService;
+
 /*-------------------------------------------------- 로그인 및 로그아웃 --------------------------------------------------*/
 
     @Override
     @Transactional
-    public MemberDTO.MemberInfoDTO join(RegisterDTO.RegisterMemberDTO registerMemberDTO) {
+    public MemberDTO.MemberInfoDTO join(RegisterDTO.RegisterMemberDTO registerMemberDTO, String imageUrl) {
 
         MemberRequestDTO.MemberDTO memberDTO = registerMemberDTO.getMember();
         InfoRequestDTO.BasicInfoDTO basicInfoDTO = registerMemberDTO.getInfo();
 
-        String image = memberDTO.getProfileImage();
-
-        if(memberDTO.getProfileImage().isEmpty())
-            image = "default url";
+        if(imageUrl == null || imageUrl.isEmpty()) {
+            imageUrl = defaultProfile;
+        }
 
         // 이미 회원가입이 되어있음
         if (memberRepository.findByEmail(memberDTO.getEmail()).isPresent()) {
-            throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_EXIST);
+            handleMemberAndS3Bucket(imageUrl, ErrorStatus.MEMBER_ALREADY_EXIST);
         }
         // 중복된 아이디가 있음
         if (memberRepository.findByLoginId(memberDTO.getLoginId()).isPresent()) {
-            throw new MemberHandler(ErrorStatus.MEMBER_DUPLICATED_LOGIN_ID);
+            handleMemberAndS3Bucket(imageUrl, ErrorStatus.MEMBER_DUPLICATED_LOGIN_ID);
         }
         // 중복된 이메일이 있음
         if (memberRepository.findByLoginId(memberDTO.getEmail()).isPresent()) {
-            throw new MemberHandler(ErrorStatus.MEMBER_DUPLICATED_EMAIL);
+            handleMemberAndS3Bucket(imageUrl, ErrorStatus.MEMBER_DUPLICATED_EMAIL);
         }
         // 비밀번호와 비밀번호 확인이 일치하지 않음
         if (!memberDTO.getLoginPw().equals(memberDTO.getLoginPwCheck())) {
-            throw new MemberHandler(ErrorStatus.MEMBER_INVALID_LOGIN_PW);
+            handleMemberAndS3Bucket(imageUrl, ErrorStatus.MEMBER_INVALID_LOGIN_PW);
         }
 
         Member member = Member.builder()
@@ -86,7 +92,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                 .phone(memberDTO.getPhone())
                 .nickname(memberDTO.getNickname())
                 .introduction(memberDTO.getIntroduction())
-                .profileImage(image)
+                .profileImage(imageUrl)
                 .role(Role.MEMBER)
                 .build();
 
@@ -96,6 +102,11 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
         return euclid.lyc_spring.dto.response.MemberDTO.MemberInfoDTO.toDTO(member);
 
+    }
+
+    private void handleMemberAndS3Bucket(String imageUrl, ErrorStatus errorStatus) {
+        s3ImageService.deleteImageFromS3(imageUrl);
+        throw new MemberHandler(errorStatus);
     }
 
     private void createInfo(Member member, InfoRequestDTO.BasicInfoDTO infoDto) {

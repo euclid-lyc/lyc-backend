@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface InfoMaterialRepository extends JpaRepository<InfoMaterial, Long> {
+
+    void deleteAllByInfoId(Long infoId);
 }

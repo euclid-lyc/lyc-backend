@@ -16,6 +16,12 @@ public enum ErrorStatus implements BaseErrorCode {
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED,"COMMON401","인증이 필요합니다."),
     FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403", "금지된 요청입니다."),
 
+    // S3
+    _FILE_IS_NULL(HttpStatus.BAD_REQUEST, "S34001", "파일이 입력되지 않았습니다."),
+    _IO_EXCEPTION(HttpStatus.BAD_REQUEST, "S34002", "IO 오류가 발생했습니다."),
+    _BAD_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "S34003", "잘못된 확장자입니다."),
+    _PUT_OBJECT_EXCEPTION(HttpStatus.BAD_REQUEST, "S34004", "이미지 업로드하는 과정에서 오류가 발생했습니다."),
+
     // Authentication & Authorization
     JWT_EXPIRED(HttpStatus.UNAUTHORIZED, "AA4001", "토큰이 만료되었습니다."),
     JWT_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "AA4002", "인증에 실패하였습니다."),
@@ -64,10 +70,11 @@ public enum ErrorStatus implements BaseErrorCode {
     COMMISSION_INFO_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMISSION4044", "기본 정보를 찾을 수 없습니다."),
 
     // clothes
-    CLOTHES_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4041", "옷장 게시들이 존재하지 않습니다."),
+    CLOTHES_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4041", "옷장 게시글이 존재하지 않습니다."),
     CLOTHES_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4001", "옷장 이미지를 찾을 수 없습니다."),
     CLOTHES_TEXT_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4002", "옷장 텍스트를 찾을 수 없습니다."),
     CLOTHES_BAD_QUERY(HttpStatus.BAD_REQUEST, "CLOTHES4003", "type 쿼리에는 image와 text만 입력할 수 있습니다."),
+    CLOTHES_WRITER_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4004", "옷장 게시글의 작성자가 아닙니다."),
 
     // CHAT
     CHAT_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT4041", "채팅을 찾을 수 없습니다."),
