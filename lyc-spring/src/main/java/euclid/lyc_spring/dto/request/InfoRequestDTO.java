@@ -3,6 +3,7 @@ package euclid.lyc_spring.dto.request;
 import euclid.lyc_spring.domain.enums.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -58,4 +59,14 @@ public class InfoRequestDTO {
         private final List<BodyType> badBodyTypeList;
     }
 
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class OtherMattersDTO {
+        private Integer minPrice;
+        private Integer maxPrice;
+        private LocalDate dateToUse;
+        private LocalDate desiredDate;
+        private String text;
+    }
 }

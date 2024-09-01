@@ -3,12 +3,15 @@ package euclid.lyc_spring.domain.chat;
 import euclid.lyc_spring.domain.chat.commission.Commission;
 import euclid.lyc_spring.domain.mapping.MemberChat;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -29,6 +32,7 @@ public class Chat {
     @Column
     private LocalDateTime updatedAt;
 
+    @Setter
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private Commission commission;
@@ -38,5 +42,21 @@ public class Chat {
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
     private List<MemberChat> memberChatList;
+
+    protected Chat(){}
+
+    @Builder
+    public Chat(LocalDateTime createdAt, LocalDateTime updatedAt, Commission commission) {
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.commission = commission;
+        this.scheduleList = new ArrayList<>();
+        this.memberChatList = new ArrayList<>();
+    }
+
+    public void addScheduleList(Schedule schedule){
+        scheduleList.add(schedule);
+        schedule.setChat(this);
+    }
 
 }

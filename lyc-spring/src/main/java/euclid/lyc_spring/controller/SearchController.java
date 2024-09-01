@@ -43,6 +43,7 @@ public class SearchController {
     @GetMapping("/directors/general")
     public void searchDirectorByGenMode(@RequestParam String term) {}
 
+
     @Operation(summary = "키워드 검색으로 디렉터 목록 불러오기", description = """
             키워드는 유클리드에서 제공하는 스타일 테마 중 하나입니다.
             
