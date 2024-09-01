@@ -24,7 +24,11 @@ public class ClothesController {
     private final ClothesCommandService clothesCommandService;
     private final S3ImageService s3ImageService;
 
-    @Operation(summary = "옷장 게시글 작성하기(사진)", description = "사진과 함께 옷장 게시글을 작성합니다.")
+    @Operation(summary = "[구현완료] 옷장 게시글 작성하기(사진)", description = """
+        사진과 함께 옷장 게시글을 작성합니다.
+        
+        이미지 요청 형식은 'multipart/form-data', 나머지 데이터의 요청 형식은 'application/json'입니다.
+        """)
     @PostMapping(value = "/clothes/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ApiResponse<ClothesDTO.ClothesImageResponseDTO> createClothesByImage(
             @RequestPart ClothesRequestDTO.ClothesByImageDTO clothesByImageDTO,
@@ -34,7 +38,7 @@ public class ClothesController {
         return ApiResponse.onSuccess(SuccessStatus._CLOTHES_BY_IMAGE_CREATED, clothesImageResponseDTO);
     }
 
-    @Operation(summary = "옷장 게시글 작성하기(텍스트)", description = "텍스트와 함께 옷장 게시글을 작성합니다.")
+    @Operation(summary = "[구현완료] 옷장 게시글 작성하기(텍스트)", description = "텍스트와 함께 옷장 게시글을 작성합니다.")
     @PostMapping("/clothes/texts")
     ApiResponse<ClothesDTO.ClothesTextResponseDTO> createClothesByText(
             @RequestBody ClothesRequestDTO.ClothesByTextDTO clothesByTextDTO) {
@@ -42,21 +46,21 @@ public class ClothesController {
         return ApiResponse.onSuccess(SuccessStatus._CLOTHES_BY_TEXT_CREATED, clothesTextResponseDTO);
     }
 
-    @Operation(summary = "옷장 게시글 삭제하기", description = "옷장 게시글을 삭제합니다(이미지 & 텍스트 공통).")
+    @Operation(summary = "[구현완료] 옷장 게시글 삭제하기", description = "옷장 게시글을 삭제합니다(이미지 & 텍스트 공통).")
     @DeleteMapping("/clothes/{clothesId}")
     ApiResponse<ClothesDTO.ClothesPreviewDTO> deleteClothes(@PathVariable Long clothesId) {
         ClothesDTO.ClothesPreviewDTO clothesPreviewDTO = clothesCommandService.deleteClothes(clothesId);
         return ApiResponse.onSuccess(SuccessStatus._CLOTHES_DELETED, clothesPreviewDTO);
     }
 
-    @Operation(summary = "옷장 게시글 목록 불러오기", description = "옷장 게시글 목록을 불러옵니다.")
+    @Operation(summary = "[구현완료] 옷장 게시글 목록 불러오기", description = "옷장 게시글 목록을 불러옵니다.")
     @GetMapping("/clothes/members/{memberId}")
     ApiResponse<ClothesDTO.ClothesListDTO> getClothesByMemberId(@PathVariable("memberId") Long memberId) {
         ClothesDTO.ClothesListDTO clothesListDTO = clothesQueryService.getClothesList(memberId);
         return ApiResponse.onSuccess(SuccessStatus._CLOTHES_LIST_FETCHED, clothesListDTO);
     }
 
-    @Operation(summary = "옷장 게시글 불러오기", description = "옷장 게시글을 불러옵니다.")
+    @Operation(summary = "[구현중] 옷장 게시글 불러오기", description = "옷장 게시글을 불러옵니다.")
     @GetMapping("/clothes/{clothesId}")
     void getClothes(@PathVariable("clothesId") Long clothesId) {}
 

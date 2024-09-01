@@ -21,7 +21,7 @@ public class AdminController {
 
 /*-------------------------------------------------- Auth --------------------------------------------------*/
 
-    @Operation(summary = "회원 영구 삭제하기", description = """
+    @Operation(summary = "[구현완료] 회원 영구 삭제하기", description = """
             """)
     @DeleteMapping("/members/deletion")
     public ApiResponse<Void> deleteMember() {
