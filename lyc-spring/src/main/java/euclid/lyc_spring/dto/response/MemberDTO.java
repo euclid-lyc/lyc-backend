@@ -133,4 +133,65 @@ public class MemberDTO {
                     .build();
         }
     }
+
+    @Getter
+    @Builder(access = AccessLevel.PRIVATE)
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class MemberSettingInfoDTO {
+        private final Long memberId;
+        private final String loginId;
+        private final String profileImage;
+        private final String nickname;
+        private final String introduction;
+
+        public static MemberSettingInfoDTO toDTO(Member member) {
+            return MemberSettingInfoDTO.builder()
+                    .memberId(member.getId())
+                    .loginId(member.getLoginId())
+                    .nickname(member.getNickname())
+                    .profileImage(member.getProfileImage())
+                    .introduction(member.getIntroduction())
+                    .build();
+        }
+    }
+
+    @Getter
+    @Builder(access = AccessLevel.PRIVATE)
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class AdrressDTO{
+        private final Integer postalCode;
+        private final String address;
+        private final String detailAddress;
+
+        public static AdrressDTO toDTO(Member member) {
+            return AdrressDTO.builder()
+                    .postalCode(member.getInfo().getPostalCode())
+                    .address(member.getInfo().getAddress())
+                    .detailAddress(member.getInfo().getDetailAddress())
+                    .build();
+        }
+    }
+
+    @Getter
+    @Builder(access = AccessLevel.PRIVATE)
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class PushSetDTO{
+        private final Boolean dm;
+        private final Boolean feed;
+        private final Boolean schedule;
+        private final Boolean likeMark;
+        private final Boolean event;
+        private final Boolean ad;
+
+        public static PushSetDTO toDTO(Member member) {
+            return PushSetDTO.builder()
+                    .dm(member.getPushSet().getDm())
+                    .feed(member.getPushSet().getFeed())
+                    .schedule(member.getPushSet().getSchedule())
+                    .likeMark(member.getPushSet().getLikeMark())
+                    .event(member.getPushSet().getEvent())
+                    .ad(member.getPushSet().getAd())
+                    .build();
+        }
+    }
 }

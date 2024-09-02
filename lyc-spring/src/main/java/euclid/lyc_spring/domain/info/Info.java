@@ -3,6 +3,7 @@ package euclid.lyc_spring.domain.info;
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.enums.BottomSize;
 import euclid.lyc_spring.domain.enums.TopSize;
+import euclid.lyc_spring.dto.request.MemberRequestDTO;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -88,7 +89,7 @@ public class Info {
     }
 
 
-    //=== Methods ===//
+    //=== add Methods ===//
 
     public void addInfoStyle(InfoStyle infoStyle) {
         infoStyleList.add(infoStyle);
@@ -108,6 +109,13 @@ public class Info {
     public void addInfoBodyType(InfoBodyType infoBodyType) {
         infoBodyTypeList.add(infoBodyType);
         infoBodyType.setInfo(this);
+    }
+
+    //=== reload Methods ===//
+    public void reloadAdrress(MemberRequestDTO.AddressDTO addressDTO) {
+        this.postalCode = addressDTO.getPostalCode();
+        this.address = addressDTO.getAddress();
+        this.detailAddress = addressDTO.getDetailAddress();
     }
 
 }

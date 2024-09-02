@@ -43,4 +43,12 @@ public class VerificationRequestDTO {
         private final String verificationCode;
     }
 
+    @Getter
+    @RequiredArgsConstructor
+    @Builder
+    public static class ChangePasswordDTO {
+        private final String oldPassword;
+        private final String newPassword;
+        private final String confirmPassword;
+    }
 }
