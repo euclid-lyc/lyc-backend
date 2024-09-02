@@ -25,6 +25,7 @@ public class CommissionController {
 
     @Tag(name = "Commission - Request", description = "의뢰서 관련 API")
     @Operation(summary = "[구현완료] 의뢰서 작성하기", description = """
+            의뢰서 관련 데이터를 입력받아 commission 테이블에 새로운 의뢰를 생성합니다.
             """)
     @PostMapping("/chats/commissions")
     public ApiResponse<CommissionDTO.CommissionViewDTO> writeCommission(
@@ -35,7 +36,10 @@ public class CommissionController {
 
     @Tag(name = "Commission - Request", description = "의뢰서 관련 API")
     @Operation(summary = "[구현완료] 의뢰 목록(의뢰함) 불러오기", description = """
+            의뢰서 목록을 불러옵니다.
             """)
+    // 이거도 굳이 내 의뢰함만 보면 되니까 directerId 필요 없을 듯
+    // 근데 의뢰함 기능 확인을 위해 아직 살려둠 나중에 수정하겠음~
     @GetMapping("/chats/commissions/{directorId}")
     public ApiResponse<List<CommissionDTO.CommissionViewDTO>> getAllCommissions(@PathVariable("directorId") Long directorId) {
         List<CommissionDTO.CommissionViewDTO> responseDTO = commissionQueryService.getAllCommissionList(directorId);
@@ -44,6 +48,7 @@ public class CommissionController {
 
     @Tag(name = "Commission - Request", description = "의뢰서 관련 API")
     @Operation(summary = "[구현완료] 의뢰서 확인하기", description = """
+            의뢰서의 전체 내용을 확인합니다. 
             """)
     @GetMapping("/chats/commissions/commission/{commissionId}")
     public ApiResponse<CommissionDTO.CommissionInfoDTO> getCommission(@PathVariable Long commissionId) {
@@ -53,6 +58,7 @@ public class CommissionController {
 
     @Tag(name = "Commission - Request", description = "의뢰서 관련 API")
     @Operation(summary = "[구현완료] 의뢰 승낙하기", description = """
+            의뢰서의 status룰 APPROVED로 변경합니다.
             """)
     @PatchMapping("/chats/commissions/{commissionId}/accept")
     public ApiResponse<CommissionDTO.CommissionViewDTO> acceptCommission(@PathVariable Long commissionId) {
@@ -62,6 +68,7 @@ public class CommissionController {
 
     @Tag(name = "Commission - Request", description = "의뢰서 관련 API")
     @Operation(summary = "[구현완료] 의뢰 거절하기", description = """
+            의뢰서의 status를 TERMINATED로 변경합니다.
             """)
     @PatchMapping("/chats/commissions/{commissionId}/decline")
     public ApiResponse<CommissionDTO.CommissionViewDTO> declineCommission(@PathVariable Long commissionId) {
@@ -71,9 +78,11 @@ public class CommissionController {
 
     @Tag(name = "Commission - Request", description = "의뢰서 관련 API")
     @Operation(summary = "[구현완료] 의뢰서 수정하기", description = """
+            의뢰서 관련 데이터를 입력받고 기존 의뢰서의 내용을 수정합니다. 
             """)
     // 의뢰가 승낙되기 전에 수정할 수도 있지않나.. 그래서 commissionId로 바꿔봄
     // 그래야 할 것 같긴 한데 근데 이거 수정을 어디서 함?
+    // 수정이 안되는 부분이 있어서 코드를 수정함
     @PatchMapping("/chats/commissions/{commissionId}")
     public ApiResponse<CommissionDTO.CommissionViewDTO> updateCommission(
             @RequestBody CommissionRequestDTO.CommissionDTO commissionRequestDTO, @PathVariable Long commissionId) {
@@ -118,6 +127,7 @@ public class CommissionController {
 
     @Tag(name = "Commission - Termination", description = "의뢰 종료 관련 API")
     @Operation(summary = "[구현완료] 의뢰 종료 요청하기", description = """
+            의뢰서의 status를 WAIT_FOR_TERMINATION로 변경합니다.
             """)
     @PatchMapping("/chats/{chatId}/commissions/termination-request")
     public ApiResponse<CommissionDTO.CommissionViewDTO> requestCommissionTermination(@PathVariable Long chatId) {
@@ -127,6 +137,7 @@ public class CommissionController {
 
     @Tag(name = "Commission - Termination", description = "의뢰 종료 관련 API")
     @Operation(summary = "[구현완료] 의뢰 종료 승낙하기", description = """
+            의뢰서의 status를 TERMINATED로 변경합니다.
             """)
     @PatchMapping("/chats/{chatId}/commissions/termination")
     public ApiResponse<CommissionDTO.CommissionViewDTO> terminateCommission(@PathVariable Long chatId) {
@@ -136,6 +147,7 @@ public class CommissionController {
 
     @Tag(name = "Commission - Termination", description = "의뢰 종료 관련 API")
     @Operation(summary = "[구현완료] 의뢰 종료 거절하기", description = """
+            의뢰서의 status룰 APPROVED로 변경합니다.
             """)
     @PatchMapping("/chats/{chatId}/commissions/termination-cancel")
     public ApiResponse<CommissionDTO.CommissionViewDTO> declineCommissionTermination(@PathVariable Long chatId) {

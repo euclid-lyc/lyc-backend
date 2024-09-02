@@ -30,6 +30,8 @@ public class AuthController {
     private final S3ImageService s3ImageService;
     private final MailService mailService;
 
+    // 해당 api 전체적으로 굳이 memberId가 필요없다고 느껴서 쿨하게 뺴버렸습니다!!!!!!!!!!!!!!!!!!!!!!!!
+
 /*-------------------------------------------------- 회원가입 및 탈퇴 --------------------------------------------------*/
 
     @Operation(summary = "[구현완료] 회원가입 하기", description = """
