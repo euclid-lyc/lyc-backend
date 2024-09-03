@@ -3,6 +3,7 @@ package euclid.lyc_spring.domain.chat.commission.commission_info;
 import euclid.lyc_spring.domain.chat.commission.Commission;
 import euclid.lyc_spring.domain.enums.BottomSize;
 import euclid.lyc_spring.domain.enums.TopSize;
+import euclid.lyc_spring.dto.request.InfoRequestDTO;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -97,6 +98,14 @@ public class CommissionInfo {
         commissionInfoBodyTypeList = new ArrayList<>();
         commissionInfoFitList = new ArrayList<>();
         commissionInfoMaterialList = new ArrayList<>();
+    }
+
+    public void reloadInfo(InfoRequestDTO.BasicInfoDTO basicInfoDTO){
+        this.height = basicInfoDTO.getHeight();
+        this.weight = basicInfoDTO.getWeight();
+        this.topSize = basicInfoDTO.getTopSize();
+        this.bottomSize = basicInfoDTO.getBottomSize();
+        this.text = basicInfoDTO.getText();
     }
 }
 

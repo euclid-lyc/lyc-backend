@@ -218,7 +218,9 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
     private void updateCommissionInfo(Commission commission, InfoRequestDTO.BasicInfoDTO basicInfoDTO) {
         CommissionInfo commissionInfo = commissionInfoRepository.findByCommission(commission)
                 .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_INFO_NOT_FOUND));
-        commissionInfo.clear();
+
+        //update CommissionBasicInfo
+        commissionInfo.reloadInfo(basicInfoDTO);
 
         // update CommissionInfoStyle
         commissionInfoStyleRepository.deleteAllByCommissionInfo(commissionInfo);

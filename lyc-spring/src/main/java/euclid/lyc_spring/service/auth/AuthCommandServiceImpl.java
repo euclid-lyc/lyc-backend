@@ -6,6 +6,7 @@ import euclid.lyc_spring.auth.JwtGenerator;
 import euclid.lyc_spring.auth.JwtProvider;
 import euclid.lyc_spring.auth.SecurityUtils;
 import euclid.lyc_spring.domain.Member;
+import euclid.lyc_spring.domain.PushSet;
 import euclid.lyc_spring.domain.RefreshToken;
 import euclid.lyc_spring.domain.enums.Role;
 import euclid.lyc_spring.domain.info.*;
@@ -44,6 +45,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private final InfoMaterialRepository infoMaterialRepository;
     private final InfoBodyTypeRepository infoBodyTypeRepository;
     private final VerificationCodeRepository verificationCodeRepository;
+    private final PushSetRepository pushSetRepository;
 
     private final JwtGenerator jwtGenerator;
     private final JwtProvider jwtProvider;
@@ -62,6 +64,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
         MemberRequestDTO.MemberDTO memberDTO = registerMemberDTO.getMember();
         InfoRequestDTO.BasicInfoDTO basicInfoDTO = registerMemberDTO.getInfo();
+        MemberRequestDTO.PushSetDTO pushSetDTO = registerMemberDTO.getPushSet();
 
         if(imageUrl == null || imageUrl.isEmpty()) {
             imageUrl = defaultProfile;
@@ -99,6 +102,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         member = memberRepository.save(member);
 
         createInfo(member, basicInfoDTO);
+        createPushSet(member, pushSetDTO);
 
         return euclid.lyc_spring.dto.response.MemberDTO.MemberInfoDTO.toDTO(member);
 
@@ -107,6 +111,22 @@ public class AuthCommandServiceImpl implements AuthCommandService {
     private void handleMemberAndS3Bucket(String imageUrl, ErrorStatus errorStatus) {
         s3ImageService.deleteImageFromS3(imageUrl);
         throw new MemberHandler(errorStatus);
+    }
+
+    private void createPushSet(Member member, MemberRequestDTO.PushSetDTO pushSetDTO) {
+
+        PushSet pushSet = PushSet.builder()
+                .ad(pushSetDTO.getAd())
+                .feed(pushSetDTO.getFeed())
+                .event(pushSetDTO.getEvent())
+                .dm(pushSetDTO.getDm())
+                .likeMark(pushSetDTO.getLikeMark())
+                .schedule(pushSetDTO.getSchedule())
+                .member(member)
+                .build();
+
+        member.addPushSet(pushSet);
+        pushSetRepository.save(pushSet);
     }
 
     private void createInfo(Member member, InfoRequestDTO.BasicInfoDTO infoDto) {
