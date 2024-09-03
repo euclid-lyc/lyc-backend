@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class TextMessage {
+public class Message {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +20,9 @@ public class TextMessage {
 
     @Column(nullable = false, columnDefinition = "text")
     private String content;
+
+    @Column(columnDefinition = "BIT DEFAULT 0")
+    private Boolean isText;
 
     @CreatedDate
     @Column
