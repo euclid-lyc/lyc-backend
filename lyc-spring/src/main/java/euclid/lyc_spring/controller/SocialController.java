@@ -24,7 +24,7 @@ public class SocialController {
 /*-------------------------------------------------- 회원 팔로우 및 팔로잉 --------------------------------------------------*/
 
     @Tag(name = "Social - Follow", description = "팔로우 & 팔로잉 관련 API")
-    @Operation(summary = "[구현완료] 팔로워 목록 불러오기", description = "팔로워 목록을 불러옵니다.")
+    @Operation(summary = "[구현중] 팔로워 목록 불러오기", description = "팔로워 목록을 불러옵니다.")
     @GetMapping("/members/{memberId}/followers")
     public ApiResponse<List<MemberDTO.FollowDTO>> getFollowers(@PathVariable("memberId") Long memberId) {
         List<MemberDTO.FollowDTO> Followers = socialQueryService.getFollowerList(memberId);
@@ -32,7 +32,7 @@ public class SocialController {
     }
 
     @Tag(name = "Social - Follow", description = "팔로우 & 팔로잉 관련 API")
-    @Operation(summary = "[구현완료] 팔로잉 목록 불러오기", description = "팔로잉 목록을 불러옵니다.")
+    @Operation(summary = "[구현중] 팔로잉 목록 불러오기", description = "팔로잉 목록을 불러옵니다.")
     @GetMapping("/members/{memberId}/followings")
     public ApiResponse<List<MemberDTO.FollowDTO>> getFollowings(@PathVariable("memberId") Long memberId) {
         List<MemberDTO.FollowDTO> Followings = socialQueryService.getFollowingList(memberId);

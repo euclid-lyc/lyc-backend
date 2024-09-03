@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -25,12 +25,12 @@ public class CommissionQueryServiceImpl implements CommissionQueryService {
     private final CommissionRepository commissionRepository;
 
     @Override
-    public List<CommissionDTO.CommissionViewDTO> getAllCommissionList(Long directorId) {
+    public List<CommissionDTO.CommissionViewDTO> getAllCommissionList(Long directorId, Integer pageSize, LocalDateTime cursorDateTime) {
 
         Member director = memberRepository.findById(directorId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        List<Commission> commissionList = commissionRepository.findByDirector(director);
+        List<Commission> commissionList = commissionRepository.findCommissionsByDirectorId(directorId, pageSize, cursorDateTime);
         return commissionList.stream()
                 .map(CommissionDTO.CommissionViewDTO::toDTO)
                 .toList();

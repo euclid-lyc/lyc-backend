@@ -9,10 +9,14 @@ import euclid.lyc_spring.service.clothes.ClothesQueryService;
 import euclid.lyc_spring.service.s3.S3ImageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDateTime;
 
 @Tag(name = "Clothes", description = "옷장 관련 API")
 @RestController
@@ -53,10 +57,19 @@ public class ClothesController {
         return ApiResponse.onSuccess(SuccessStatus._CLOTHES_DELETED, clothesPreviewDTO);
     }
 
-    @Operation(summary = "[구현완료] 옷장 게시글 목록 불러오기", description = "옷장 게시글 목록을 불러옵니다.")
+    @Operation(summary = "[구현완료] 옷장 게시글 목록 불러오기", description = """
+            옷장 게시글 목록을 불러옵니다.
+            
+            커서 기반 페이징이 적용됩니다. cursorDateTime은 이전에 전달된 마지막 옷장 게시글의 업로드 시각입니다.
+            
+            이 API는 cursorDateTime보다 이전에 업로드된 옷장 게시글의 목록을 불러옵니다.
+            """)
     @GetMapping("/clothes/members/{memberId}")
-    ApiResponse<ClothesDTO.ClothesListDTO> getClothesByMemberId(@PathVariable("memberId") Long memberId) {
-        ClothesDTO.ClothesListDTO clothesListDTO = clothesQueryService.getClothesList(memberId);
+    ApiResponse<ClothesDTO.ClothesListDTO> getClothesByMemberId(
+            @PathVariable("memberId") Long memberId,
+            @RequestParam @Min(1) Integer pageSize,
+            @RequestParam LocalDateTime cursorDateTime) {
+        ClothesDTO.ClothesListDTO clothesListDTO = clothesQueryService.getClothesList(memberId, pageSize, cursorDateTime);
         return ApiResponse.onSuccess(SuccessStatus._CLOTHES_LIST_FETCHED, clothesListDTO);
     }
 

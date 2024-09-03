@@ -8,9 +8,14 @@ import euclid.lyc_spring.service.chat.ChatCommandService;
 import euclid.lyc_spring.service.chat.ChatQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Range;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,14 +28,17 @@ public class ChatController {
 /*-------------------------------------------------- 채팅방 --------------------------------------------------*/
 
     @Tag(name = "Chat - General", description = "채팅방 관련 API")
-    @Operation(summary = "[구현중] 채팅방 목록 불러오기", description = """
+    @Operation(summary = "[구현완료] 채팅방 목록 불러오기", description = """
             로그인한 회원과 채팅을 주고받은 회원 목록을 최근 메시지를 주고받은 순으로 불러옵니다.
             
-            커서 기반 페이징이 적용됩니다.
+            오프셋 기반 페이징이 적용됩니다. (이거는 커서 기반 페이징 하다가 때려치움;;)
             """)
     @GetMapping("/chats")
-    public ApiResponse<ChatResponseDTO.ChatPreviewListDTO> getAllChats() {
-        ChatResponseDTO.ChatPreviewListDTO chatMemberPreviewDTO = chatQueryService.getAllChats();
+    public ApiResponse<ChatResponseDTO.ChatPreviewListDTO> getAllChats(
+            @RequestParam @Min(0) Integer pageNum,
+            @RequestParam @Min(1) Integer pageSize
+            ) {
+        ChatResponseDTO.ChatPreviewListDTO chatMemberPreviewDTO = chatQueryService.getAllChats(PageRequest.of(pageNum, pageSize));
         return ApiResponse.onSuccess(SuccessStatus._CHAT_LIST_FOUND, chatMemberPreviewDTO);
     }
 
@@ -117,14 +125,18 @@ public class ChatController {
 /*-------------------------------------------------- 사진 및 동영상 --------------------------------------------------*/
 
     @Tag(name = "Chat - Image", description = "채팅방 사진 관련 API")
-    @Operation(summary = "[구현중] 사진 및 동영상 목록 불러오기", description = """
+    @Operation(summary = "[구현완료] 사진 및 동영상 목록 불러오기", description = """
             채팅방에 전송한 사진 및 동영상의 목록을 조회합니다. (근데 우리 사진만 보내게 하면 안 될까...)
             
             커서 기반 페이징이 적용됩니다.
             """)
     @GetMapping("/chats/{chatId}/images")
-    public ApiResponse<ChatResponseDTO.ImageListDTO> getAllChatImages(@PathVariable Long chatId) {
-        ChatResponseDTO.ImageListDTO imageListDTO = chatQueryService.getAllChatImages(chatId);
+    public ApiResponse<ChatResponseDTO.ImageListDTO> getAllChatImages(
+            @PathVariable Long chatId,
+            @RequestParam @Min(1) Integer pageSize,
+            @RequestParam LocalDateTime cursorDateTime
+            ) {
+        ChatResponseDTO.ImageListDTO imageListDTO = chatQueryService.getAllChatImages(chatId, pageSize, cursorDateTime);
         return ApiResponse.onSuccess(SuccessStatus._CHAT_IMAGE_LIST_FOUND, imageListDTO);
     }
 

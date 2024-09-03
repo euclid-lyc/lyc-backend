@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,7 +55,7 @@ public class PostingQueryServiceImpl implements PostingQueryService {
     }
 
     @Override
-    public PostingDTO.PostingImageListDTO getAllSavedPostings(Long memberId) {
+    public PostingDTO.PostingImageListDTO getAllSavedPostings(Long memberId, Integer pageSize, LocalDateTime cursorDateTime) {
 
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
@@ -68,7 +69,8 @@ public class PostingQueryServiceImpl implements PostingQueryService {
             throw new PostingHandler(ErrorStatus.SAVED_POSTING_CANNOT_ACCESS);
         }
 
-        List<PostingDTO.PostingImageDTO> savedPostingList = savedPostingRepository.findAllByMemberId(memberId).stream()
+        List<PostingDTO.PostingImageDTO> savedPostingList = savedPostingRepository
+                .findSavedPostingsByMemberId(memberId, pageSize, cursorDateTime).stream()
                 .map(savedPosting -> PostingDTO.PostingImageDTO.toDTO(savedPosting.getPosting()))
                 .collect(Collectors.toList());
 
@@ -81,12 +83,13 @@ public class PostingQueryServiceImpl implements PostingQueryService {
 /*-------------------------------------------------- 코디 게시글 --------------------------------------------------*/
 
     @Override
-    public PostingDTO.PostingImageListDTO getAllMemberCoordies(Long memberId) {
+    public PostingDTO.PostingImageListDTO getAllMemberCoordies(Long memberId, Integer pageSize, LocalDateTime cursorDateTime) {
 
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        List<PostingDTO.PostingImageDTO> postingImageDTOList = postingRepository.findByFromMemberId(member.getId()).stream()
+        List<PostingDTO.PostingImageDTO> postingImageDTOList = postingRepository
+                .findCoordiesByFromMemberId(member.getId(), pageSize, cursorDateTime).stream()
                 .map(PostingDTO.PostingImageDTO::toDTO)
                 .toList();
 
@@ -99,19 +102,18 @@ public class PostingQueryServiceImpl implements PostingQueryService {
     /*-------------------------------------------------- 리뷰 게시글 --------------------------------------------------*/
 
     @Override
-    public PostingDTO.PostingImageListDTO getAllMemberReviews(Long memberId) {
+    public PostingDTO.PostingImageListDTO getAllMemberReviews(Long memberId, Integer pageSize, LocalDateTime cursorDateTime) {
 
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        // 내가 아닌 from_member 로부터 리뷰를 받음
-        List<PostingDTO.PostingImageDTO> postingImageDTOList = postingRepository.findByToMemberId(memberId).stream()
-                .filter(toPosting -> !memberId.equals(toPosting.getFromMember().getId()))
+        List<PostingDTO.PostingImageDTO> postingImageDTOList = postingRepository
+                .findReviewsByToMemberId(memberId, pageSize, cursorDateTime).stream()
                 .map(PostingDTO.PostingImageDTO::toDTO)
                 .toList();
-
+        
         return PostingDTO.PostingImageListDTO.builder()
                 .memberId(memberId)
                 .imageList(postingImageDTOList)
