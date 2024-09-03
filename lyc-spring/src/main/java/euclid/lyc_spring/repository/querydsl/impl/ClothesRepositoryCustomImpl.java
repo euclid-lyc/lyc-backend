@@ -20,7 +20,7 @@ public class ClothesRepositoryCustomImpl implements ClothesRepositoryCustom {
         return queryFactory.selectFrom(clothes)
                 .where(clothes.member.id.eq(memberId)
                         .and(clothes.createdAt.before(cursorDateTime)))
-                .orderBy(clothes.createdAt.desc())
+                .orderBy(clothes.createdAt.desc(), clothes.id.desc())
                 .limit(pageSize)
                 .fetch();
     }

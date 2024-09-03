@@ -21,7 +21,7 @@ public class SavedPostingRepositoryCustomImpl implements SavedPostingRepositoryC
                 .selectFrom(savedPosting)
                 .where(savedPosting.member.id.eq(memberId)
                         .and(savedPosting.createdAt.before(cursorDateTime)))
-                .orderBy(savedPosting.createdAt.desc(), savedPosting.id.asc())
+                .orderBy(savedPosting.createdAt.desc(), savedPosting.id.desc())
                 .limit(pageSize)
                 .fetch();
     }

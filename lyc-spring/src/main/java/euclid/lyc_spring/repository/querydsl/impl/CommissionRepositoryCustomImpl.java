@@ -25,7 +25,7 @@ public class CommissionRepositoryCustomImpl implements CommissionRepositoryCusto
                 .where(commission.director.id.eq(directorId)
                         .and(commission.status.eq(CommissionStatus.REQUIRED))
                         .and(commission.createdAt.before(cursorDateTime)))
-                .orderBy(commission.createdAt.desc())
+                .orderBy(commission.createdAt.desc(), commission.id.desc())
                 .limit(pageSize)
                 .fetch();
     }
