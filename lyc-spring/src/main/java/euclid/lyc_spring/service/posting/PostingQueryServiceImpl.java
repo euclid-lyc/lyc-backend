@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,7 +55,7 @@ public class PostingQueryServiceImpl implements PostingQueryService {
     }
 
     @Override
-    public PostingDTO.PostingImageListDTO getAllSavedPostings(Long memberId) {
+    public PostingDTO.PostingImageListDTO getAllSavedPostings(Long memberId, Integer pageSize, LocalDateTime cursorDateTime) {
 
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
@@ -68,7 +69,8 @@ public class PostingQueryServiceImpl implements PostingQueryService {
             throw new PostingHandler(ErrorStatus.SAVED_POSTING_CANNOT_ACCESS);
         }
 
-        List<PostingDTO.PostingImageDTO> savedPostingList = savedPostingRepository.findAllByMemberId(memberId).stream()
+        List<PostingDTO.PostingImageDTO> savedPostingList = savedPostingRepository
+                .findSavedPostingsByMemberId(memberId, pageSize, cursorDateTime).stream()
                 .map(savedPosting -> PostingDTO.PostingImageDTO.toDTO(savedPosting.getPosting()))
                 .collect(Collectors.toList());
 

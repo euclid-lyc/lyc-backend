@@ -11,11 +11,13 @@ import euclid.lyc_spring.service.s3.S3ImageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,9 +55,9 @@ public class PostingController {
 /*-------------------------------------------------- 게시글 공통 --------------------------------------------------*/
 
     @Operation(summary = "[구현완료] 게시글(코디 or 리뷰) 작성하기", description = "게시글을 작성합니다.")
-    @PostMapping(value = "/postings")
+    @PostMapping("/postings")
     ApiResponse<PostingDTO.PostingViewDTO> createPosting(
-            @RequestPart PostingRequestDTO.PostingSaveDTO postingSaveDTO) {
+            @RequestBody PostingRequestDTO.PostingSaveDTO postingSaveDTO) {
         PostingDTO.PostingViewDTO postingViewDTO = postingCommandService.createPosting(postingSaveDTO);
         return ApiResponse.onSuccess(SuccessStatus._POSTING_CREATED, postingViewDTO);
     }
@@ -102,10 +104,19 @@ public class PostingController {
         return ApiResponse.onSuccess(SuccessStatus._SAVED_POSTING_DELETED, savedPostingIdDTO);
     }
 
-    @Operation(summary = "[구현완료] 저장한 코디 목록 불러오기", description = "마이페이지에 저장한 코디 목록을 불러옵니다.")
+    @Operation(summary = "[구현완료] 저장한 코디 목록 불러오기", description = """
+            마이페이지에 저장한 코디 목록을 불러옵니다.
+            
+            커서 기반 페이징이 적용됩니다. cursorDateTime은 이전에 전달된 마지막 <저장한 코디>의 업로드 시각입니다.
+            
+            이 API는 cursorDateTime보다 이전에 업로드된 <저장한 코디>의 목록을 불러옵니다.
+            """)
     @GetMapping("/members/{memberId}/saved-postings")
-    ApiResponse<PostingDTO.PostingImageListDTO> getAllSavedCoordies(@PathVariable("memberId") Long memberId) {
-        PostingDTO.PostingImageListDTO postingImageListDTO = postingQueryService.getAllSavedPostings(memberId);
+    ApiResponse<PostingDTO.PostingImageListDTO> getAllSavedCoordies(
+            @PathVariable("memberId") Long memberId,
+            @RequestParam @Min(1) Integer pageSize,
+            @RequestParam LocalDateTime cursorDateTime) {
+        PostingDTO.PostingImageListDTO postingImageListDTO = postingQueryService.getAllSavedPostings(memberId, pageSize, cursorDateTime);
         return ApiResponse.onSuccess(SuccessStatus._SAVED_COORDIES_FETCHED, postingImageListDTO);
     }
 
