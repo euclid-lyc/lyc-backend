@@ -71,7 +71,7 @@ public class MemberChatRepositoryCustomImpl implements MemberChatRepositoryCusto
     }
 
     @Override
-    public List<Message> findImageMessagesSortedByCreatedAt(Long chatId, Pageable pageable, LocalDateTime cursorDateTime) {
+    public List<Message> findImageMessagesSortedByCreatedAt(Long chatId, Integer pageSize, LocalDateTime cursorDateTime) {
 
         QMemberChat memberChat = QMemberChat.memberChat;
         QMessage message = QMessage.message;
@@ -83,8 +83,7 @@ public class MemberChatRepositoryCustomImpl implements MemberChatRepositoryCusto
                         .and(message.isText.eq(false))
                         .and(message.createdAt.before(cursorDateTime)))
                 .orderBy(message.createdAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+                .limit(pageSize)
                 .fetch();
     }
 }
