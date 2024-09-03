@@ -53,7 +53,7 @@ public class PostingController {
 /*-------------------------------------------------- 게시글 공통 --------------------------------------------------*/
 
     @Operation(summary = "[구현완료] 게시글(코디 or 리뷰) 작성하기", description = "게시글을 작성합니다.")
-    @PostMapping(value = "/postings", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/postings")
     ApiResponse<PostingDTO.PostingViewDTO> createPosting(
             @RequestPart PostingRequestDTO.PostingSaveDTO postingSaveDTO) {
         PostingDTO.PostingViewDTO postingViewDTO = postingCommandService.createPosting(postingSaveDTO);
