@@ -109,16 +109,11 @@ public class PostingQueryServiceImpl implements PostingQueryService {
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        //// 내가 아닌 from_member 로부터 리뷰를 받음
-        //List<PostingDTO.PostingImageDTO> postingImageDTOList = postingRepository.findByToMemberId(memberId).stream()
-        //        .filter(toPosting -> !memberId.equals(toPosting.getFromMember().getId()))
-        //        .map(PostingDTO.PostingImageDTO::toDTO)
-        //        .toList();
-
         List<PostingDTO.PostingImageDTO> postingImageDTOList = postingRepository
                 .findReviewsByToMemberId(memberId, pageSize, cursorDateTime).stream()
                 .map(PostingDTO.PostingImageDTO::toDTO)
                 .toList();
+        
         return PostingDTO.PostingImageListDTO.builder()
                 .memberId(memberId)
                 .imageList(postingImageDTOList)
