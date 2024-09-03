@@ -142,7 +142,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
 /*-------------------------------------------------- 사진 및 동영상 --------------------------------------------------*/
 
     @Override
-    public ChatResponseDTO.ImageListDTO getAllChatImages(Long chatId, PageRequest pageRequest, LocalDateTime cursorDateTime) {
+    public ChatResponseDTO.ImageListDTO getAllChatImages(Long chatId, Integer pageSize, LocalDateTime cursorDateTime) {
 
         String loginId = SecurityUtils.getAuthorizedLoginId();
         Member member = memberRepository.findByLoginId(loginId)
@@ -154,9 +154,9 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         if (!memberChatRepository.existsByMemberIdAndChatId(member.getId(), chatId)) {
             throw new ChatHandler(ErrorStatus.CHAT_PARTICIPANTS_ONLY_ALLOWED);
         }
-        
+
         List<Message> imageMessages = memberChatRepository
-                .findImageMessagesSortedByCreatedAt(chatId, pageRequest, cursorDateTime);
+                .findImageMessagesSortedByCreatedAt(chatId, pageSize, cursorDateTime);
 
         return ChatResponseDTO.ImageListDTO.toDTO(imageMessages);
     }

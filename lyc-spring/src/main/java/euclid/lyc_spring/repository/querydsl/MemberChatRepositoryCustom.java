@@ -13,5 +13,5 @@ public interface MemberChatRepositoryCustom {
 
     List<ChatResponseDTO.MemberPreviewDTO> findPartnerByChatAndMemberId(Long chatId, Long memberId);
 
-    List<Message> findImageMessagesSortedByCreatedAt(Long memberId, Pageable pageable, LocalDateTime cursorDateTime);
+    List<Message> findImageMessagesSortedByCreatedAt(Long memberId, Integer pageSize, LocalDateTime cursorDateTime);
 }

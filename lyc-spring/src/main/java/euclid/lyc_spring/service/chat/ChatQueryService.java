@@ -21,7 +21,7 @@ public interface ChatQueryService {
 
 /*-------------------------------------------------- 사진 및 동영상 --------------------------------------------------*/
 
-    ChatResponseDTO.ImageListDTO getAllChatImages(Long chatId, PageRequest pageRequest, LocalDateTime cursorDateTime);
+    ChatResponseDTO.ImageListDTO getAllChatImages(Long chatId, Integer pageSize, LocalDateTime cursorDateTime);
 
     ChatResponseDTO.ChatImageDTO getChatImage(Long chatId, Long imageId);
 }
