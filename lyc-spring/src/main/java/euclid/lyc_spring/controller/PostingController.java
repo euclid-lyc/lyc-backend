@@ -138,19 +138,37 @@ public class PostingController {
 /*-------------------------------------------------- 코디 게시글 --------------------------------------------------*/
 
 
-    @Operation(summary = "[구현완료] 유저의 코디 목록 불러오기", description = "마이페이지에 유저의 코디 목록을 불러옵니다.")
+    @Operation(summary = "[구현완료] 유저의 코디 목록 불러오기", description = """
+            마이페이지에 유저의 코디 목록을 불러옵니다.
+            
+            커서 기반 페이징이 적용됩니다. cursorDateTime은 이전에 전달된 마지막 <코디>의 업로드 시각입니다.
+            
+            이 API는 cursorDateTime보다 이전에 업로드된 <코디>의 목록을 불러옵니다.
+            """)
     @GetMapping("/members/{memberId}/coordies")
-    ApiResponse<PostingDTO.PostingImageListDTO> getAllMemberCoordies(@PathVariable("memberId") Long memberId) {
-        PostingDTO.PostingImageListDTO postingImageListDTO = postingQueryService.getAllMemberCoordies(memberId);
+    ApiResponse<PostingDTO.PostingImageListDTO> getAllMemberCoordies(
+            @PathVariable("memberId") Long memberId,
+            @RequestParam @Min(1) Integer pageSize,
+            @RequestParam LocalDateTime cursorDateTime) {
+        PostingDTO.PostingImageListDTO postingImageListDTO = postingQueryService.getAllMemberCoordies(memberId, pageSize, cursorDateTime);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_COORDIES_FETCHED, postingImageListDTO);
     }
 
 /*-------------------------------------------------- 리뷰 게시글 --------------------------------------------------*/
 
-    @Operation(summary = "[구현완료] 유저의 리뷰 목록 불러오기", description = "마이페이지에 유저의 리뷰 목록을 불러옵니다.")
+    @Operation(summary = "[구현완료] 유저의 리뷰 목록 불러오기", description = """
+            마이페이지에 유저의 리뷰 목록을 불러옵니다.
+            
+            커서 기반 페이징이 적용됩니다. cursorDateTime은 이전에 전달된 마지막 <리뷰>의 업로드 시각입니다.
+            
+            이 API는 cursorDateTime보다 이전에 업로드된 <리뷰>의 목록을 불러옵니다.
+            """)
     @GetMapping("/members/{memberId}/reviews")
-    ApiResponse<PostingDTO.PostingImageListDTO> getAllMemberReviews(@PathVariable("memberId") Long memberId) {
-        PostingDTO.PostingImageListDTO postingImageListDTO = postingQueryService.getAllMemberReviews(memberId);
+    ApiResponse<PostingDTO.PostingImageListDTO> getAllMemberReviews(
+            @PathVariable("memberId") Long memberId,
+            @RequestParam @Min(1) Integer pageSize,
+            @RequestParam LocalDateTime cursorDateTime) {
+        PostingDTO.PostingImageListDTO postingImageListDTO = postingQueryService.getAllMemberReviews(memberId, pageSize, cursorDateTime);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_REVIEWS_FETCHED, postingImageListDTO);
     }
 }

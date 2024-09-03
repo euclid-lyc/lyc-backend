@@ -18,10 +18,10 @@ public interface PostingQueryService {
 
 /*-------------------------------------------------- 코디 게시글 --------------------------------------------------*/
 
-    PostingDTO.PostingImageListDTO getAllMemberCoordies(Long memberId);
+    PostingDTO.PostingImageListDTO getAllMemberCoordies(Long memberId, Integer pageSize, LocalDateTime cursorDateTime);
 
 /*-------------------------------------------------- 리뷰 게시글 --------------------------------------------------*/
 
-    PostingDTO.PostingImageListDTO getAllMemberReviews(Long memberId);
+    PostingDTO.PostingImageListDTO getAllMemberReviews(Long memberId, Integer pageSize, LocalDateTime cursorDateTime);
 
 }
