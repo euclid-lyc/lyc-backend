@@ -8,9 +8,11 @@ import euclid.lyc_spring.service.commission.CommissionCommandService;
 import euclid.lyc_spring.service.commission.CommissionQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -35,10 +37,18 @@ public class CommissionController {
 
     @Tag(name = "Commission - Request", description = "의뢰서 관련 API")
     @Operation(summary = "[구현완료] 의뢰 목록(의뢰함) 불러오기", description = """
+            로그인한 회원에게 요청된 의뢰의 목록이 반환됩니다.
+            
+            커서 기반 페이징이 적용됩니다. cursorDateTime은 이전에 전달된 마지막 의뢰의 업로드 시각입니다.
+            
+            이 API는 cursorDateTime보다 이전에 업로드된 의뢰의 목록을 불러옵니다.
             """)
     @GetMapping("/chats/commissions/{directorId}")
-    public ApiResponse<List<CommissionDTO.CommissionViewDTO>> getAllCommissions(@PathVariable("directorId") Long directorId) {
-        List<CommissionDTO.CommissionViewDTO> responseDTO = commissionQueryService.getAllCommissionList(directorId);
+    public ApiResponse<List<CommissionDTO.CommissionViewDTO>> getAllCommissions(
+            @PathVariable("directorId") Long directorId,
+            @RequestParam @Min(1) Integer pageSize,
+            @RequestParam LocalDateTime cursorDateTime) {
+        List<CommissionDTO.CommissionViewDTO> responseDTO = commissionQueryService.getAllCommissionList(directorId, pageSize, cursorDateTime);
         return ApiResponse.onSuccess(SuccessStatus._COMMISSION_LIST_FETCHED, responseDTO);
     }
 
