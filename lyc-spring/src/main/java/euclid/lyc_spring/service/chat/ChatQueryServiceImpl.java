@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
@@ -141,7 +142,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
 /*-------------------------------------------------- 사진 및 동영상 --------------------------------------------------*/
 
     @Override
-    public ChatResponseDTO.ImageListDTO getAllChatImages(Long chatId) {
+    public ChatResponseDTO.ImageListDTO getAllChatImages(Long chatId, PageRequest pageRequest, LocalDateTime cursorDateTime) {
 
         String loginId = SecurityUtils.getAuthorizedLoginId();
         Member member = memberRepository.findByLoginId(loginId)
@@ -153,12 +154,9 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         if (!memberChatRepository.existsByMemberIdAndChatId(member.getId(), chatId)) {
             throw new ChatHandler(ErrorStatus.CHAT_PARTICIPANTS_ONLY_ALLOWED);
         }
-
-        List<Message> imageMessages = chat.getMemberChatList().stream()
-                .flatMap(memberChat -> memberChat.getMessageList().stream())
-                .filter(message -> !message.getIsText())
-                .sorted(Comparator.comparing(Message::getCreatedAt).reversed())
-                .toList();
+        
+        List<Message> imageMessages = memberChatRepository
+                .findImageMessagesSortedByCreatedAt(chatId, pageRequest, cursorDateTime);
 
         return ChatResponseDTO.ImageListDTO.toDTO(imageMessages);
     }

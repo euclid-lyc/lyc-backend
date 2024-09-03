@@ -12,6 +12,7 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -130,8 +131,13 @@ public class ChatController {
             커서 기반 페이징이 적용됩니다.
             """)
     @GetMapping("/chats/{chatId}/images")
-    public ApiResponse<ChatResponseDTO.ImageListDTO> getAllChatImages(@PathVariable Long chatId) {
-        ChatResponseDTO.ImageListDTO imageListDTO = chatQueryService.getAllChatImages(chatId);
+    public ApiResponse<ChatResponseDTO.ImageListDTO> getAllChatImages(
+            @PathVariable Long chatId,
+            @RequestParam @Min(0) Integer pageNum,
+            @RequestParam @Min(1) Integer pageSize,
+            @RequestParam LocalDateTime cursorDateTime
+            ) {
+        ChatResponseDTO.ImageListDTO imageListDTO = chatQueryService.getAllChatImages(chatId, PageRequest.of(pageNum, pageSize), cursorDateTime);
         return ApiResponse.onSuccess(SuccessStatus._CHAT_IMAGE_LIST_FOUND, imageListDTO);
     }
 
