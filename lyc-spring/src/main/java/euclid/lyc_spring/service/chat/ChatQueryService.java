@@ -1,11 +1,12 @@
 package euclid.lyc_spring.service.chat;
 
 import euclid.lyc_spring.dto.response.ChatResponseDTO;
+import org.springframework.data.domain.PageRequest;
 
 public interface ChatQueryService {
 
 /*-------------------------------------------------- 채팅방 --------------------------------------------------*/
-    ChatResponseDTO.ChatPreviewListDTO getAllChats();
+    ChatResponseDTO.ChatPreviewListDTO getAllChats(PageRequest pageRequest);
 
     ChatResponseDTO.ChatMemberListDTO getChatMembers(Long chatId);
 

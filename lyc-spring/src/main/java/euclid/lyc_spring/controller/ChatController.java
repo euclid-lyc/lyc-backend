@@ -8,9 +8,13 @@ import euclid.lyc_spring.service.chat.ChatCommandService;
 import euclid.lyc_spring.service.chat.ChatQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Range;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,11 +30,14 @@ public class ChatController {
     @Operation(summary = "[구현중] 채팅방 목록 불러오기", description = """
             로그인한 회원과 채팅을 주고받은 회원 목록을 최근 메시지를 주고받은 순으로 불러옵니다.
             
-            커서 기반 페이징이 적용됩니다.
+            오프셋 기반 페이징이 적용됩니다. (이거는 커서 기반 페이징 하다가 때려치움;;)
             """)
     @GetMapping("/chats")
-    public ApiResponse<ChatResponseDTO.ChatPreviewListDTO> getAllChats() {
-        ChatResponseDTO.ChatPreviewListDTO chatMemberPreviewDTO = chatQueryService.getAllChats();
+    public ApiResponse<ChatResponseDTO.ChatPreviewListDTO> getAllChats(
+            @RequestParam @Min(0) Integer pageNum,
+            @RequestParam @Min(1) Integer pageSize
+            ) {
+        ChatResponseDTO.ChatPreviewListDTO chatMemberPreviewDTO = chatQueryService.getAllChats(PageRequest.of(pageNum, pageSize));
         return ApiResponse.onSuccess(SuccessStatus._CHAT_LIST_FOUND, chatMemberPreviewDTO);
     }
 
