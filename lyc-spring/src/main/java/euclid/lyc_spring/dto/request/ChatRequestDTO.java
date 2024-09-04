@@ -17,4 +17,13 @@ public class ChatRequestDTO {
         private final String memo;
     }
 
+    @Getter
+    @RequiredArgsConstructor
+    @Builder
+    public static class MessageDTO {
+        private final String accessToken;
+        private final String content;
+        private final Boolean isText;
+    }
+
 }

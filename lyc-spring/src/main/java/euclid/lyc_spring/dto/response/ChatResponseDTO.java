@@ -63,6 +63,26 @@ public class ChatResponseDTO {
     @Getter
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     @Builder(access = AccessLevel.PRIVATE)
+    public static class MessageInfoDTO {
+
+        private final String content;
+        private final Boolean isText;
+        private final Boolean isChecked;
+        private final LocalDateTime createdAt;
+
+        public static MessageInfoDTO toDTO(Message message) {
+            return MessageInfoDTO.builder()
+                    .content(message.getContent())
+                    .isText(message.getIsText())
+                    .isChecked(message.getIsChecked())
+                    .createdAt(message.getCreatedAt())
+                    .build();
+        }
+
+    }
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
     public static class ChatMemberListDTO {
 
         private final List<ChatMemberDTO> members;
