@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -93,12 +94,14 @@ public class ClothesDTO {
         private final Long clothesId;
         private final String image;
         private final String title;
+        private final LocalDateTime createdAt;
 
         @Builder(access = AccessLevel.PRIVATE)
-        private ClothesInfoDTO(Long clothesId, String image, String title) {
+        private ClothesInfoDTO(Long clothesId, String image, String title, LocalDateTime createdAt) {
             this.clothesId = clothesId;
             this.image = image;
             this.title = title;
+            this.createdAt = createdAt;
         }
 
         public static ClothesInfoDTO toDTO(Clothes clothes) {
@@ -106,6 +109,7 @@ public class ClothesDTO {
                     .clothesId(clothes.getId())
                     .image(clothes.getClothesImage() != null ? clothes.getClothesImage().getImage() : null)
                     .title(clothes.getTitle())
+                    .createdAt(clothes.getCreatedAt())
                     .build();
         }
     }
