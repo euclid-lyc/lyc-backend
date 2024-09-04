@@ -19,17 +19,20 @@ public class PostingDTO {
 
         private final Long postingId;
         private final String image;
+        private final LocalDateTime createdAt;
 
         @Builder(access = AccessLevel.PRIVATE)
-        private PostingImageDTO(Long postingId, String image) {
+        private PostingImageDTO(Long postingId, String image, LocalDateTime createdAt) {
             this.postingId = postingId;
             this.image = image;
+            this.createdAt = createdAt;
         }
 
         public static PostingImageDTO toDTO(Posting posting) {
             return PostingImageDTO.builder()
                     .postingId(posting.getId())
                     .image(posting.getImageList().isEmpty() ? "" : posting.getImageList().get(0).getImage())
+                    .createdAt(posting.getCreatedAt())
                     .build();
         }
     }
