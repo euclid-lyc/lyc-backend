@@ -54,9 +54,18 @@ public class ChatController {
 
     @Tag(name = "Chat - General", description = "채팅방 관련 API")
     @Operation(summary = "[구현중] 채팅방 불러오기", description = """
+            채팅방의 기존 대화 내역을 반환합니다.
+            
+            커서 기반 페이징이 적용됩니다.
             """)
-    @PostMapping("/chats/{chatId}")
-    public void getChat(@PathVariable Long chatId) {}
+    @PatchMapping("/chats/{chatId}")
+    public ApiResponse<ChatResponseDTO.ChatDTO> getChat(
+            @PathVariable Long chatId,
+            @RequestParam @Min(1) Integer pageSize,
+            @RequestParam LocalDateTime cursorDateTime) {
+        ChatResponseDTO.ChatDTO chatDTO = chatQueryService.getChat(chatId, pageSize, cursorDateTime);
+        return ApiResponse.onSuccess(SuccessStatus._CHAT_MESSAGES_FOUND, chatDTO);
+    }
 
     @Tag(name = "Chat - General", description = "채팅방 관련 API")
     @Operation(summary = "[구현완료] 대화상대 목록 불러오기", description = """
@@ -76,7 +85,7 @@ public class ChatController {
             
             채팅 종료 시 Chat이 비활성화 되며 30일 이후 DB에서 자동으로 삭제됩니다.
             """)
-    @PatchMapping("/chats/{chatId}")
+    @PatchMapping("/chats/{chatId}/termination")
     public ApiResponse<ChatResponseDTO.ChatInactiveDTO> terminateChat(@PathVariable Long chatId) {
         ChatResponseDTO.ChatInactiveDTO chatInactiveDTO = chatCommandService.terminateChat(chatId);
         return ApiResponse.onSuccess(SuccessStatus._CHAT_DISABLED, chatInactiveDTO);
@@ -105,6 +114,7 @@ public class ChatController {
 
     @Tag(name = "Chat - Message", description = "채팅방 메시지 관련 API")
     @Operation(summary = "[구현중] 메시지 전송하기 (이미지) - 이미지 업로드", description = """
+            채팅방에 전송할 이미지를 S3에 업로드합니다.
             """)
     @PostMapping(value = "/chats/{chatId}/messages/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<String> uploadImageMessage(

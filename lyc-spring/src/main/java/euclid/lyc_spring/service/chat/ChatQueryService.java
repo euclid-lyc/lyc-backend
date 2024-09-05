@@ -24,4 +24,6 @@ public interface ChatQueryService {
     ChatResponseDTO.ImageListDTO getAllChatImages(Long chatId, Integer pageSize, LocalDateTime cursorDateTime);
 
     ChatResponseDTO.ChatImageDTO getChatImage(Long chatId, Long imageId);
+
+    ChatResponseDTO.ChatDTO getChat(Long chatId, Integer pageSize, LocalDateTime cursorDateTime);
 }

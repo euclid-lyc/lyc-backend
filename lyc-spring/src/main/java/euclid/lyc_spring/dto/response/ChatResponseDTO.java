@@ -65,6 +65,8 @@ public class ChatResponseDTO {
     @Builder(access = AccessLevel.PRIVATE)
     public static class MessageInfoDTO {
 
+        private final String sender;
+        private final String profileImage;
         private final String content;
         private final Boolean isText;
         private final Boolean isChecked;
@@ -72,6 +74,8 @@ public class ChatResponseDTO {
 
         public static MessageInfoDTO toDTO(Message message) {
             return MessageInfoDTO.builder()
+                    .sender(message.getMemberChat().getMember().getNickname())
+                    .profileImage(message.getMemberChat().getMember().getProfileImage())
                     .content(message.getContent())
                     .isText(message.getIsText())
                     .isChecked(message.getIsChecked())
@@ -183,6 +187,20 @@ public class ChatResponseDTO {
                     .imageId(imageMessage.getId())
                     .imageUrl(imageMessage.getContent())
                     .createdAt(imageMessage.getCreatedAt())
+                    .build();
+        }
+    }
+
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class ChatDTO {
+        private final List<MessageInfoDTO> messages;
+        public static ChatDTO toDTO(List<Message> messages) {
+            return ChatDTO.builder()
+                    .messages(messages.stream()
+                            .map(MessageInfoDTO::toDTO)
+                            .toList())
                     .build();
         }
     }
