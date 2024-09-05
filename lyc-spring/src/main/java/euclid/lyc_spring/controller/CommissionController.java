@@ -2,6 +2,7 @@ package euclid.lyc_spring.controller;
 
 import euclid.lyc_spring.apiPayload.ApiResponse;
 import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
+import euclid.lyc_spring.dto.request.ChatRequestDTO;
 import euclid.lyc_spring.dto.request.CommissionRequestDTO;
 import euclid.lyc_spring.dto.response.CommissionDTO;
 import euclid.lyc_spring.service.commission.CommissionCommandService;
@@ -10,6 +11,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -23,7 +28,7 @@ public class CommissionController {
     private final CommissionQueryService commissionQueryService;
     private final CommissionCommandService commissionCommandService;
 
-/*-------------------------------------------------- 의뢰서 --------------------------------------------------*/
+    /*-------------------------------------------------- 의뢰서 --------------------------------------------------*/
 
     @Tag(name = "Commission - Request", description = "의뢰서 관련 API")
     @Operation(summary = "[구현완료] 의뢰서 작성하기", description = """
@@ -68,6 +73,8 @@ public class CommissionController {
     @Tag(name = "Commission - Request", description = "의뢰서 관련 API")
     @Operation(summary = "[구현완료] 의뢰 승낙하기", description = """
             의뢰서의 status룰 APPROVED로 변경합니다.
+            
+            의뢰를 승낙하면 자동으로 채팅방이 생성됩니다.
             """)
     @PatchMapping("/chats/commissions/{commissionId}/accept")
     public ApiResponse<CommissionDTO.CommissionViewDTO> acceptCommission(@PathVariable Long commissionId) {

@@ -32,7 +32,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 필터가 적용되지 않는 URI
         if (request.getRequestURI().startsWith("/lyc/auths/sign-up") || request.getRequestURI().startsWith("/lyc/auths/sign-in") ||
-            request.getRequestURI().startsWith("/swagger-ui") || request.getRequestURI().startsWith("/v3/api-docs")) {
+            request.getRequestURI().startsWith("/swagger-ui") || request.getRequestURI().startsWith("/v3/api-docs") ||
+            request.getRequestURI().startsWith("/ws/lyc")) {
             filterChain.doFilter(request, response);
             return ;
         }

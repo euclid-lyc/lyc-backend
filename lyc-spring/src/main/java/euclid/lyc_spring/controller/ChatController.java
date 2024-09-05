@@ -2,18 +2,25 @@ package euclid.lyc_spring.controller;
 
 import euclid.lyc_spring.apiPayload.ApiResponse;
 import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
+import euclid.lyc_spring.auth.SecurityUtils;
 import euclid.lyc_spring.dto.request.ChatRequestDTO;
 import euclid.lyc_spring.dto.response.ChatResponseDTO;
 import euclid.lyc_spring.service.chat.ChatCommandService;
 import euclid.lyc_spring.service.chat.ChatQueryService;
+import euclid.lyc_spring.service.s3.S3ImageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
+import org.springframework.messaging.handler.annotation.*;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -24,6 +31,9 @@ public class ChatController {
 
     private final ChatQueryService chatQueryService;
     private final ChatCommandService chatCommandService;
+    private final S3ImageService s3ImageService;
+
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
 /*-------------------------------------------------- 채팅방 --------------------------------------------------*/
 
@@ -44,10 +54,18 @@ public class ChatController {
 
     @Tag(name = "Chat - General", description = "채팅방 관련 API")
     @Operation(summary = "[구현중] 채팅방 불러오기", description = """
-            로그인한 회원과 특정 회원의 채팅방 정보 및 메시지 목록을 반환합니다.
+            채팅방의 기존 대화 내역을 반환합니다.
+            
+            커서 기반 페이징이 적용됩니다.
             """)
-    @GetMapping("/chats/{chatId}")
-    public void getChat(@PathVariable Long chatId) {}
+    @PatchMapping("/chats/{chatId}")
+    public ApiResponse<ChatResponseDTO.ChatDTO> getChat(
+            @PathVariable Long chatId,
+            @RequestParam @Min(1) Integer pageSize,
+            @RequestParam LocalDateTime cursorDateTime) {
+        ChatResponseDTO.ChatDTO chatDTO = chatQueryService.getChat(chatId, pageSize, cursorDateTime);
+        return ApiResponse.onSuccess(SuccessStatus._CHAT_MESSAGES_FOUND, chatDTO);
+    }
 
     @Tag(name = "Chat - General", description = "채팅방 관련 API")
     @Operation(summary = "[구현완료] 대화상대 목록 불러오기", description = """
@@ -67,7 +85,7 @@ public class ChatController {
             
             채팅 종료 시 Chat이 비활성화 되며 30일 이후 DB에서 자동으로 삭제됩니다.
             """)
-    @PatchMapping("/chats/{chatId}")
+    @PatchMapping("/chats/{chatId}/termination")
     public ApiResponse<ChatResponseDTO.ChatInactiveDTO> terminateChat(@PathVariable Long chatId) {
         ChatResponseDTO.ChatInactiveDTO chatInactiveDTO = chatCommandService.terminateChat(chatId);
         return ApiResponse.onSuccess(SuccessStatus._CHAT_DISABLED, chatInactiveDTO);
@@ -75,17 +93,36 @@ public class ChatController {
 
 /*-------------------------------------------------- 메시지 --------------------------------------------------*/
 
-    @Tag(name = "Chat - Message", description = "채팅방 메시지 관련 API")
-    @Operation(summary = "[구현중] 메시지 전송하기 (텍스트)", description = """
+    @Tag(name = "Chat - General", description = "채팅방 관련 API")
+    @Operation(summary = "[구현중] 메시지 전송하기", description = """
+            HTTP 요청이 아니라 스웨거 화면에 나오진 않을 거지만... 로그인한 회원과 특정 회원의 채팅방 정보 및 메시지 목록을 반환합니다.
+            
+            텍스트 : { "content" : "메시지 내용", "isText" : true, "accessToken" : "Bearer {token}" }
+            
+            이미지 : { "content" : "이미지 Url", "isText" : false, "accessToken" : "Bearer {token}" }
+            
+            이미지 전송의 경우 이미지 업로드를 먼저 수행한 후 전송 바랍니다.
             """)
-    @PostMapping("/chats/{chatId}/messages/texts")
-    public void sendMessageByText(@PathVariable Long chatId) {}
+    @MessageMapping("/chats/{chatId}")
+    @SendTo("/sub/chats/{chatId}")
+    public ApiResponse<ChatResponseDTO.MessageInfoDTO> sendMessage(
+            @DestinationVariable("chatId") Long chatId,
+            ChatRequestDTO.MessageDTO messageDTO) {
+        ChatResponseDTO.MessageInfoDTO messageInfoDTO = chatCommandService.saveMessage(chatId, messageDTO);
+        return ApiResponse.onSuccess(SuccessStatus._CHAT_MESSAGE_SENT, messageInfoDTO);
+    }
 
     @Tag(name = "Chat - Message", description = "채팅방 메시지 관련 API")
-    @Operation(summary = "[구현중] 메시지 전송하기 (이미지)", description = """
+    @Operation(summary = "[구현중] 메시지 전송하기 (이미지) - 이미지 업로드", description = """
+            채팅방에 전송할 이미지를 S3에 업로드합니다.
             """)
-    @PostMapping("/chats/{chatId}/messages/images")
-    public void sendMessageByImage(@PathVariable Long chatId) {}
+    @PostMapping(value = "/chats/{chatId}/messages/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<String> uploadImageMessage(
+            @PathVariable Long chatId,
+            @RequestPart(required = false) MultipartFile image) {
+        String imageUrl = s3ImageService.upload(image);
+        return ApiResponse.onSuccess(SuccessStatus._CHAT_IMAGE_UPLOADED, imageUrl);
+    }
 
 /*-------------------------------------------------- 일정 --------------------------------------------------*/
 

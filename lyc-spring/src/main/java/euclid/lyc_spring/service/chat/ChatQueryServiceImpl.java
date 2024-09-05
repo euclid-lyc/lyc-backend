@@ -180,4 +180,32 @@ public class ChatQueryServiceImpl implements ChatQueryService {
 
         return ChatResponseDTO.ChatImageDTO.toDTO(imageMessage);
     }
+
+    @Override
+    @Transactional
+    public ChatResponseDTO.ChatDTO getChat(Long chatId, Integer pageSize, LocalDateTime cursorDateTime) {
+
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        chatRepository.findByIdAndInactive(chatId, null)
+                .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
+
+        // 채팅에 참여 중인 회원만 채팅방 조회 가능
+        if (!memberChatRepository.existsByMemberIdAndChatId(member.getId(), chatId)) {
+            throw new ChatHandler(ErrorStatus.CHAT_PARTICIPANTS_ONLY_ALLOWED);
+        }
+
+        memberChatRepository.findAllByChatId(chatId).stream()
+                .filter(memberChat -> !memberChat.getMember().equals(member))
+                .flatMap(memberChat -> messageRepository.findAllByMemberChatId(memberChat.getId()).stream())
+                .forEach(message -> {
+                    message.setIsChecked(true);
+                    messageRepository.save(message);
+                });
+
+        List<Message> messages = messageRepository.findMessagesByChatId(chatId, pageSize, cursorDateTime);
+
+        return ChatResponseDTO.ChatDTO.toDTO(messages);
+    }
 }

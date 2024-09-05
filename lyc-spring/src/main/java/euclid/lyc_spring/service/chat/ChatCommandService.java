@@ -14,6 +14,8 @@ public interface ChatCommandService {
 
     ChatResponseDTO.ScheduleDTO createSchedule(Long chatId, ChatRequestDTO.ScheduleReqDTO scheduleReqDTO);
 
-/*-------------------------------------------------- 사진 및 동영상 --------------------------------------------------*/
+    ChatResponseDTO.MessageInfoDTO saveMessage(Long chatId, ChatRequestDTO.MessageDTO messageDTO);
+
+    /*-------------------------------------------------- 사진 및 동영상 --------------------------------------------------*/
 
 }

@@ -41,7 +41,13 @@ public class JwtProvider {
             return bearerToken.substring(7);
         }
         return null;
+    }
 
+    public String resolveToken(String bearerToken) {
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 
     // accessToken 검증하기(요청으로 받은 토큰이 유효한지 확인)
@@ -108,5 +114,4 @@ public class JwtProvider {
         refreshToken.updateToken(token);
         refreshTokenRepository.save(refreshToken);
     }
-
 }
