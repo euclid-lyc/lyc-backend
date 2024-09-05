@@ -104,7 +104,7 @@ public class ChatController {
             이미지 전송의 경우 이미지 업로드를 먼저 수행한 후 전송 바랍니다.
             """)
     @MessageMapping("/chats/{chatId}")
-    @SendTo("/sub/{chatId}")
+    @SendTo("/sub/chats/{chatId}")
     public ApiResponse<ChatResponseDTO.MessageInfoDTO> sendMessage(
             @DestinationVariable("chatId") Long chatId,
             ChatRequestDTO.MessageDTO messageDTO) {
