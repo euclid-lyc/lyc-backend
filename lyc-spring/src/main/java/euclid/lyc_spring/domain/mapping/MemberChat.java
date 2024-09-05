@@ -39,4 +39,8 @@ public class MemberChat {
         this.member = member;
         this.chat = chat;
     }
+
+    public void addMessage(Message message) {
+        this.messageList.add(message);
+    }
 }

@@ -114,6 +114,7 @@ public class ChatCommandServiceImpl implements ChatCommandService {
                 .build();
 
         message = messageRepository.save(message);
+        memberChat.addMessage(message);
 
         return ChatResponseDTO.MessageInfoDTO.toDTO(message);
     }

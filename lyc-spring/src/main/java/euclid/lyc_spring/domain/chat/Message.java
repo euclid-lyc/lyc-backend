@@ -2,10 +2,7 @@ package euclid.lyc_spring.domain.chat;
 
 import euclid.lyc_spring.domain.mapping.MemberChat;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -32,6 +29,7 @@ public class Message {
     @Column
     private LocalDateTime createdAt;
 
+    @Setter
     @Column(columnDefinition = "BIT DEFAULT 0")
     private Boolean isChecked;
 

@@ -182,6 +182,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
     }
 
     @Override
+    @Transactional
     public ChatResponseDTO.ChatDTO getChat(Long chatId, Integer pageSize, LocalDateTime cursorDateTime) {
 
         String loginId = SecurityUtils.getAuthorizedLoginId();
@@ -194,6 +195,14 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         if (!memberChatRepository.existsByMemberIdAndChatId(member.getId(), chatId)) {
             throw new ChatHandler(ErrorStatus.CHAT_PARTICIPANTS_ONLY_ALLOWED);
         }
+
+        memberChatRepository.findAllByChatId(chatId).stream()
+                .filter(memberChat -> !memberChat.getMember().equals(member))
+                .flatMap(memberChat -> messageRepository.findAllByMemberChatId(memberChat.getId()).stream())
+                .forEach(message -> {
+                    message.setIsChecked(true);
+                    messageRepository.save(message);
+                });
 
         List<Message> messages = messageRepository.findMessagesByChatId(chatId, pageSize, cursorDateTime);
 
