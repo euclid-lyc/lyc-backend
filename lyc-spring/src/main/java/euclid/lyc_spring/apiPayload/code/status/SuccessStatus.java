@@ -39,6 +39,12 @@ public enum SuccessStatus implements BaseCode {
     _MEMBER_WITHDRAWN(HttpStatus.OK, "MEMBER2012", "회원 탈퇴 완료"),
     _MEMBER_LOGIN_ID_FOUND(HttpStatus.OK, "MEMBER2013", "회원 아이디 조회 완료"),
     _MEMBER_PW_CHANGED(HttpStatus.OK, "MEMBER2014", "회원 패스워드 변경 완료"),
+    _MEMBER_SETTING_INFO_FETCHED(HttpStatus.OK, "MEMBER2015", "회원 정보 불러오기 완료"),
+    _MEMBER_SETTING_INFO_UPDATED(HttpStatus.OK, "MEMBER2016", "회원 정보 변경 완료"),
+    _ADRRESS_FETCHED(HttpStatus.OK, "MEMBER2017", "배송지 정보 불러오기 완료"),
+    _ADRRESS_UPDATED(HttpStatus.OK, "MEMBER2018", "배송지 정보 변경 완료"),
+    _PUSH_SET_FETCHED(HttpStatus.OK, "MEMBER2019", "푸시 알람 설정 불러오기 완료"),
+    _PUSH_SET_UPDATED(HttpStatus.OK, "MEMBER2020", "푸시 알람 설정 변경 완료"),
 
     // coordie
     _MEMBER_COORDIES_FETCHED(HttpStatus.OK, "COORDIE2001", "유저의 코디 목록 불러오기 완료"),
@@ -83,6 +89,9 @@ public enum SuccessStatus implements BaseCode {
     _CHAT_COMMISSION_SCHEDULE_FOUND(HttpStatus.OK, "CHAT2005", "채팅방 의뢰 일정 조회 완료"),
     _CHAT_IMAGE_LIST_FOUND(HttpStatus.OK, "CHAT2006", "채팅방 이미지 목록 조회 완료"),
     _CHAT_IMAGE_FOUND(HttpStatus.OK, "CHAT2007", "채팅방 이미지 조회 완료"),
+    _CHAT_MESSAGE_SENT(HttpStatus.CREATED, "CHAT2008", "채팅방 메시지 전송 완료"),
+    _CHAT_IMAGE_UPLOADED(HttpStatus.CREATED, "CHAT2009", "채팅방 이미지 업로드 완료"),
+    _CHAT_MESSAGES_FOUND(HttpStatus.OK, "CHAT2010", "채팅방 대화 내역 조회 완료"),
 
     ;
 

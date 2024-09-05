@@ -6,21 +6,18 @@ import euclid.lyc_spring.apiPayload.exception.handler.MemberHandler;
 import euclid.lyc_spring.auth.SecurityUtils;
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.chat.Chat;
-import euclid.lyc_spring.domain.chat.ImageMessage;
+import euclid.lyc_spring.domain.chat.Message;
 import euclid.lyc_spring.domain.chat.Schedule;
-import euclid.lyc_spring.domain.chat.TextMessage;
-import euclid.lyc_spring.domain.mapping.MemberChat;
 import euclid.lyc_spring.dto.response.ChatResponseDTO;
 import euclid.lyc_spring.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,25 +26,48 @@ public class ChatQueryServiceImpl implements ChatQueryService {
 
     private final MemberRepository memberRepository;
     private final ChatRepository chatRepository;
+    private final MessageRepository messageRepository;
     private final CommissionRepository commissionRepository;
 
     private final MemberChatRepository memberChatRepository;
-    private final TextMessageRepository textMessageRepository;
-    private final ImageMessageRepository imageMessageRepository;
+
 
 /*-------------------------------------------------- 채팅방 --------------------------------------------------*/
 
     @Override
-    public ChatResponseDTO.ChatPreviewListDTO getAllChats() {
+    public ChatResponseDTO.ChatPreviewListDTO getAllChats(PageRequest pageRequest) {
 
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        List<ChatResponseDTO.ChatPreviewDTO> chatPreviewDTOS = memberChatRepository.findAllByMemberId(member.getId()).stream()
-                .filter(memberChat -> memberChat.getChat().getInactive() == null)
-                .map(memberChat ->getChatMemberPreviewDTO(memberChat.getChat()))
+        //List<ChatResponseDTO.ChatPreviewDTO> chatPreviewDTOS = memberChatRepository.findAllByMemberId(member.getId()).stream()
+        //        .filter(memberChat -> memberChat.getChat().getInactive() == null)
+        //        .map(memberChat ->getChatMemberPreviewDTO(memberChat.getChat()))
+        //        .toList();
+
+        List<ChatResponseDTO.ChatPreviewDTO> chatPreviewDTOS = memberChatRepository
+                .findAllChatsByMemberId(member.getId(), pageRequest).stream()
+                .map(latestMessageDTO -> {
+                    List<ChatResponseDTO.MemberPreviewDTO> memberPreviewDTOs = memberChatRepository.findPartnerByChatAndMemberId(latestMessageDTO.getChatId(), member.getId());
+                    if (memberPreviewDTOs.isEmpty()) {
+                        throw new ChatHandler(ErrorStatus.CHAT_PARTNER_NOT_FOUND);
+                    } else {
+                        Message message = messageRepository.findByMemberChatChatIdAndCreatedAt(latestMessageDTO.getChatId(), latestMessageDTO.getCreatedAt())
+                                .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_MESSAGE_NOT_FOUND));
+                        return ChatResponseDTO.ChatPreviewDTO.builder()
+                                .chatId(latestMessageDTO.getChatId())
+                                .nickname(memberPreviewDTOs.get(0).getNickname())
+                                .loginId(memberPreviewDTOs.get(0).getLoginId())
+                                .profileImage(memberPreviewDTOs.get(0).getProfileImage())
+                                .isText(message.getIsText())
+                                .content(message.getContent())
+                                .createdAt(message.getCreatedAt())
+                                .build();
+                    }
+                })
+                .sorted(Comparator.comparing(ChatResponseDTO.ChatPreviewDTO::getCreatedAt).reversed())
                 .toList();
 
         return ChatResponseDTO.ChatPreviewListDTO.toDTO(chatPreviewDTOS);
@@ -70,42 +90,6 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         return ChatResponseDTO.ChatMemberListDTO.toDTO(chat, member);
     }
 
-    private static ChatResponseDTO.ChatPreviewDTO getChatMemberPreviewDTO(Chat chat) {
-        Optional<ChatResponseDTO.ChatPreviewDTO> chatPreviewDTO = chat.getMemberChatList().stream()
-                .map(memberChat -> getChatMemberPreviewDTO(memberChat, memberChat.getMember()))
-                .max(Comparator.comparing(ChatResponseDTO.ChatPreviewDTO::getCreatedAt));
-
-        if (chatPreviewDTO.isEmpty()) {
-            throw new ChatHandler(ErrorStatus.CHAT_MESSAGE_NOT_FOUND);
-        } else {
-            return chatPreviewDTO.get();
-        }
-    }
-
-    private static ChatResponseDTO.ChatPreviewDTO getChatMemberPreviewDTO(MemberChat memberChat, Member member) {
-        Optional<TextMessage> optionalTextMessage = memberChat.getTextMessageList().stream()
-                .max(Comparator.comparing(TextMessage::getCreatedAt));
-        Optional<ImageMessage> optionalImageMessage = memberChat.getImageMessageList().stream()
-                .max(Comparator.comparing(ImageMessage::getCreatedAt));
-
-        if (optionalTextMessage.isEmpty() && optionalImageMessage.isEmpty()) {
-            return ChatResponseDTO.ChatPreviewDTO.toDTO(member, memberChat.getChat(), "", LocalDateTime.MIN);
-        } else if (optionalTextMessage.isPresent() && optionalImageMessage.isEmpty()) {
-            TextMessage textMessage = optionalTextMessage.get();
-            return ChatResponseDTO.ChatPreviewDTO.toDTO(member, memberChat.getChat(), textMessage.getContent(), textMessage.getCreatedAt());
-        } else if (optionalTextMessage.isEmpty()) {
-            ImageMessage imageMessage = optionalImageMessage.get();
-            return ChatResponseDTO.ChatPreviewDTO.toDTO(member, memberChat.getChat(), "사진", imageMessage.getCreatedAt());
-        } else {
-            TextMessage textMessage = optionalTextMessage.get();
-            ImageMessage imageMessage = optionalImageMessage.get();
-            if (textMessage.getCreatedAt().isAfter(imageMessage.getCreatedAt())) {
-                return ChatResponseDTO.ChatPreviewDTO.toDTO(member, memberChat.getChat(), textMessage.getContent(), textMessage.getCreatedAt());
-            } else {
-                return ChatResponseDTO.ChatPreviewDTO.toDTO(member, memberChat.getChat(), "사진", imageMessage.getCreatedAt());
-            }
-        }
-    }
 
 /*-------------------------------------------------- 메시지 --------------------------------------------------*/
 /*-------------------------------------------------- 일정 --------------------------------------------------*/
@@ -158,7 +142,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
 /*-------------------------------------------------- 사진 및 동영상 --------------------------------------------------*/
 
     @Override
-    public ChatResponseDTO.ImageListDTO getAllChatImages(Long chatId) {
+    public ChatResponseDTO.ImageListDTO getAllChatImages(Long chatId, Integer pageSize, LocalDateTime cursorDateTime) {
 
         String loginId = SecurityUtils.getAuthorizedLoginId();
         Member member = memberRepository.findByLoginId(loginId)
@@ -171,10 +155,8 @@ public class ChatQueryServiceImpl implements ChatQueryService {
             throw new ChatHandler(ErrorStatus.CHAT_PARTICIPANTS_ONLY_ALLOWED);
         }
 
-        List<ImageMessage> imageMessages = chat.getMemberChatList().stream()
-                .flatMap(memberChat -> memberChat.getImageMessageList().stream())
-                .sorted(Comparator.comparing(ImageMessage::getCreatedAt).reversed())
-                .toList();
+        List<Message> imageMessages = memberChatRepository
+                .findImageMessagesSortedByCreatedAt(chatId, pageSize, cursorDateTime);
 
         return ChatResponseDTO.ImageListDTO.toDTO(imageMessages);
     }
@@ -193,10 +175,37 @@ public class ChatQueryServiceImpl implements ChatQueryService {
             throw new ChatHandler(ErrorStatus.CHAT_PARTICIPANTS_ONLY_ALLOWED);
         }
 
-        ImageMessage imageMessage = imageMessageRepository.findById(imageId)
+        Message imageMessage = messageRepository.findByIdAndIsText(imageId, false)
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_IMAGE_NOT_FOUND));
 
         return ChatResponseDTO.ChatImageDTO.toDTO(imageMessage);
     }
 
+    @Override
+    @Transactional
+    public ChatResponseDTO.ChatDTO getChat(Long chatId, Integer pageSize, LocalDateTime cursorDateTime) {
+
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        chatRepository.findByIdAndInactive(chatId, null)
+                .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
+
+        // 채팅에 참여 중인 회원만 채팅방 조회 가능
+        if (!memberChatRepository.existsByMemberIdAndChatId(member.getId(), chatId)) {
+            throw new ChatHandler(ErrorStatus.CHAT_PARTICIPANTS_ONLY_ALLOWED);
+        }
+
+        memberChatRepository.findAllByChatId(chatId).stream()
+                .filter(memberChat -> !memberChat.getMember().equals(member))
+                .flatMap(memberChat -> messageRepository.findAllByMemberChatId(memberChat.getId()).stream())
+                .forEach(message -> {
+                    message.setIsChecked(true);
+                    messageRepository.save(message);
+                });
+
+        List<Message> messages = messageRepository.findMessagesByChatId(chatId, pageSize, cursorDateTime);
+
+        return ChatResponseDTO.ChatDTO.toDTO(messages);
+    }
 }

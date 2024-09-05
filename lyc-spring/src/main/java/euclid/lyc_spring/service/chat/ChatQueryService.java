@@ -1,11 +1,14 @@
 package euclid.lyc_spring.service.chat;
 
 import euclid.lyc_spring.dto.response.ChatResponseDTO;
+import org.springframework.data.domain.PageRequest;
+
+import java.time.LocalDateTime;
 
 public interface ChatQueryService {
 
 /*-------------------------------------------------- 채팅방 --------------------------------------------------*/
-    ChatResponseDTO.ChatPreviewListDTO getAllChats();
+    ChatResponseDTO.ChatPreviewListDTO getAllChats(PageRequest pageRequest);
 
     ChatResponseDTO.ChatMemberListDTO getChatMembers(Long chatId);
 
@@ -18,7 +21,9 @@ public interface ChatQueryService {
 
 /*-------------------------------------------------- 사진 및 동영상 --------------------------------------------------*/
 
-    ChatResponseDTO.ImageListDTO getAllChatImages(Long chatId);
+    ChatResponseDTO.ImageListDTO getAllChatImages(Long chatId, Integer pageSize, LocalDateTime cursorDateTime);
 
     ChatResponseDTO.ChatImageDTO getChatImage(Long chatId, Long imageId);
+
+    ChatResponseDTO.ChatDTO getChat(Long chatId, Integer pageSize, LocalDateTime cursorDateTime);
 }

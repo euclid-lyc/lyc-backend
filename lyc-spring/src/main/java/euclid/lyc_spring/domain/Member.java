@@ -269,6 +269,8 @@ public class Member {
         savedPostingList.remove(savedPosting);
     }
 
+    //=== reload Methods ===//
+
     public void reloadFollowing(Long following) {
         this.following = following;
     }
@@ -276,6 +278,14 @@ public class Member {
     public void reloadFollower(Long follower) {
         this.follower = follower;
     }
+
+    public void reloadNickname(String nickname) { this.nickname = nickname; }
+
+    public void reloadIntroduction(String introduction) { this.introduction = introduction; }
+
+    public void reloadLoginId(String loginId) { this.loginId = loginId; }
+
+    public void reloadProfileImage(String profileImage) { this.profileImage = profileImage; }
 
     public void changeLoginPw(String password, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.loginPw = bCryptPasswordEncoder.encode(password);

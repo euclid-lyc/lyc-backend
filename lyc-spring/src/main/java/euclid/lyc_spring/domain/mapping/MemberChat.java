@@ -2,8 +2,7 @@ package euclid.lyc_spring.domain.mapping;
 
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.chat.Chat;
-import euclid.lyc_spring.domain.chat.ImageMessage;
-import euclid.lyc_spring.domain.chat.TextMessage;
+import euclid.lyc_spring.domain.chat.Message;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,10 +20,7 @@ public class MemberChat {
     private Long id;
 
     @OneToMany(mappedBy = "memberChat", cascade = CascadeType.ALL)
-    private List<TextMessage> textMessageList;
-
-    @OneToMany(mappedBy = "memberChat", cascade = CascadeType.ALL)
-    private List<ImageMessage> imageMessageList;
+    private List<Message> messageList;
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,9 +35,12 @@ public class MemberChat {
 
     @Builder
     public MemberChat(Member member, Chat chat) {
-        this.textMessageList = new ArrayList<>();
-        this.imageMessageList = new ArrayList<>();
+        this.messageList = new ArrayList<>();
         this.member = member;
         this.chat = chat;
+    }
+
+    public void addMessage(Message message) {
+        this.messageList.add(message);
     }
 }

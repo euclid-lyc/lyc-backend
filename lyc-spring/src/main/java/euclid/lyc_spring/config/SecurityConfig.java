@@ -58,6 +58,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/lyc/auths/sign-up/**", "/lyc/auths/sign-in/**").permitAll()
+                        .requestMatchers("/ws/lyc/**").permitAll()
                         .requestMatchers("/lyc/**").authenticated()
                         .anyRequest().denyAll()
                 )

@@ -2,7 +2,7 @@ package euclid.lyc_spring.dto.response;
 
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.chat.Chat;
-import euclid.lyc_spring.domain.chat.ImageMessage;
+import euclid.lyc_spring.domain.chat.Message;
 import euclid.lyc_spring.domain.chat.Schedule;
 import euclid.lyc_spring.domain.mapping.MemberChat;
 import lombok.AccessLevel;
@@ -29,29 +29,61 @@ public class ChatResponseDTO {
     }
 
     @Getter
-    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-    @Builder(access = AccessLevel.PRIVATE)
+    @RequiredArgsConstructor
+    @Builder
     public static class ChatPreviewDTO {
 
         private final Long chatId;
         private final String nickname;
         private final String loginId;
         private final String profileImage;
-        private final String recentMessage;
+        private final Boolean isText;
+        private final String content;
         private final LocalDateTime createdAt;
-
-        public static ChatPreviewDTO toDTO(Member member, Chat chat, String recentMessage, LocalDateTime createdAt) {
-            return ChatPreviewDTO.builder()
-                    .chatId(chat.getId())
-                    .nickname(member.getNickname())
-                    .loginId(member.getLoginId())
-                    .profileImage(member.getProfileImage())
-                    .recentMessage(recentMessage)
-                    .createdAt(createdAt)
-                    .build();
-        }
     }
 
+    @Getter
+    @RequiredArgsConstructor
+    @Builder
+    public static class LatestMessageDTO {
+
+        private final Long chatId;
+        private final LocalDateTime createdAt;
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    @Builder
+    public static class MemberPreviewDTO {
+        private final String nickname;
+        private final String loginId;
+        private final String profileImage;
+    }
+
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class MessageInfoDTO {
+
+        private final String sender;
+        private final String profileImage;
+        private final String content;
+        private final Boolean isText;
+        private final Boolean isChecked;
+        private final LocalDateTime createdAt;
+
+        public static MessageInfoDTO toDTO(Message message) {
+            return MessageInfoDTO.builder()
+                    .sender(message.getMemberChat().getMember().getNickname())
+                    .profileImage(message.getMemberChat().getMember().getProfileImage())
+                    .content(message.getContent())
+                    .isText(message.getIsText())
+                    .isChecked(message.getIsChecked())
+                    .createdAt(message.getCreatedAt())
+                    .build();
+        }
+
+    }
     @Getter
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     @Builder(access = AccessLevel.PRIVATE)
@@ -132,7 +164,7 @@ public class ChatResponseDTO {
 
         private final List<ChatImageDTO> images;
 
-        public static ImageListDTO toDTO(List<ImageMessage> imageMessages) {
+        public static ImageListDTO toDTO(List<Message> imageMessages) {
             return ImageListDTO.builder()
                     .images(imageMessages.stream()
                             .map(ChatImageDTO::toDTO)
@@ -150,11 +182,25 @@ public class ChatResponseDTO {
         private final String imageUrl;
         private final LocalDateTime createdAt;
 
-        public static ChatImageDTO toDTO(ImageMessage imageMessage) {
+        public static ChatImageDTO toDTO(Message imageMessage) {
             return ChatImageDTO.builder()
                     .imageId(imageMessage.getId())
-                    .imageUrl(imageMessage.getImageUrl())
+                    .imageUrl(imageMessage.getContent())
                     .createdAt(imageMessage.getCreatedAt())
+                    .build();
+        }
+    }
+
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class ChatDTO {
+        private final List<MessageInfoDTO> messages;
+        public static ChatDTO toDTO(List<Message> messages) {
+            return ChatDTO.builder()
+                    .messages(messages.stream()
+                            .map(MessageInfoDTO::toDTO)
+                            .toList())
                     .build();
         }
     }

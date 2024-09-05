@@ -17,18 +17,21 @@ public class CommissionDTO {
     @Getter
     public static class CommissionViewDTO {
 
-        private final Long CommissionId;
+        private final Long commissionId;
         private final String profileImage;
         private final String nickname;
         private final String loginId;
+        private final LocalDateTime createdAt;
 
 
         @Builder(access = AccessLevel.PRIVATE)
-        private CommissionViewDTO(Long commissionId, String profileImage, String nickname, String loginId) {
+        private CommissionViewDTO(Long commissionId, String profileImage,
+                                  String nickname, String loginId, LocalDateTime createdAt) {
             this.profileImage = profileImage;
             this.nickname = nickname;
             this.loginId = loginId;
-            this.CommissionId = commissionId;
+            this.commissionId = commissionId;
+            this.createdAt = createdAt;
         }
 
         public static CommissionViewDTO toDTO(Commission commission) {
@@ -38,6 +41,7 @@ public class CommissionDTO {
                     .nickname(member.getNickname())
                     .loginId(member.getLoginId())
                     .commissionId(commission.getId())
+                    .createdAt(commission.getCreatedAt())
                     .build();
         }
     }

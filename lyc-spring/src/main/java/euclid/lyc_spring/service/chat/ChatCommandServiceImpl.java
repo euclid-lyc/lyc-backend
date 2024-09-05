@@ -2,15 +2,20 @@ package euclid.lyc_spring.service.chat;
 
 import euclid.lyc_spring.apiPayload.code.status.ErrorStatus;
 import euclid.lyc_spring.apiPayload.exception.handler.ChatHandler;
+import euclid.lyc_spring.apiPayload.exception.handler.JwtHandler;
 import euclid.lyc_spring.apiPayload.exception.handler.MemberHandler;
+import euclid.lyc_spring.auth.JwtProvider;
 import euclid.lyc_spring.auth.SecurityUtils;
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.chat.Chat;
+import euclid.lyc_spring.domain.chat.Message;
 import euclid.lyc_spring.domain.chat.Schedule;
+import euclid.lyc_spring.domain.mapping.MemberChat;
 import euclid.lyc_spring.dto.request.ChatRequestDTO;
 import euclid.lyc_spring.dto.response.ChatResponseDTO;
 import euclid.lyc_spring.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +30,11 @@ public class ChatCommandServiceImpl implements ChatCommandService {
     private final ChatRepository chatRepository;
     private final CommissionRepository commissionRepository;
     private final ScheduleRepository scheduleRepository;
+    private final MessageRepository messageRepository;
 
     private final MemberChatRepository memberChatRepository;
+
+    private final JwtProvider jwtProvider;
 
 /*-------------------------------------------------- 채팅방 --------------------------------------------------*/
 
@@ -76,6 +84,41 @@ public class ChatCommandServiceImpl implements ChatCommandService {
         return ChatResponseDTO.ScheduleDTO.toDTO(schedule);
     }
 
-/*-------------------------------------------------- 사진 및 동영상 --------------------------------------------------*/
+    @Override
+    public ChatResponseDTO.MessageInfoDTO saveMessage(Long chatId, ChatRequestDTO.MessageDTO messageDTO) {
+
+        String accessToken = jwtProvider.resolveToken(messageDTO.getAccessToken());
+        String loginId;
+        if (jwtProvider.validateToken(accessToken)) {
+            Authentication authentication = jwtProvider.getAuthentication(accessToken);
+            if (authentication == null || !authentication.isAuthenticated()) {
+                throw new JwtHandler(ErrorStatus.JWT_UNAUTHORIZED);
+            }
+            loginId = authentication.getPrincipal().toString();
+        } else {
+            throw new JwtHandler(ErrorStatus.JWT_INVALID_TOKEN);
+        }
+
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        chatRepository.findByIdAndInactive(chatId, null)
+                .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
+        MemberChat memberChat = memberChatRepository.findByMemberIdAndChatId(member.getId(), chatId)
+                .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_MEMBER_NOT_FOUND));
+
+        Message message = Message.builder()
+                .content(messageDTO.getContent())
+                .isText(messageDTO.getIsText())
+                .isChecked(Boolean.FALSE)
+                .memberChat(memberChat)
+                .build();
+
+        message = messageRepository.save(message);
+        memberChat.addMessage(message);
+
+        return ChatResponseDTO.MessageInfoDTO.toDTO(message);
+    }
+
+    /*-------------------------------------------------- 사진 및 동영상 --------------------------------------------------*/
 
 }
