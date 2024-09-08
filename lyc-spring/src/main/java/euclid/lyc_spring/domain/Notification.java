@@ -4,9 +4,13 @@ import euclid.lyc_spring.domain.enums.CommissionStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Getter
 @Entity
+@DynamicUpdate
+@DynamicInsert
 public class Notification {
 
     @Id
