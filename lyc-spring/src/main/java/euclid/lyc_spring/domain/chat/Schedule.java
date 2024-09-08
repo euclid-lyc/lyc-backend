@@ -4,11 +4,15 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
 
 @Getter
 @Entity
+@DynamicUpdate
+@DynamicInsert
 public class Schedule {
 
     @Id
