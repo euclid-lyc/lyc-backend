@@ -98,25 +98,25 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
         commission.reloadStatus(APPROVED);
         commissionRepository.save(commission);
 
-
         Chat chat = Chat.builder()
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .commission(commission)
                 .build();
-        chatRepository.save(chat);
+        chat = chatRepository.save(chat);
 
         MemberChat memberChat1 = MemberChat.builder()
                 .chat(chat)
                 .member(member)
                 .build();
-        memberChatRepository.save(memberChat1);
+
+        memberChat1 = memberChatRepository.save(memberChat1);
 
         MemberChat memberChat2 = MemberChat.builder()
                 .chat(chat)
                 .member(commission.getDirector())
                 .build();
-        memberChatRepository.save(memberChat2);
+        memberChat2 = memberChatRepository.save(memberChat2);
 
         Schedule schedule = Schedule.builder()
                 .date(commission.getCommissionOther().getDesiredDate())
@@ -124,7 +124,10 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 .chat(chat)
                 .build();
         schedule = scheduleRepository.save(schedule);
+
         chat.addSchedule(schedule);
+        chat.addMemberChat(memberChat1);
+        chat.addMemberChat(memberChat2);
 
         return CommissionDTO.CommissionViewDTO.toDTO(commission);
     }
