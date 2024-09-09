@@ -120,14 +120,14 @@ public class PostingController {
         return ApiResponse.onSuccess(SuccessStatus._SAVED_COORDIES_FETCHED, postingImageListDTO);
     }
 
-    //@Operation(summary = "[구현완료] 게시글 저장 여부 불러오기", description= """
-    //        로그인한 회원의 게시글 저장 여부를 반환합니다.
-    //        """)
-    //@GetMapping("/postings/{postingId}/save-status")
-    //public ApiResponse<Boolean> getPostingSaveStatus(@PathVariable Long postingId) {
-    //    Boolean isSaved = postingQueryService.getPostingSaveStatus(postingId);
-    //    return ApiResponse.onSuccess(SuccessStatus._POSTING_SAVE_STATUS_FOUND, isSaved);
-    //}
+    @Operation(summary = "[구현완료] 게시글 저장 여부 불러오기", description= """
+            로그인한 회원의 게시글 저장 여부를 반환합니다.
+            """)
+    @GetMapping("/postings/{postingId}/save-status")
+    public ApiResponse<Boolean> getPostingSaveStatus(@PathVariable Long postingId) {
+        Boolean isSaved = postingQueryService.getPostingSaveStatus(postingId);
+        return ApiResponse.onSuccess(SuccessStatus._POSTING_SAVE_STATUS_FOUND, isSaved);
+    }
 
     @Operation(summary = "[구현완료] 게시글 좋아요 하기", description = "게시글에 좋아요를 누릅니다.")
     @PostMapping("/postings/{postingId}/likes")
