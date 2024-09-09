@@ -6,33 +6,49 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @Getter
 public class MemberDTO {
 
     @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class TodayDirectorListDTO {
+        private final List<TodayDirectorDTO> directors;
+        public static TodayDirectorListDTO toDTO(List<TodayDirectorDTO> directors) {
+            return TodayDirectorListDTO.builder()
+                    .directors(directors)
+                    .build();
+        }
+    }
+
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
     public static class TodayDirectorDTO {
 
         private final Long memberId;
         private final String nickname;
         private final String profileImage;
-        private final Long follower;
+        private final Long followerCount;
 
-        @Builder(access = AccessLevel.PRIVATE)
-        private TodayDirectorDTO(Long memberId, String nickname, String profileImage, Long follower) {
-            this.memberId =memberId;
-            this.nickname = nickname;
-            this.profileImage = profileImage;
-            this.follower = follower;
-        }
-
-        public static TodayDirectorDTO toDTO(Member member) {
+        public static TodayDirectorDTO toDTO(Member member, Long followerCount) {
             return TodayDirectorDTO.builder()
                     .memberId(member.getId())
                     .nickname(member.getNickname())
                     .profileImage(member.getProfileImage())
-                    .follower(member.getFollower())
+                    .followerCount(followerCount)
                     .build();
         }
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    @Builder
+    public static class FollowerCountDTO {
+        private final Long memberId;
+        private final Long followerCount;
     }
 
     @Getter
