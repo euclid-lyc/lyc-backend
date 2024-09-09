@@ -35,14 +35,14 @@ public class PostingController {
 
     @Operation(summary = "[구현완료] 게시글 미리보기 10개 불러오기", description = "홈 화면에 노출할 최신 피드 10개를 불러옵니다.")
     @GetMapping("/feeds/preview")
-    ApiResponse<PostingDTO.RecentPostingListDTO> getRecentPostings() {
+    public ApiResponse<PostingDTO.RecentPostingListDTO> getRecentPostings() {
         PostingDTO.RecentPostingListDTO recentPostingListDTO = postingQueryService.getRecentPostings();
         return ApiResponse.onSuccess(SuccessStatus._RECENT_TEN_FEEDS_FETCHED, recentPostingListDTO);
     }
 
     @Operation(summary = "[구현중] 날씨 기반 추천 게시글 10개 불러오기", description = "피드 화면에 노출할 날씨 기반 추천 게시글 10개를 불러옵니다.")
     @GetMapping("/feeds/by-weather")
-    void getPostingsAccordingToWeather() {}
+    public void getPostingsAccordingToWeather() {}
 
     @Operation(summary = "[구현중] 회원 맞춤 추천 게시글 목록 불러오기", description = """
     피드 화면에 노출할 회원 맞춤 추천 게시글 목록을 불러옵니다.
@@ -50,13 +50,13 @@ public class PostingController {
     오프셋 기반 페이징을 사용합니다.
     """)
     @GetMapping("feeds/for-member")
-    void getPostingForMember() {}
+    public void getPostingForMember() {}
 
 /*-------------------------------------------------- 게시글 공통 --------------------------------------------------*/
 
     @Operation(summary = "[구현완료] 게시글(코디 or 리뷰) 작성하기", description = "게시글을 작성합니다.")
     @PostMapping("/postings")
-    ApiResponse<PostingDTO.PostingViewDTO> createPosting(
+    public ApiResponse<PostingDTO.PostingViewDTO> createPosting(
             @RequestBody PostingRequestDTO.PostingSaveDTO postingSaveDTO) {
         PostingDTO.PostingViewDTO postingViewDTO = postingCommandService.createPosting(postingSaveDTO);
         return ApiResponse.onSuccess(SuccessStatus._POSTING_CREATED, postingViewDTO);
@@ -64,7 +64,7 @@ public class PostingController {
 
     @Operation(summary = "[구현완료] 게시글(코디 or 리뷰) 작성하기 - 이미지 업로드", description = "게시글을 작성합니다.")
     @PostMapping(value = "/postings/{postingId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ApiResponse<PostingDTO.PostingViewDTO> createPostingImage(
+    public ApiResponse<PostingDTO.PostingViewDTO> createPostingImage(
             @PathVariable Long postingId,
             @RequestPart ImageRequestDTO.LinkDTO linkDTO,
             @RequestPart(required = false) List<MultipartFile> multipartFiles) {
@@ -77,14 +77,14 @@ public class PostingController {
 
     @Operation(summary = "[구현완료] 게시글(코디 or 리뷰) 삭제하기", description = "게시글을 삭제합니다.")
     @DeleteMapping("/postings/{postingId}")
-    ApiResponse<PostingDTO.PostingIdDTO> deletePosting(@PathVariable("postingId") Long postingId) {
+    public ApiResponse<PostingDTO.PostingIdDTO> deletePosting(@PathVariable("postingId") Long postingId) {
         PostingDTO.PostingIdDTO postingIdDTO = postingCommandService.deletePosting(postingId);
         return ApiResponse.onSuccess(SuccessStatus._POSTING_DELETED, postingIdDTO);
     }
 
     @Operation(summary = "[구현완료] 게시글 불러오기", description = "게시글(코디 or 리뷰)을 불러옵니다.")
     @GetMapping("/postings/{postingId}")
-    ApiResponse<PostingDTO.PostingViewDTO> getPosting(@PathVariable("postingId") Long postingId){
+    public ApiResponse<PostingDTO.PostingViewDTO> getPosting(@PathVariable("postingId") Long postingId){
         PostingDTO.PostingViewDTO postingViewDTO = postingQueryService.getPosting(postingId);
         return ApiResponse.onSuccess(SuccessStatus._OK, postingViewDTO);
     }
@@ -98,7 +98,7 @@ public class PostingController {
 
     @Operation(summary = "[구현완료] 게시글 저장 취소하기", description = "저장되어 있는 게시글을 삭제합니다.")
     @DeleteMapping("/postings/{postingId}/saved-postings")
-    ApiResponse<PostingDTO.SavedPostingIdDTO> deleteSavedPosting(
+    public ApiResponse<PostingDTO.SavedPostingIdDTO> deleteSavedPosting(
             @PathVariable("postingId") Long postingId) {
         PostingDTO.SavedPostingIdDTO savedPostingIdDTO = postingCommandService.deleteSavedPosting(postingId);
         return ApiResponse.onSuccess(SuccessStatus._SAVED_POSTING_DELETED, savedPostingIdDTO);
@@ -112,13 +112,22 @@ public class PostingController {
             이 API는 cursorDateTime보다 이전에 업로드된 <저장한 코디>의 목록을 불러옵니다.
             """)
     @GetMapping("/members/{memberId}/saved-postings")
-    ApiResponse<PostingDTO.PostingImageListDTO> getAllSavedCoordies(
+    public ApiResponse<PostingDTO.PostingImageListDTO> getAllSavedCoordies(
             @PathVariable("memberId") Long memberId,
             @RequestParam @Min(1) Integer pageSize,
             @RequestParam LocalDateTime cursorDateTime) {
         PostingDTO.PostingImageListDTO postingImageListDTO = postingQueryService.getAllSavedPostings(memberId, pageSize, cursorDateTime);
         return ApiResponse.onSuccess(SuccessStatus._SAVED_COORDIES_FETCHED, postingImageListDTO);
     }
+
+    //@Operation(summary = "[구현완료] 게시글 저장 여부 불러오기", description= """
+    //        로그인한 회원의 게시글 저장 여부를 반환합니다.
+    //        """)
+    //@GetMapping("/postings/{postingId}/save-status")
+    //public ApiResponse<Boolean> getPostingSaveStatus(@PathVariable Long postingId) {
+    //    Boolean isSaved = postingQueryService.getPostingSaveStatus(postingId);
+    //    return ApiResponse.onSuccess(SuccessStatus._POSTING_SAVE_STATUS_FOUND, isSaved);
+    //}
 
     @Operation(summary = "[구현완료] 게시글 좋아요 하기", description = "게시글에 좋아요를 누릅니다.")
     @PostMapping("/postings/{postingId}/likes")
@@ -134,6 +143,15 @@ public class PostingController {
         return ApiResponse.onSuccess(SuccessStatus._POSTING_LIKE_CANCELED, postingViewDTO);
     }
 
+    @Operation(summary = "[구현완료] 게시글 좋아요 여부 불러오기", description= """
+            로그인한 회원의 게시글 좋아요 여부를 반환합니다.
+            """)
+    @GetMapping("/postings/{postingId}/like-status")
+    public ApiResponse<Boolean> getPostingLikeStatus(@PathVariable Long postingId) {
+        Boolean isLiked = postingQueryService.getPostingLikeStatus(postingId);
+        return ApiResponse.onSuccess(SuccessStatus._POSTING_LIKE_STATUS_FOUND, isLiked);
+    }
+
 
 /*-------------------------------------------------- 코디 게시글 --------------------------------------------------*/
 
@@ -146,7 +164,7 @@ public class PostingController {
             이 API는 cursorDateTime보다 이전에 업로드된 <코디>의 목록을 불러옵니다.
             """)
     @GetMapping("/members/{memberId}/coordies")
-    ApiResponse<PostingDTO.PostingImageListDTO> getAllMemberCoordies(
+    public ApiResponse<PostingDTO.PostingImageListDTO> getAllMemberCoordies(
             @PathVariable("memberId") Long memberId,
             @RequestParam @Min(1) Integer pageSize,
             @RequestParam LocalDateTime cursorDateTime) {
@@ -164,7 +182,7 @@ public class PostingController {
             이 API는 cursorDateTime보다 이전에 업로드된 <리뷰>의 목록을 불러옵니다.
             """)
     @GetMapping("/members/{memberId}/reviews")
-    ApiResponse<PostingDTO.PostingImageListDTO> getAllMemberReviews(
+    public ApiResponse<PostingDTO.PostingImageListDTO> getAllMemberReviews(
             @PathVariable("memberId") Long memberId,
             @RequestParam @Min(1) Integer pageSize,
             @RequestParam LocalDateTime cursorDateTime) {
