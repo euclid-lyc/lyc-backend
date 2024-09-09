@@ -13,5 +13,5 @@ public interface LikedPostingRepository extends JpaRepository<LikedPosting, Long
     List<LikedPosting> findAllByMember_Id(Long memberId);
     List<LikedPosting> findByMemberIdAndPostingId(Long memberId, Long postingId);
     void deleteByMemberIdAndPostingId(Long memberId, Long postingId);
-
+    boolean existsByMemberIdAndPostingId(Long memberId, Long postingId);
 }
