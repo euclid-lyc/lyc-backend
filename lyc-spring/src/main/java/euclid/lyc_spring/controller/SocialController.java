@@ -7,9 +7,11 @@ import euclid.lyc_spring.service.social.SocialCommandService;
 import euclid.lyc_spring.service.social.SocialQueryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -57,17 +59,19 @@ public class SocialController {
 /*-------------------------------------------------- 인기 디렉터 --------------------------------------------------*/
 
     @Tag(name = "Social - Director", description = "인기 회원(디렉터) 관련 API")
-    @Operation(summary = "[구현완료] 오늘의 디렉터 불러오기", description = "홈화면에 오늘의 디렉터 10명을 불러옵니다.")
-    @GetMapping("/directors/preview")
-    public ApiResponse<List<MemberDTO.TodayDirectorDTO>> getTodayDirectorList() {
-        List<MemberDTO.TodayDirectorDTO> todayDirectorDTOList = socialQueryService.getTodayDirectorList();
-        return ApiResponse.onSuccess(SuccessStatus._TODAY_DIRECTOR_FETCHED, todayDirectorDTOList);
-    }
-
-    @Tag(name = "Social - Director", description = "인기 회원(디렉터) 관련 API")
-    @Operation(summary = "[구현중] 디렉터 목록 불러오기 (인기순)", description = "디렉터 찾기 화면에 표시할 디렉터 랭킹을 불러옵니다.")
+    @Operation(summary = "[구현중] 디렉터 목록 불러오기 (인기순)", description = """
+            디렉터 찾기 화면에 표시할 디렉터 랭킹을 불러옵니다.
+    
+            커서 기반 페이징이 적용됩니다. (커서 : 팔로워 수, 커서가 null이면 오프셋이 0인 것과 동일)
+            """)
     @GetMapping("/directors")
-    public void getPopularDirectors() {}
+    public ApiResponse<MemberDTO.TodayDirectorListDTO> getPopularDirectors(
+            @RequestParam @Min(1) Integer pageSize,
+            @RequestParam(required = false) Long followerCount
+    ) {
+        MemberDTO.TodayDirectorListDTO todayDirectorListDTO = socialQueryService.getPopularDirectors(pageSize, followerCount);
+        return ApiResponse.onSuccess(SuccessStatus._TODAY_DIRECTOR_FETCHED, todayDirectorListDTO);
+    }
 
 /*-------------------------------------------------- 프로필 --------------------------------------------------*/
 

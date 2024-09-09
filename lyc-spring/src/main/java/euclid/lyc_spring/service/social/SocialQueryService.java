@@ -13,7 +13,7 @@ public interface SocialQueryService {
 
 /*-------------------------------------------------- 인기 디렉터 --------------------------------------------------*/
 
-    List<MemberDTO.TodayDirectorDTO> getTodayDirectorList();
+    MemberDTO.TodayDirectorListDTO getPopularDirectors(Integer pageSize, Long followerCount);
 
 /*-------------------------------------------------- 프로필 --------------------------------------------------*/
 

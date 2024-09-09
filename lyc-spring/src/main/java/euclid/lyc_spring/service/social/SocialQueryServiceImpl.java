@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -67,19 +66,22 @@ public class SocialQueryServiceImpl implements SocialQueryService {
 /*-------------------------------------------------- 인기 디렉터 --------------------------------------------------*/
 
     @Override
-    public List<MemberDTO.TodayDirectorDTO> getTodayDirectorList() {
+    public MemberDTO.TodayDirectorListDTO getPopularDirectors(Integer pageSize, Long followerCount) {
 
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
         memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        return memberRepository.findAll().stream()
-                .sorted(Comparator.comparing(Member::getFollower).reversed())
-                .map(MemberDTO.TodayDirectorDTO::toDTO)
-                .limit(10)
+        List<MemberDTO.TodayDirectorDTO> popularDirectors = followRepository.findPopularDirectors(pageSize, followerCount).stream()
+                .map(followerCountDTO -> {
+                    Member member = memberRepository.findById(followerCountDTO.getMemberId())
+                            .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+                    return MemberDTO.TodayDirectorDTO.toDTO(member, followerCountDTO.getFollowerCount());
+                })
                 .toList();
 
+        return MemberDTO.TodayDirectorListDTO.toDTO(popularDirectors);
     }
 
 /*-------------------------------------------------- 프로필 --------------------------------------------------*/
