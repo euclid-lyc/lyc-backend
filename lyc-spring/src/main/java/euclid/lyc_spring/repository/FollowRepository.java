@@ -2,6 +2,7 @@ package euclid.lyc_spring.repository;
 
 
 import euclid.lyc_spring.domain.Follow;
+import euclid.lyc_spring.repository.querydsl.FollowRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface FollowRepository extends JpaRepository<Follow, Long> {
+public interface FollowRepository extends JpaRepository<Follow, Long>, FollowRepositoryCustom {
 
     List<Follow> findByFollowingId(Long followingId);
     List<Follow> findByFollowerId(Long followerId);
