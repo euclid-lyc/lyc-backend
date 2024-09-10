@@ -3,6 +3,7 @@ package euclid.lyc_spring.domain.info;
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.enums.BottomSize;
 import euclid.lyc_spring.domain.enums.TopSize;
+import euclid.lyc_spring.dto.request.InfoRequestDTO;
 import euclid.lyc_spring.dto.request.MemberRequestDTO;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -122,4 +123,30 @@ public class Info {
         this.detailAddress = addressReqDTO.getDetailAddress();
     }
 
+    public void updateInfo(InfoRequestDTO.StyleInfoDTO styleInfoDTO) {
+        this.isPublic = styleInfoDTO.getIsPublic();
+        this.topSize = styleInfoDTO.getTopSize();
+        this.bottomSize = styleInfoDTO.getBottomSize();
+        this.height = styleInfoDTO.getHeight();
+        this.weight = styleInfoDTO.getWeight();
+        this.text = styleInfoDTO.getDetails();
+    }
+
+
+    //=== deleteMethods ===//
+    public void deleteInfoStyle(InfoStyle infoStyle) {
+        infoStyleList.remove(infoStyle);
+    }
+
+    public void deleteInfoFit(InfoFit infoFit) {
+        infoFitList.remove(infoFit);
+    }
+
+    public void deleteInfoMaterial(InfoMaterial infoMaterial) {
+        infoMaterialList.remove(infoMaterial);
+    }
+
+    public void deleteInfoBodyType(InfoBodyType infoBodyType) {
+        infoBodyTypeList.remove(infoBodyType);
+    }
 }
