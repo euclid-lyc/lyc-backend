@@ -48,7 +48,7 @@ public class MemberController {
     @GetMapping("/members/delivery")
     public ApiResponse<MemberDTO.AdrressDTO> getDeliveryInfo() {
         MemberDTO.AdrressDTO responseDTO = memberQueryService.getAdrress();
-        return ApiResponse.onSuccess(SuccessStatus._ADRRESS_FETCHED, responseDTO);
+        return ApiResponse.onSuccess(SuccessStatus._ADDRESS_FETCHED, responseDTO);
     }
 
     @Operation(summary = "[구현완료] 배송지 정보 변경하기", description = """
@@ -57,7 +57,7 @@ public class MemberController {
     @PatchMapping("/members/delivery")
     public ApiResponse<MemberDTO.AdrressDTO> updateDeliveryInfo(@RequestBody MemberRequestDTO.AddressDTO addressDTO) {
         MemberDTO.AdrressDTO responseDTO = memberCommandService.updateAddress(addressDTO);
-        return ApiResponse.onSuccess(SuccessStatus._ADRRESS_UPDATED, responseDTO);
+        return ApiResponse.onSuccess(SuccessStatus._ADDRESS_UPDATED, responseDTO);
     }
 
     // 보안에 신경쓰라고 하셨는데 이게 신경을 쓴건지 잘 모르겠습니다 함 봐주세용 ㅠ
