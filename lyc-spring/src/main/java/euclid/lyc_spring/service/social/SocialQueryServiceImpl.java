@@ -100,16 +100,16 @@ public class SocialQueryServiceImpl implements SocialQueryService {
 
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
-        memberRepository.findByLoginId(loginId)
+        Member loginMember = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        memberRepository.findById(memberId)
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         Info info = infoRepository.findByMemberId(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_INFO_NOT_FOUND));
 
-        // 비공개 설정 시 스타일 정보 반환 X
-        if (!info.getIsPublic()) {
+        // 비공개 설정이면서 본인의 스타일 정보가 아니면 반환 X
+        if (!info.getIsPublic() && !loginMember.getId().equals(member.getId())) {
             throw new MemberHandler(ErrorStatus.MEMBER_STYLE_INFO_IS_PRIVATE);
         }
 
