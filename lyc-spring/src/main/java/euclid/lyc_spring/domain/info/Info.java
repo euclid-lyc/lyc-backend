@@ -116,10 +116,10 @@ public class Info {
     }
 
     //=== reload Methods ===//
-    public void reloadAdrress(MemberRequestDTO.AddressDTO addressDTO) {
-        this.postalCode = addressDTO.getPostalCode();
-        this.address = addressDTO.getAddress();
-        this.detailAddress = addressDTO.getDetailAddress();
+    public void reloadAdrress(MemberRequestDTO.AddressReqDTO addressReqDTO) {
+        this.postalCode = addressReqDTO.getPostalCode();
+        this.address = addressReqDTO.getAddress();
+        this.detailAddress = addressReqDTO.getDetailAddress();
     }
 
 }

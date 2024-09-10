@@ -55,8 +55,8 @@ public class MemberController {
             입력받은 배송지 데이터로 유저의 배송지 정보를 변경합니다.
             """)
     @PatchMapping("/members/delivery")
-    public ApiResponse<MemberDTO.AddressDTO> updateDeliveryInfo(@RequestBody MemberRequestDTO.AddressDTO addressDTO) {
-        MemberDTO.AddressDTO responseDTO = memberCommandService.updateAddress(addressDTO);
+    public ApiResponse<MemberDTO.AddressDTO> updateDeliveryInfo(@RequestBody MemberRequestDTO.AddressReqDTO addressReqDTO) {
+        MemberDTO.AddressDTO responseDTO = memberCommandService.updateAddress(addressReqDTO);
         return ApiResponse.onSuccess(SuccessStatus._ADDRESS_UPDATED, responseDTO);
     }
 

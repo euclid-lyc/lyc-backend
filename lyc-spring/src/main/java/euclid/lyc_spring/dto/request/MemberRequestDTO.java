@@ -1,8 +1,6 @@
 package euclid.lyc_spring.dto.request;
 
-import jakarta.persistence.Column;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 
 @Getter
@@ -52,12 +50,12 @@ public class MemberRequestDTO {
     }
 
     @Getter
-    public static class AddressDTO{
+    public static class AddressReqDTO {
         private final Integer postalCode;
         private final String address;
         private final String detailAddress;
 
-        public AddressDTO(Integer postalCode, String address, String detailAddress) {
+        public AddressReqDTO(Integer postalCode, String address, String detailAddress) {
             this.postalCode = postalCode;
             this.address = address;
             this.detailAddress = detailAddress;
