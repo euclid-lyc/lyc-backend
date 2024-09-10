@@ -53,7 +53,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public MemberDTO.AdrressDTO updateAddress(MemberRequestDTO.AddressDTO addressDTO) {
+    public MemberDTO.AddressDTO updateAddress(MemberRequestDTO.AddressDTO addressDTO) {
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
         Member loginMember = memberRepository.findByLoginId(loginId)
@@ -62,7 +62,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         info.reloadAdrress(addressDTO);
         infoRepository.save(info);
-        return MemberDTO.AdrressDTO.toDTO(loginMember);
+        return MemberDTO.AddressDTO.toDTO(loginMember);
     }
 
     @Override

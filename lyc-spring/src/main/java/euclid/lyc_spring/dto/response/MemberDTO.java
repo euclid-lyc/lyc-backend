@@ -184,13 +184,13 @@ public class MemberDTO {
     @Getter
     @Builder(access = AccessLevel.PRIVATE)
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class AdrressDTO{
+    public static class AddressDTO {
         private final Integer postalCode;
         private final String address;
         private final String detailAddress;
 
-        public static AdrressDTO toDTO(Member member) {
-            return AdrressDTO.builder()
+        public static AddressDTO toDTO(Member member) {
+            return AddressDTO.builder()
                     .postalCode(member.getInfo().getPostalCode())
                     .address(member.getInfo().getAddress())
                     .detailAddress(member.getInfo().getDetailAddress())

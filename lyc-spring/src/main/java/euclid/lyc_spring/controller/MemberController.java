@@ -46,8 +46,8 @@ public class MemberController {
             유저의 배송지 정보를 불러옵니다.
             """)
     @GetMapping("/members/delivery")
-    public ApiResponse<MemberDTO.AdrressDTO> getDeliveryInfo() {
-        MemberDTO.AdrressDTO responseDTO = memberQueryService.getAdrress();
+    public ApiResponse<MemberDTO.AddressDTO> getDeliveryInfo() {
+        MemberDTO.AddressDTO responseDTO = memberQueryService.getAdrress();
         return ApiResponse.onSuccess(SuccessStatus._ADDRESS_FETCHED, responseDTO);
     }
 
@@ -55,8 +55,8 @@ public class MemberController {
             입력받은 배송지 데이터로 유저의 배송지 정보를 변경합니다.
             """)
     @PatchMapping("/members/delivery")
-    public ApiResponse<MemberDTO.AdrressDTO> updateDeliveryInfo(@RequestBody MemberRequestDTO.AddressDTO addressDTO) {
-        MemberDTO.AdrressDTO responseDTO = memberCommandService.updateAddress(addressDTO);
+    public ApiResponse<MemberDTO.AddressDTO> updateDeliveryInfo(@RequestBody MemberRequestDTO.AddressDTO addressDTO) {
+        MemberDTO.AddressDTO responseDTO = memberCommandService.updateAddress(addressDTO);
         return ApiResponse.onSuccess(SuccessStatus._ADDRESS_UPDATED, responseDTO);
     }
 
