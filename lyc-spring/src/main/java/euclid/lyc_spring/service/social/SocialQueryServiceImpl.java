@@ -44,7 +44,7 @@ public class SocialQueryServiceImpl implements SocialQueryService {
     }
 
     @Override
-    public List<MemberDTO.FollowDTO> getFollowingList(Long memberId) {
+    public List<MemberDTO.FollowDTO> getFollowingList(Long memberId, Integer pageSize, String cursorNickname) {
 
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
@@ -54,9 +54,8 @@ public class SocialQueryServiceImpl implements SocialQueryService {
         memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        List<Follow> followers = followRepository.findByFollowerId(memberId);
-        return followers.stream()
-                .map(Follow::getFollowing)
+        List<Member> followings = followRepository.findFollowings(memberId, pageSize, cursorNickname);
+        return followings.stream()
                 .map(MemberDTO.FollowDTO::toDTO)
                 .toList();
     }

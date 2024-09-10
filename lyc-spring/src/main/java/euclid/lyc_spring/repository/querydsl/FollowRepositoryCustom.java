@@ -11,4 +11,6 @@ public interface FollowRepositoryCustom {
     List<MemberDTO.FollowerCountDTO> findPopularDirectors(Integer pageSize, Long followerCount);
 
     List<Member> findFollowers(Long memberId, Integer pageSize, String cursorId);
+
+    List<Member> findFollowings(Long memberId, Integer pageSize, String cursorNickname);
 }

@@ -26,7 +26,7 @@ public class SocialController {
 /*-------------------------------------------------- 회원 팔로우 및 팔로잉 --------------------------------------------------*/
 
     @Tag(name = "Social - Follow", description = "팔로우 & 팔로잉 관련 API")
-    @Operation(summary = "[구현중] 팔로워 목록 불러오기", description = """
+    @Operation(summary = "[구현완료] 팔로워 목록 불러오기", description = """
     팔로워 목록을 불러옵니다.
     
     커서 기반 페이징이 적용됩니다. (커서 : 닉네임, 커서가 null이면 오프셋이 0인 것과 동일)
@@ -41,10 +41,17 @@ public class SocialController {
     }
 
     @Tag(name = "Social - Follow", description = "팔로우 & 팔로잉 관련 API")
-    @Operation(summary = "[구현중] 팔로잉 목록 불러오기", description = "팔로잉 목록을 불러옵니다.")
+    @Operation(summary = "[구현완료] 팔로잉 목록 불러오기", description = """
+    팔로잉 목록을 불러옵니다.
+
+    커서 기반 페이징이 적용됩니다. (커서 : 닉네임, 커서가 null이면 오프셋이 0인 것과 동일)
+    """)
     @GetMapping("/members/{memberId}/followings")
-    public ApiResponse<List<MemberDTO.FollowDTO>> getFollowings(@PathVariable("memberId") Long memberId) {
-        List<MemberDTO.FollowDTO> Followings = socialQueryService.getFollowingList(memberId);
+    public ApiResponse<List<MemberDTO.FollowDTO>> getFollowings(
+            @PathVariable("memberId") Long memberId,
+            @RequestParam @Min(1) Integer pageSize,
+            @RequestParam(required = false) String cursorNickname) {
+        List<MemberDTO.FollowDTO> Followings = socialQueryService.getFollowingList(memberId, pageSize, cursorNickname);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOLLOWING_FOUND, Followings);
     }
     @Tag(name = "Social - Follow", description = "팔로우 & 팔로잉 관련 API")

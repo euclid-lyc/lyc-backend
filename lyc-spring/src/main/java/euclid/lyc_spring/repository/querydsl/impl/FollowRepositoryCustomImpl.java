@@ -66,4 +66,28 @@ public class FollowRepositoryCustomImpl implements FollowRepositoryCustom {
                 .fetch();
 
     }
+
+    @Override
+    public List<Member> findFollowings(Long memberId, Integer pageSize, String cursorNickname) {
+
+        QMember follower = new QMember("follower");
+        QMember following = new QMember("following");
+        QFollow follow = QFollow.follow;
+
+        BooleanBuilder whereClause = new BooleanBuilder();
+        whereClause.and(follower.id.eq(memberId));
+
+        if (cursorNickname != null) {
+            whereClause.and(following.nickname.gt(cursorNickname));
+        }
+
+        return queryFactory
+                .selectFrom(following)
+                .join(follow).on(following.id.eq(follow.following.id))
+                .join(follower).on(follow.follower.id.eq(follower.id))
+                .where(whereClause)
+                .orderBy(following.nickname.asc(), following.id.asc())
+                .limit(pageSize)
+                .fetch();
+    }
 }
