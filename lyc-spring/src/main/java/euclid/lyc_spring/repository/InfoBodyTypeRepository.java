@@ -10,4 +10,6 @@ import java.util.List;
 public interface InfoBodyTypeRepository extends JpaRepository<InfoBodyType, Long> {
 
     void deleteAllByInfoId(Long infoId);
+
+    List<InfoBodyType> findAllByInfoId(Long id);
 }

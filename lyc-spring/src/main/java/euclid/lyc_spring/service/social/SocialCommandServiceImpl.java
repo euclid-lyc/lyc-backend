@@ -7,16 +7,17 @@ import euclid.lyc_spring.domain.BlockMember;
 import euclid.lyc_spring.domain.Follow;
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.Report;
+import euclid.lyc_spring.domain.info.*;
+import euclid.lyc_spring.dto.request.InfoRequestDTO;
 import euclid.lyc_spring.dto.request.MemberRequestDTO;
+import euclid.lyc_spring.dto.response.InfoResponseDTO;
 import euclid.lyc_spring.dto.response.MemberDTO;
-import euclid.lyc_spring.repository.BlockMemberRepository;
-import euclid.lyc_spring.repository.FollowRepository;
-import euclid.lyc_spring.repository.MemberRepository;
-import euclid.lyc_spring.repository.ReportRepository;
+import euclid.lyc_spring.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -28,6 +29,12 @@ public class SocialCommandServiceImpl implements SocialCommandService {
     private final FollowRepository followRepository;
     private final BlockMemberRepository blockMemberRepository;
     private final ReportRepository reportRepository;
+
+    private final InfoRepository infoRepository;
+    private final InfoStyleRepository infoStyleRepository;
+    private final InfoFitRepository infoFitRepository;
+    private final InfoMaterialRepository infoMaterialRepository;
+    private final InfoBodyTypeRepository infoBodyTypeRepository;
 
 /*-------------------------------------------------- 회원 팔로우 및 팔로잉 --------------------------------------------------*/
 
@@ -95,6 +102,164 @@ public class SocialCommandServiceImpl implements SocialCommandService {
 /*-------------------------------------------------- 인기 디렉터 --------------------------------------------------*/
 
 /*-------------------------------------------------- 프로필 --------------------------------------------------*/
+
+    @Override
+    public InfoResponseDTO.AllInfoDTO updateStyleInfo(InfoRequestDTO.StyleInfoDTO styleInfoDTO) {
+
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Info info = infoRepository.findByMemberId(member.getId())
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_INFO_NOT_FOUND));
+
+        info = updateInfo(info, styleInfoDTO);
+        member.setInfo(info);
+
+        return InfoResponseDTO.AllInfoDTO.toDTO(info);
+    }
+
+    private Info updateInfo(Info info, InfoRequestDTO.StyleInfoDTO styleInfoDTO) {
+        info.updateInfo(styleInfoDTO);
+        info = infoRepository.save(info);
+
+        updateInfoStyle(info, styleInfoDTO);
+        updateInfoFit(info, styleInfoDTO);
+        updateInfoMaterial(info, styleInfoDTO);
+        updateInfoBodyType(info, styleInfoDTO);
+
+        return info;
+    }
+
+    private void updateInfoStyle(Info info, InfoRequestDTO.StyleInfoDTO styleInfoDTO) {
+
+        // 기존 InfoStyle 삭제
+        infoStyleRepository.findAllByInfoId(info.getId())
+                .forEach(infoStyle -> {
+                    info.deleteInfoStyle(infoStyle);
+                    infoStyleRepository.delete(infoStyle);
+                });
+
+        // 새로운 InfoStyle 추가
+        styleInfoDTO.getPreferredStyleList()
+                .forEach(style -> {
+                    InfoStyle infoStyle = InfoStyle.builder()
+                            .info(info)
+                            .style(style)
+                            .isPrefer(true)
+                            .build();
+                    infoStyle = infoStyleRepository.save(infoStyle);
+                    info.addInfoStyle(infoStyle);
+                });
+
+        styleInfoDTO.getNonPreferredStyleList()
+                .forEach(style -> {
+                    InfoStyle infoStyle = InfoStyle.builder()
+                            .info(info)
+                            .style(style)
+                            .isPrefer(false)
+                            .build();
+                    infoStyle = infoStyleRepository.save(infoStyle);
+                    info.addInfoStyle(infoStyle);
+                });
+    }
+
+    private void updateInfoFit(Info info, InfoRequestDTO.StyleInfoDTO styleInfoDTO) {
+
+        // 기존 InfoFit 삭제
+        infoFitRepository.findAllByInfoId(info.getId())
+                .forEach(infoFit -> {
+                    info.deleteInfoFit(infoFit);
+                    infoFitRepository.delete(infoFit);
+                });
+
+        // 새로운 InfoFit 추가
+        styleInfoDTO.getPreferredFitList()
+                .forEach(fit -> {
+                    InfoFit infoFit = InfoFit.builder()
+                            .info(info)
+                            .fit(fit)
+                            .isPrefer(true)
+                            .build();
+                    infoFit = infoFitRepository.save(infoFit);
+                    info.addInfoFit(infoFit);
+                });
+        styleInfoDTO.getNonPreferredFitList()
+                .forEach(fit -> {
+                    InfoFit infoFit = InfoFit.builder()
+                            .info(info)
+                            .fit(fit)
+                            .isPrefer(false)
+                            .build();
+                    infoFit = infoFitRepository.save(infoFit);
+                    info.addInfoFit(infoFit);
+                });
+    }
+
+    private void updateInfoMaterial(Info info, InfoRequestDTO.StyleInfoDTO styleInfoDTO) {
+
+        // 기존 InfoMaterial 삭제
+        infoMaterialRepository.findAllByInfoId(info.getId())
+                .forEach(infoMaterial -> {
+                    info.deleteInfoMaterial(infoMaterial);
+                    infoMaterialRepository.delete(infoMaterial);
+                });
+
+        // 새로운 InfoMaterial 추가
+        styleInfoDTO.getPreferredMaterialList()
+                .forEach(material -> {
+                    InfoMaterial infoMaterial = InfoMaterial.builder()
+                            .info(info)
+                            .material(material)
+                            .isPrefer(true)
+                            .build();
+                    infoMaterial = infoMaterialRepository.save(infoMaterial);
+                    info.addInfoMaterial(infoMaterial);
+                });
+        styleInfoDTO.getNonPreferredMaterialList()
+                .forEach(material -> {
+                    InfoMaterial infoMaterial = InfoMaterial.builder()
+                            .info(info)
+                            .material(material)
+                            .isPrefer(false)
+                            .build();
+                    infoMaterial = infoMaterialRepository.save(infoMaterial);
+                    info.addInfoMaterial(infoMaterial);
+                });
+    }
+
+    private void updateInfoBodyType(Info info, InfoRequestDTO.StyleInfoDTO styleInfoDTO) {
+        // 기존 InfoBodyType 삭제
+        infoBodyTypeRepository.findAllByInfoId(info.getId())
+                .forEach(infoBodyType -> {
+                    info.deleteInfoBodyType(infoBodyType);
+                    infoBodyTypeRepository.delete(infoBodyType);
+                });
+
+
+        // 새로운 InfoMaterial 추가
+        styleInfoDTO.getGoodBodyTypeList()
+                .forEach(bodyType -> {
+                    InfoBodyType infoBodyType = InfoBodyType.builder()
+                            .info(info)
+                            .bodyType(bodyType)
+                            .isGood(true)
+                            .build();
+                    infoBodyType = infoBodyTypeRepository.save(infoBodyType);
+                    info.addInfoBodyType(infoBodyType);
+                });
+        styleInfoDTO.getBadBodyTypeList()
+                .forEach(bodyType -> {
+                    InfoBodyType infoBodyType = InfoBodyType.builder()
+                            .info(info)
+                            .bodyType(bodyType)
+                            .isGood(false)
+                            .build();
+                    infoBodyType = infoBodyTypeRepository.save(infoBodyType);
+                    info.addInfoBodyType(infoBodyType);
+                });
+    }
 
 /*-------------------------------------------------- 회원 차단 --------------------------------------------------*/
 

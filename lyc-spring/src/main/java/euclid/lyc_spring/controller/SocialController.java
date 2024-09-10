@@ -101,7 +101,7 @@ public class SocialController {
     }
 
     @Tag(name = "Social - Member Info", description = "소셜 회원 정보 관련 API")
-    @Operation(summary = "[구현중] 스타일 정보 불러오기", description = """
+    @Operation(summary = "[구현완료] 스타일 정보 불러오기", description = """
     회원의 스타일 정보를 불러옵니다.
     
     비공개된 스타일 정보는 다른 회원이 열람할 수 없습니다.
@@ -113,9 +113,13 @@ public class SocialController {
     }
 
     @Tag(name = "Social - Member Info", description = "소셜 회원 정보 관련 API")
-    @Operation(summary = "[구현중] 스타일 정보 변경하기", description = "로그인한 회원의 스타일 정보를 변경합니다.")
+    @Operation(summary = "[구현완료] 스타일 정보 변경하기", description = "로그인한 회원의 스타일 정보를 변경합니다.")
     @PatchMapping("/styles")
-    public void updateStyleInfo() {}
+    public ApiResponse<InfoResponseDTO.AllInfoDTO> updateStyleInfo(
+            @RequestBody InfoRequestDTO.StyleInfoDTO styleInfoDTO) {
+        InfoResponseDTO.AllInfoDTO allInfoDTO = socialCommandService.updateStyleInfo(styleInfoDTO);
+        return ApiResponse.onSuccess(SuccessStatus._MEMBER_STYLE_INFO_UPDATED, allInfoDTO);
+    }
 
 /*-------------------------------------------------- 회원 차단 --------------------------------------------------*/
 
