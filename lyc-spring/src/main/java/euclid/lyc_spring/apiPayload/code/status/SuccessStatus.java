@@ -46,6 +46,7 @@ public enum SuccessStatus implements BaseCode {
     _PUSH_SET_FETCHED(HttpStatus.OK, "MEMBER2019", "푸시 알람 설정 불러오기 완료"),
     _PUSH_SET_UPDATED(HttpStatus.OK, "MEMBER2020", "푸시 알람 설정 변경 완료"),
     _BLOCK_MEMBER_LIST_FOUND(HttpStatus.OK, "MEMBER2021", "차단 회원 목록 조회 완료"),
+    _MEMBER_REPORTED(HttpStatus.CREATED, "MEMBER2022", "회원 신고 완료"),
 
     // coordie
     _MEMBER_COORDIES_FETCHED(HttpStatus.OK, "COORDIE2001", "유저의 코디 목록 불러오기 완료"),
