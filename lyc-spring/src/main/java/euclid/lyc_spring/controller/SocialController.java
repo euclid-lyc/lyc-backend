@@ -26,10 +26,17 @@ public class SocialController {
 /*-------------------------------------------------- 회원 팔로우 및 팔로잉 --------------------------------------------------*/
 
     @Tag(name = "Social - Follow", description = "팔로우 & 팔로잉 관련 API")
-    @Operation(summary = "[구현중] 팔로워 목록 불러오기", description = "팔로워 목록을 불러옵니다.")
+    @Operation(summary = "[구현중] 팔로워 목록 불러오기", description = """
+    팔로워 목록을 불러옵니다.
+    
+    커서 기반 페이징이 적용됩니다. (커서 : 닉네임, 커서가 null이면 오프셋이 0인 것과 동일)
+    """)
     @GetMapping("/members/{memberId}/followers")
-    public ApiResponse<List<MemberDTO.FollowDTO>> getFollowers(@PathVariable("memberId") Long memberId) {
-        List<MemberDTO.FollowDTO> Followers = socialQueryService.getFollowerList(memberId);
+    public ApiResponse<List<MemberDTO.FollowDTO>> getFollowers(
+            @PathVariable("memberId") Long memberId,
+            @RequestParam @Min(1) Integer pageSize,
+            @RequestParam(required = false) String cursorNickname) {
+        List<MemberDTO.FollowDTO> Followers = socialQueryService.getFollowerList(memberId, pageSize, cursorNickname);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOLLOWER_FOUND, Followers);
     }
 
@@ -59,7 +66,7 @@ public class SocialController {
 /*-------------------------------------------------- 인기 디렉터 --------------------------------------------------*/
 
     @Tag(name = "Social - Director", description = "인기 회원(디렉터) 관련 API")
-    @Operation(summary = "[구현중] 디렉터 목록 불러오기 (인기순)", description = """
+    @Operation(summary = "[구현완료] 디렉터 목록 불러오기 (인기순)", description = """
             디렉터 찾기 화면에 표시할 디렉터 랭킹을 불러옵니다.
     
             커서 기반 페이징이 적용됩니다. (커서 : 팔로워 수, 커서가 null이면 오프셋이 0인 것과 동일)

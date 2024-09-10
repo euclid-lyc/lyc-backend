@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -28,7 +27,7 @@ public class SocialQueryServiceImpl implements SocialQueryService {
 /*-------------------------------------------------- 회원 팔로우 및 팔로잉 --------------------------------------------------*/
 
     @Override
-    public List<MemberDTO.FollowDTO> getFollowerList(Long memberId) {
+    public List<MemberDTO.FollowDTO> getFollowerList(Long memberId, Integer pageSize, String cursorNickname) {
 
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
@@ -38,9 +37,8 @@ public class SocialQueryServiceImpl implements SocialQueryService {
         memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        List<Follow> followers = followRepository.findByFollowingId(memberId);
+        List<Member> followers = followRepository.findFollowers(memberId, pageSize, cursorNickname);
         return followers.stream()
-                .map(Follow::getFollower)
                 .map(MemberDTO.FollowDTO::toDTO)
                 .toList();
     }

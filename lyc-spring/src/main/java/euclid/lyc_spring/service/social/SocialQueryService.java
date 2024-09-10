@@ -8,7 +8,7 @@ public interface SocialQueryService {
 
 /*-------------------------------------------------- 회원 팔로우 및 팔로잉 --------------------------------------------------*/
 
-    List<MemberDTO.FollowDTO> getFollowerList(Long memberId);
+    List<MemberDTO.FollowDTO> getFollowerList(Long memberId, Integer pageSize, String cursorNickname);
     List<MemberDTO.FollowDTO> getFollowingList(Long memberId);
 
 /*-------------------------------------------------- 인기 디렉터 --------------------------------------------------*/

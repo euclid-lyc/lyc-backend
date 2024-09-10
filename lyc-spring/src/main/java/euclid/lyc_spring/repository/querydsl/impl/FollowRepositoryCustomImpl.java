@@ -1,11 +1,9 @@
 package euclid.lyc_spring.repository.querydsl.impl;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.JPQLQuery;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import euclid.lyc_spring.domain.Follow;
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.QFollow;
 import euclid.lyc_spring.domain.QMember;
@@ -32,7 +30,8 @@ public class FollowRepositoryCustomImpl implements FollowRepositoryCustom {
             havingClause.and(follow.count().lt(followerCount));
         }
 
-        return queryFactory.select(Projections.constructor(MemberDTO.FollowerCountDTO.class,
+        return queryFactory
+                .select(Projections.constructor(MemberDTO.FollowerCountDTO.class,
                         member.id,
                         follow.count()))
                 .from(follow)
@@ -42,5 +41,29 @@ public class FollowRepositoryCustomImpl implements FollowRepositoryCustom {
                 .having(havingClause) // cursorCount보다 팔로워가 적은 것만 반환
                 .limit(pageSize)
                 .fetch();
+    }
+
+    @Override
+    public List<Member> findFollowers(Long memberId, Integer pageSize, String cursorNickname) {
+        QMember follower = new QMember("follower");
+        QMember following = new QMember("following");
+        QFollow follow = QFollow.follow;
+
+        BooleanBuilder whereClause = new BooleanBuilder();
+        whereClause.and(following.id.eq(memberId));
+
+        if (cursorNickname != null) {
+            whereClause.and(follower.nickname.gt(cursorNickname));
+        }
+
+        return queryFactory
+                .selectFrom(follower)
+                .join(follow).on(follower.id.eq(follow.follower.id))
+                .join(following).on(follow.following.id.eq(following.id))
+                .where(whereClause)
+                .orderBy(follower.nickname.asc(), follower.id.asc())
+                .limit(pageSize)
+                .fetch();
+
     }
 }
