@@ -23,5 +23,6 @@ public interface PostingQueryService {
 /*-------------------------------------------------- 리뷰 게시글 --------------------------------------------------*/
 
     PostingDTO.PostingImageListDTO getAllMemberReviews(Long memberId, Integer pageSize, LocalDateTime cursorDateTime);
-
+    Boolean getPostingLikeStatus(Long postingId);
+    Boolean getPostingSaveStatus(Long postingId);
 }

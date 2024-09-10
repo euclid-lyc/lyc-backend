@@ -66,9 +66,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public MemberDTO.MemberPreviewDTO updateLoginPw(HttpServletRequest request, VerificationRequestDTO.ChangePasswordDTO passwordDTO) {
-        String tempToken = jwtProvider.resolveToken(request);
-        SecurityUtils.checkTempAuthorization();
+    public MemberDTO.MemberPreviewDTO updateLoginPw(VerificationRequestDTO.ChangePasswordDTO passwordDTO) {
 
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
@@ -90,9 +88,6 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         member.changeLoginPw(passwordDTO.getNewPassword(), bCryptPasswordEncoder);
         memberRepository.save(member);
-
-        // 임시 인증 정보 삭제
-        verificationCodeRepository.removeVerificationCode(tempToken);
 
         return MemberDTO.MemberPreviewDTO.toDTO(member);
     }
