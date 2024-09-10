@@ -16,8 +16,8 @@ public interface SocialCommandService {
 
 /*-------------------------------------------------- 회원 차단 --------------------------------------------------*/
 
-    MemberDTO.MemberInfoDTO blockMember(Long myId, Long memberId);
-    MemberDTO.MemberInfoDTO unblockMember(Long myId, Long memberId);
+    MemberDTO.MemberInfoDTO blockMember(Long blockMemberId);
+    MemberDTO.MemberInfoDTO unblockMember(Long blockMemberId);
 
 /*-------------------------------------------------- 회원 신고 --------------------------------------------------*/
 

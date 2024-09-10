@@ -51,24 +51,34 @@ public class MemberDTO {
         private final Long followerCount;
     }
 
+    ////
+
     @Getter
-    public static class FollowDTO {
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class MemberIntroListDTO {
+        private final List<MemberIntroDTO> members;
+        public static MemberIntroListDTO toDTO(List<Member> members) {
+            return MemberIntroListDTO.builder()
+                    .members(members.stream()
+                            .map(MemberIntroDTO::toDTO)
+                            .toList())
+                    .build();
+        }
+    }
+
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class MemberIntroDTO {
 
         private final Long memberId;
         private final String nickname;
         private final String profileImage;
         private final String introduction;
 
-        @Builder(access = AccessLevel.PRIVATE)
-        private FollowDTO(Long memberId, String nickname, String profileImage, String introduction) {
-            this.memberId = memberId;
-            this.nickname = nickname;
-            this.profileImage = profileImage;
-            this.introduction = introduction;
-        }
-
-        public static FollowDTO toDTO(Member member) {
-            return FollowDTO.builder()
+        public static MemberIntroDTO toDTO(Member member) {
+            return MemberIntroDTO.builder()
                     .memberId(member.getId())
                     .nickname(member.getNickname())
                     .profileImage(member.getProfileImage())

@@ -95,12 +95,13 @@ public class SocialCommandServiceImpl implements SocialCommandService {
 /*-------------------------------------------------- 회원 차단 --------------------------------------------------*/
 
     @Override
-    public MemberDTO.MemberInfoDTO blockMember(Long memberId, Long blockMemberId) {
+    public MemberDTO.MemberInfoDTO blockMember(Long blockMemberId) {
 
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
-        memberRepository.findByLoginId(loginId)
+        Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Long memberId = member.getId();
 
         if (Objects.equals(memberId, blockMemberId)){
             throw new MemberHandler(ErrorStatus.FORBIDDEN);
@@ -109,9 +110,6 @@ public class SocialCommandServiceImpl implements SocialCommandService {
         }
 
         Member blockMember = memberRepository.findById(blockMemberId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
-        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         // 차단 관계 생성
@@ -136,12 +134,13 @@ public class SocialCommandServiceImpl implements SocialCommandService {
     }
 
     @Override
-    public MemberDTO.MemberInfoDTO unblockMember(Long memberId, Long blockMemberId) {
+    public MemberDTO.MemberInfoDTO unblockMember(Long blockMemberId) {
 
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
-        memberRepository.findByLoginId(loginId)
+        Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Long memberId = member.getId();
 
         if (blockMemberRepository.findByMemberIdAndBlockMemberId(memberId, blockMemberId).isEmpty()) {
             throw new MemberHandler(ErrorStatus.MEMBER_NOT_BLOCKING);

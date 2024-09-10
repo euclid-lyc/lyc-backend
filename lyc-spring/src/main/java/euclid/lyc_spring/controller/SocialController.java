@@ -11,7 +11,6 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -32,12 +31,12 @@ public class SocialController {
     커서 기반 페이징이 적용됩니다. (커서 : 닉네임, 커서가 null이면 오프셋이 0인 것과 동일)
     """)
     @GetMapping("/members/{memberId}/followers")
-    public ApiResponse<List<MemberDTO.FollowDTO>> getFollowers(
+    public ApiResponse<MemberDTO.MemberIntroListDTO> getFollowers(
             @PathVariable("memberId") Long memberId,
             @RequestParam @Min(1) Integer pageSize,
             @RequestParam(required = false) String cursorNickname) {
-        List<MemberDTO.FollowDTO> Followers = socialQueryService.getFollowerList(memberId, pageSize, cursorNickname);
-        return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOLLOWER_FOUND, Followers);
+        MemberDTO.MemberIntroListDTO followers = socialQueryService.getFollowerList(memberId, pageSize, cursorNickname);
+        return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOLLOWER_FOUND, followers);
     }
 
     @Tag(name = "Social - Follow", description = "팔로우 & 팔로잉 관련 API")
@@ -47,11 +46,11 @@ public class SocialController {
     커서 기반 페이징이 적용됩니다. (커서 : 닉네임, 커서가 null이면 오프셋이 0인 것과 동일)
     """)
     @GetMapping("/members/{memberId}/followings")
-    public ApiResponse<List<MemberDTO.FollowDTO>> getFollowings(
+    public ApiResponse<MemberDTO.MemberIntroListDTO> getFollowings(
             @PathVariable("memberId") Long memberId,
             @RequestParam @Min(1) Integer pageSize,
             @RequestParam(required = false) String cursorNickname) {
-        List<MemberDTO.FollowDTO> Followings = socialQueryService.getFollowingList(memberId, pageSize, cursorNickname);
+        MemberDTO.MemberIntroListDTO Followings = socialQueryService.getFollowingList(memberId, pageSize, cursorNickname);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_FOLLOWING_FOUND, Followings);
     }
     @Tag(name = "Social - Follow", description = "팔로우 & 팔로잉 관련 API")
@@ -104,35 +103,44 @@ public class SocialController {
     비공개된 스타일 정보는 다른 회원이 열람할 수 없습니다.
     """)
     @GetMapping("/members/{memberId}/styles")
-    void getStyleInfo(@PathVariable("memberId") Long memberId) {}
+    public void getStyleInfo(@PathVariable("memberId") Long memberId) {}
 
     @Tag(name = "Social - Member Info", description = "소셜 회원 정보 관련 API")
     @Operation(summary = "[구현중] 스타일 정보 변경하기", description = "로그인한 회원의 스타일 정보를 변경합니다.")
     @PatchMapping("/styles")
-    void updateStyleInfo() {}
+    public void updateStyleInfo() {}
 
 /*-------------------------------------------------- 회원 차단 --------------------------------------------------*/
 
     @Tag(name = "Social - Blocking", description = "회원 차단 관련 API")
     @Operation(summary = "[구현완료] 차단하기", description = "회원을 차단합니다.")
     @PostMapping("/block-members/{memberId}")
-    ApiResponse<MemberDTO.MemberInfoDTO> blockMember(@RequestParam("myId") Long myId, @PathVariable("memberId") Long memberId) {
-        MemberDTO.MemberInfoDTO memberInfoDTO = socialCommandService.blockMember(myId, memberId);
+    public ApiResponse<MemberDTO.MemberInfoDTO> blockMember(@PathVariable("memberId") Long blockMemberId) {
+        MemberDTO.MemberInfoDTO memberInfoDTO = socialCommandService.blockMember(blockMemberId);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_BLOCKED, memberInfoDTO);
     }
 
     @Tag(name = "Social - Blocking", description = "회원 차단 관련 API")
     @Operation(summary = "[구현완료] 차단 해제하기", description = "회원의 차단을 해제합니다.")
     @DeleteMapping("/block-members/{memberId}")
-    ApiResponse<MemberDTO.MemberInfoDTO> unblockMember(@RequestParam("myId") Long myId, @PathVariable("memberId") Long memberId) {
-        MemberDTO.MemberInfoDTO memberInfoDTO = socialCommandService.unblockMember(myId, memberId);
+    public ApiResponse<MemberDTO.MemberInfoDTO> unblockMember(@PathVariable("memberId") Long blockMemberId) {
+        MemberDTO.MemberInfoDTO memberInfoDTO = socialCommandService.unblockMember(blockMemberId);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_BLOCK_CANCELED, memberInfoDTO);
     }
 
     @Tag(name = "Social - Blocking", description = "회원 차단 관련 API")
-    @Operation(summary = "[구현중] 차단 회원 목록 불러오기", description = "로그인한 회원이 차단한 회원의 목록을 불러옵니다.")
-    @DeleteMapping("/block-members")
-    void getAllBlockMembers() {}
+    @Operation(summary = "[구현완료] 차단 회원 목록 불러오기", description = """
+    로그인한 회원이 차단한 회원의 목록을 불러옵니다.
+    
+    커서 기반 페이징이 적용됩니다. (커서 : 차단된 회원의 id(PK), 커서가 null이면 오프셋이 0인 것과 동일)
+    """)
+    @GetMapping("/block-members")
+    public ApiResponse<MemberDTO.MemberIntroListDTO> getAllBlockMembers(
+            @RequestParam @Min(1) Integer pageSize,
+            @RequestParam(required = false) Long blockMemberId) {
+        MemberDTO.MemberIntroListDTO memberIntroListDTO = socialQueryService.getAllBlockMembers(pageSize, blockMemberId);
+        return ApiResponse.onSuccess(SuccessStatus._BLOCK_MEMBER_LIST_FOUND, memberIntroListDTO);
+    }
 
 /*-------------------------------------------------- 회원 신고 --------------------------------------------------*/
 

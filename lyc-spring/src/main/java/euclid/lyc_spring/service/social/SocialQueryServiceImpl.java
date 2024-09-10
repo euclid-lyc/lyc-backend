@@ -3,7 +3,6 @@ package euclid.lyc_spring.service.social;
 import euclid.lyc_spring.apiPayload.code.status.ErrorStatus;
 import euclid.lyc_spring.apiPayload.exception.handler.MemberHandler;
 import euclid.lyc_spring.auth.SecurityUtils;
-import euclid.lyc_spring.domain.Follow;
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.dto.response.MemberDTO;
 import euclid.lyc_spring.repository.BlockMemberRepository;
@@ -27,7 +26,7 @@ public class SocialQueryServiceImpl implements SocialQueryService {
 /*-------------------------------------------------- 회원 팔로우 및 팔로잉 --------------------------------------------------*/
 
     @Override
-    public List<MemberDTO.FollowDTO> getFollowerList(Long memberId, Integer pageSize, String cursorNickname) {
+    public MemberDTO.MemberIntroListDTO getFollowerList(Long memberId, Integer pageSize, String cursorNickname) {
 
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
@@ -38,13 +37,11 @@ public class SocialQueryServiceImpl implements SocialQueryService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         List<Member> followers = followRepository.findFollowers(memberId, pageSize, cursorNickname);
-        return followers.stream()
-                .map(MemberDTO.FollowDTO::toDTO)
-                .toList();
+        return MemberDTO.MemberIntroListDTO.toDTO(followers);
     }
 
     @Override
-    public List<MemberDTO.FollowDTO> getFollowingList(Long memberId, Integer pageSize, String cursorNickname) {
+    public MemberDTO.MemberIntroListDTO getFollowingList(Long memberId, Integer pageSize, String cursorNickname) {
 
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
@@ -55,9 +52,7 @@ public class SocialQueryServiceImpl implements SocialQueryService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         List<Member> followings = followRepository.findFollowings(memberId, pageSize, cursorNickname);
-        return followings.stream()
-                .map(MemberDTO.FollowDTO::toDTO)
-                .toList();
+        return MemberDTO.MemberIntroListDTO.toDTO(followings);
     }
 
 /*-------------------------------------------------- 인기 디렉터 --------------------------------------------------*/
@@ -97,6 +92,18 @@ public class SocialQueryServiceImpl implements SocialQueryService {
     }
 
 /*-------------------------------------------------- 회원 차단 --------------------------------------------------*/
+
+    @Override
+    public MemberDTO.MemberIntroListDTO getAllBlockMembers(Integer pageSize, Long blockMemberId) {
+
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        List<Member> blockMembers = blockMemberRepository.findBlockMembers(member.getId(), blockMemberId, pageSize);
+        return MemberDTO.MemberIntroListDTO.toDTO(blockMembers);
+    }
 
 /*-------------------------------------------------- 회원 신고 --------------------------------------------------*/
 

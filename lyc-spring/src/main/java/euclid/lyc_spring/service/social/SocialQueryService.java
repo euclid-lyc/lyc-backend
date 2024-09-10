@@ -8,8 +8,8 @@ public interface SocialQueryService {
 
 /*-------------------------------------------------- 회원 팔로우 및 팔로잉 --------------------------------------------------*/
 
-    List<MemberDTO.FollowDTO> getFollowerList(Long memberId, Integer pageSize, String cursorNickname);
-    List<MemberDTO.FollowDTO> getFollowingList(Long memberId, Integer pageSize, String cursorNickname);
+    MemberDTO.MemberIntroListDTO getFollowerList(Long memberId, Integer pageSize, String cursorNickname);
+    MemberDTO.MemberIntroListDTO getFollowingList(Long memberId, Integer pageSize, String cursorNickname);
 
 /*-------------------------------------------------- 인기 디렉터 --------------------------------------------------*/
 
@@ -20,6 +20,8 @@ public interface SocialQueryService {
     MemberDTO.MemberInfoDTO getMemberInfoDTO(Long memberId);
 
 /*-------------------------------------------------- 회원 차단 --------------------------------------------------*/
+
+    MemberDTO.MemberIntroListDTO getAllBlockMembers(Integer pageSize, Long blockMemberId);
 
 /*-------------------------------------------------- 회원 신고 --------------------------------------------------*/
 
