@@ -2,7 +2,10 @@ package euclid.lyc_spring.controller;
 
 import euclid.lyc_spring.apiPayload.ApiResponse;
 import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
+import euclid.lyc_spring.dto.request.InfoRequestDTO;
 import euclid.lyc_spring.dto.request.MemberRequestDTO;
+import euclid.lyc_spring.dto.response.CommissionDTO;
+import euclid.lyc_spring.dto.response.InfoResponseDTO;
 import euclid.lyc_spring.dto.response.MemberDTO;
 import euclid.lyc_spring.service.social.SocialCommandService;
 import euclid.lyc_spring.service.social.SocialQueryService;
@@ -104,7 +107,10 @@ public class SocialController {
     비공개된 스타일 정보는 다른 회원이 열람할 수 없습니다.
     """)
     @GetMapping("/members/{memberId}/styles")
-    public void getStyleInfo(@PathVariable("memberId") Long memberId) {}
+    public ApiResponse<InfoResponseDTO.AllInfoDTO> getStyleInfo(@PathVariable("memberId") Long memberId) {
+        InfoResponseDTO.AllInfoDTO allInfoDTO = socialQueryService.getStyleInfo(memberId);
+        return ApiResponse.onSuccess(SuccessStatus._MEMBER_STYLE_INFO_FOUND, allInfoDTO);
+    }
 
     @Tag(name = "Social - Member Info", description = "소셜 회원 정보 관련 API")
     @Operation(summary = "[구현중] 스타일 정보 변경하기", description = "로그인한 회원의 스타일 정보를 변경합니다.")
@@ -146,7 +152,7 @@ public class SocialController {
 /*-------------------------------------------------- 회원 신고 --------------------------------------------------*/
 
     @Tag(name = "Social - Report", description = "회원 신고 관련 API")
-    @Operation(summary = "[구현중] 회원 신고하기", description = "로그인한 회원이 다른 회원을 신고합니다.")
+    @Operation(summary = "[구현완료] 회원 신고하기", description = "로그인한 회원이 다른 회원을 신고합니다.")
     @PostMapping("/members/{memberId}/reports")
     public ApiResponse<MemberDTO.MemberProfileDTO> reportMember(
             @PathVariable("memberId") Long reportedMemberId,

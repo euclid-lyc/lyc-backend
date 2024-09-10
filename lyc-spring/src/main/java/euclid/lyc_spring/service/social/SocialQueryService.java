@@ -1,5 +1,6 @@
 package euclid.lyc_spring.service.social;
 
+import euclid.lyc_spring.dto.response.InfoResponseDTO;
 import euclid.lyc_spring.dto.response.MemberDTO;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public interface SocialQueryService {
 /*-------------------------------------------------- 프로필 --------------------------------------------------*/
 
     MemberDTO.MemberInfoDTO getMemberInfoDTO(Long memberId);
+    InfoResponseDTO.AllInfoDTO getStyleInfo(Long memberId);
 
 /*-------------------------------------------------- 회원 차단 --------------------------------------------------*/
 
