@@ -38,4 +38,10 @@ public class AdminController {
         return ApiResponse.onSuccess(SuccessStatus._OK);
     }
 
+/*-------------------------------------------------- Report --------------------------------------------------*/
+
+    // 신고 처리하기 (누적 신고횟수가 5회 이상이면 계정 2주간 비활성화)
+
+    // 처리된 신고 모두 삭제하기 (is_processed = true인 신고 삭제)
+
 }
