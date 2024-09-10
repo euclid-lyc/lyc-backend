@@ -6,10 +6,13 @@ import euclid.lyc_spring.auth.SecurityUtils;
 import euclid.lyc_spring.domain.BlockMember;
 import euclid.lyc_spring.domain.Follow;
 import euclid.lyc_spring.domain.Member;
+import euclid.lyc_spring.domain.Report;
+import euclid.lyc_spring.dto.request.MemberRequestDTO;
 import euclid.lyc_spring.dto.response.MemberDTO;
 import euclid.lyc_spring.repository.BlockMemberRepository;
 import euclid.lyc_spring.repository.FollowRepository;
 import euclid.lyc_spring.repository.MemberRepository;
+import euclid.lyc_spring.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +27,7 @@ public class SocialCommandServiceImpl implements SocialCommandService {
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
     private final BlockMemberRepository blockMemberRepository;
+    private final ReportRepository reportRepository;
 
 /*-------------------------------------------------- 회원 팔로우 및 팔로잉 --------------------------------------------------*/
 
@@ -157,6 +161,31 @@ public class SocialCommandServiceImpl implements SocialCommandService {
         return MemberDTO.MemberInfoDTO.toDTO(blockMember);
     }
 
-    /*-------------------------------------------------- 회원 신고 --------------------------------------------------*/
+/*-------------------------------------------------- 회원 신고 --------------------------------------------------*/
 
+    @Override
+    public MemberDTO.MemberProfileDTO reportMember(Long reportedMemberId, MemberRequestDTO.ReportDTO reportDTO) {
+
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member reportedMember = memberRepository.findById(reportedMemberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Report report = Report.builder()
+                .abuse(reportDTO.getAbuse())
+                .obsceneContent(reportDTO.getObsceneContent())
+                .privacy(reportDTO.getPrivacy())
+                .spam(reportDTO.getSpam())
+                .infringement(reportDTO.getInfringement())
+                .description(reportDTO.getDescription())
+                .member(reportedMember)
+                .build();
+
+        report = reportRepository.save(report);
+        reportedMember.addReport(report);
+
+        return MemberDTO.MemberProfileDTO.toDTO(reportedMember);
+    }
 }

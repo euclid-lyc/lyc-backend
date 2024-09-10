@@ -1,5 +1,6 @@
 package euclid.lyc_spring.service.social;
 
+import euclid.lyc_spring.dto.request.MemberRequestDTO;
 import euclid.lyc_spring.dto.response.MemberDTO;
 
 public interface SocialCommandService {
@@ -21,4 +22,5 @@ public interface SocialCommandService {
 
 /*-------------------------------------------------- 회원 신고 --------------------------------------------------*/
 
+    MemberDTO.MemberProfileDTO reportMember(Long reportedMemberId, MemberRequestDTO.ReportDTO reportDTO);
 }

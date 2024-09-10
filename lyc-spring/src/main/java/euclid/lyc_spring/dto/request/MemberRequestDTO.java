@@ -83,4 +83,15 @@ public class MemberRequestDTO {
             this.ad = ad;
         }
     }
+
+    @Getter
+    @RequiredArgsConstructor
+    public static class ReportDTO {
+        private final Boolean abuse;
+        private final Boolean obsceneContent;
+        private final Boolean privacy;
+        private final Boolean spam;
+        private final Boolean infringement;
+        private final String description;
+    }
 }

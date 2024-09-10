@@ -2,6 +2,7 @@ package euclid.lyc_spring.controller;
 
 import euclid.lyc_spring.apiPayload.ApiResponse;
 import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
+import euclid.lyc_spring.dto.request.MemberRequestDTO;
 import euclid.lyc_spring.dto.response.MemberDTO;
 import euclid.lyc_spring.service.social.SocialCommandService;
 import euclid.lyc_spring.service.social.SocialQueryService;
@@ -147,6 +148,11 @@ public class SocialController {
     @Tag(name = "Social - Report", description = "회원 신고 관련 API")
     @Operation(summary = "[구현중] 회원 신고하기", description = "로그인한 회원이 다른 회원을 신고합니다.")
     @PostMapping("/members/{memberId}/reports")
-    void reportMember(@PathVariable("memberId") Long memberId) {}
+    public ApiResponse<MemberDTO.MemberProfileDTO> reportMember(
+            @PathVariable("memberId") Long reportedMemberId,
+            @RequestBody MemberRequestDTO.ReportDTO reportDTO) {
+        MemberDTO.MemberProfileDTO memberProfileDTO = socialCommandService.reportMember(reportedMemberId, reportDTO);
+        return ApiResponse.onSuccess(SuccessStatus._MEMBER_REPORTED, memberProfileDTO);
+    }
 }
 
