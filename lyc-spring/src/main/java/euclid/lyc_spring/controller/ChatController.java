@@ -53,7 +53,7 @@ public class ChatController {
     }
 
     @Tag(name = "Chat - General", description = "채팅방 관련 API")
-    @Operation(summary = "[구현중] 채팅방 불러오기", description = """
+    @Operation(summary = "[구현완료] 채팅방 불러오기", description = """
             채팅방의 기존 대화 내역을 반환합니다.
             
             커서 기반 페이징이 적용됩니다.
@@ -94,7 +94,7 @@ public class ChatController {
 /*-------------------------------------------------- 메시지 --------------------------------------------------*/
 
     @Tag(name = "Chat - General", description = "채팅방 관련 API")
-    @Operation(summary = "[구현중] 메시지 전송하기", description = """
+    @Operation(summary = "[구현완료] 메시지 전송하기", description = """
             HTTP 요청이 아니라 스웨거 화면에 나오진 않을 거지만... 로그인한 회원과 특정 회원의 채팅방 정보 및 메시지 목록을 반환합니다.
             
             텍스트 : { "content" : "메시지 내용", "isText" : true, "accessToken" : "Bearer {token}" }
@@ -113,8 +113,10 @@ public class ChatController {
     }
 
     @Tag(name = "Chat - Message", description = "채팅방 메시지 관련 API")
-    @Operation(summary = "[구현중] 메시지 전송하기 (이미지) - 이미지 업로드", description = """
+    @Operation(summary = "[구현완료] 메시지 전송하기 (이미지) - 이미지 업로드", description = """
             채팅방에 전송할 이미지를 S3에 업로드합니다.
+            
+            ** 구현은 다 되어있지만... 추후 chatId 확인 로직 추가 예정 **
             """)
     @PostMapping(value = "/chats/{chatId}/messages/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<String> uploadImageMessage(
@@ -188,10 +190,4 @@ public class ChatController {
         return ApiResponse.onSuccess(SuccessStatus._CHAT_IMAGE_FOUND, chatImageDTO);
     }
 
-    //@Tag(name = "Chat - Image", description = "채팅방 사진 관련 API")
-    //@Operation(summary = "사진 및 동영상 미리보기 불러오기", description = """
-    //        """)
-    //@GetMapping("/chats/{chatId}/images/{imageId}/preview")
-    //public void getChatImagePreview(
-    //        @PathVariable Long chatId, @PathVariable Long imageId) {}
 }

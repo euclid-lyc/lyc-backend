@@ -94,11 +94,8 @@ public class CommissionController {
 
     @Tag(name = "Commission - Request", description = "의뢰서 관련 API")
     @Operation(summary = "[구현완료] 의뢰서 수정하기", description = """
-            의뢰서 관련 데이터를 입력받고 기존 의뢰서의 내용을 수정합니다. 
+            의뢰서 관련 데이터를 입력받고 기존 의뢰서의 내용을 수정합니다.
             """)
-    // 의뢰가 승낙되기 전에 수정할 수도 있지않나.. 그래서 commissionId로 바꿔봄
-    // 그래야 할 것 같긴 한데 근데 이거 수정을 어디서 함?
-    // 수정이 안되는 부분이 있어서 코드를 수정함
     @PatchMapping("/chats/commissions/{commissionId}")
     public ApiResponse<CommissionDTO.CommissionViewDTO> updateCommission(
             @RequestBody CommissionRequestDTO.CommissionDTO commissionRequestDTO, @PathVariable Long commissionId) {
