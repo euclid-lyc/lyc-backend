@@ -65,9 +65,9 @@ public class MemberController {
             기존 패스워드를 확인하고 일치하면 입력받은 패스워드로 변경합니다.
             """)
     @PatchMapping("/members/pw-info")
-    public ApiResponse<MemberDTO.MemberPreviewDTO> updateLoginPw(HttpServletRequest request
-            , @RequestBody VerificationRequestDTO.ChangePasswordDTO passwordDTO) {
-        MemberDTO.MemberPreviewDTO responseDTO = memberCommandService.updateLoginPw(request, passwordDTO);
+    public ApiResponse<MemberDTO.MemberPreviewDTO> updateLoginPw(
+            @RequestBody VerificationRequestDTO.ChangePasswordDTO passwordDTO) {
+        MemberDTO.MemberPreviewDTO responseDTO = memberCommandService.updateLoginPw(passwordDTO);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_PW_CHANGED, responseDTO);
     }
 
@@ -83,7 +83,7 @@ public class MemberController {
     }
 
     @Operation(summary = "[구현완료] 푸시알림 설정 변경하기", description = """
-            입력받은 푸시알림 데이터로 유저의 푸시알림 정보를 변경합니다. 
+            입력받은 푸시알림 데이터로 유저의 푸시알림 정보를 변경합니다.
             """)
     @PatchMapping("/members/push-sets")
     public ApiResponse<MemberDTO.PushSetDTO> updatePushSet(@RequestBody MemberRequestDTO.PushSetDTO pushSetDTO) {

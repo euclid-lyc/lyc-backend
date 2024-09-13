@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import euclid.lyc_spring.apiPayload.ApiResponse;
 import euclid.lyc_spring.apiPayload.code.ErrorReasonDTO;
 import euclid.lyc_spring.apiPayload.code.status.ErrorStatus;
+import euclid.lyc_spring.apiPayload.header.HttpHeadersCustom;
 import euclid.lyc_spring.dto.token.JwtTokenDTO;
 import euclid.lyc_spring.repository.token.TokenBlackListRepository;
 import jakarta.servlet.FilterChain;
@@ -91,8 +92,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     // 헤더에 토큰을 삽입하는 함수
     private void setHeader(JwtTokenDTO jwtTokenDTO, HttpServletResponse response) {
-        response.addHeader("Access-Token", jwtTokenDTO.getAccessToken());
-        response.addHeader("Refresh-Token", jwtTokenDTO.getRefreshToken());
+        response.addHeader(HttpHeadersCustom.ACCESSTOKEN, jwtTokenDTO.getAccessToken());
+        response.addHeader(HttpHeadersCustom.REFRESHTOKEN, jwtTokenDTO.getRefreshToken());
     }
 
     // 보안 컨텍스트에 인증 정보를 저장하는 함수

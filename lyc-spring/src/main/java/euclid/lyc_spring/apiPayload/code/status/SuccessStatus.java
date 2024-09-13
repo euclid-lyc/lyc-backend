@@ -63,6 +63,8 @@ public enum SuccessStatus implements BaseCode {
     _SAVED_POSTING_DELETED(HttpStatus.OK, "POSTING2007", "저장한 게시글 삭제 완료"),
     _POSTING_LIKED(HttpStatus.CREATED, "POSTING2008", "게시글 좋아요 완료"),
     _POSTING_LIKE_CANCELED(HttpStatus.OK, "POSTING2009", "게시글 좋아요 취소 완료"),
+    _POSTING_LIKE_STATUS_FOUND(HttpStatus.OK, "POSTING2010", "게시글 좋아요 여부 조회 완료"),
+    _POSTING_SAVE_STATUS_FOUND(HttpStatus.OK, "POSTING2011", "게시글 저장 여부 조회 완료"),
 
     // FEED
     _RECENT_TEN_FEEDS_FETCHED(HttpStatus.OK, "FEED2001", "최신 피드 10개 불러오기 완료"),

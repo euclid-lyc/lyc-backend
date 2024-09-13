@@ -80,7 +80,39 @@ public class PostingQueryServiceImpl implements PostingQueryService {
                 .build();
     }
 
-/*-------------------------------------------------- 코디 게시글 --------------------------------------------------*/
+    @Override
+    public Boolean getPostingSaveStatus(Long postingId) {
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        postingRepository.findById(postingId)
+                .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
+
+        if (savedPostingRepository.existsByMemberIdAndPostingId(member.getId(), postingId)) {
+            return Boolean.TRUE;
+        } else {
+            return Boolean.FALSE;
+        }
+    }
+
+    @Override
+    public Boolean getPostingLikeStatus(Long postingId) {
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        postingRepository.findById(postingId)
+                .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
+
+        if (likedPostingRepository.existsByMemberIdAndPostingId(member.getId(), postingId)) {
+            return Boolean.TRUE;
+        } else {
+            return Boolean.FALSE;
+        }
+    }
+
+    /*-------------------------------------------------- 코디 게시글 --------------------------------------------------*/
 
     @Override
     public PostingDTO.PostingImageListDTO getAllMemberCoordies(Long memberId, Integer pageSize, LocalDateTime cursorDateTime) {

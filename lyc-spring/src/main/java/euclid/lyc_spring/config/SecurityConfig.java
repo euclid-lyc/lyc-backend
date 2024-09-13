@@ -1,11 +1,13 @@
 package euclid.lyc_spring.config;
 
+import euclid.lyc_spring.apiPayload.header.HttpHeadersCustom;
 import euclid.lyc_spring.auth.JwtAuthenticationFilter;
 import euclid.lyc_spring.auth.JwtGenerator;
 import euclid.lyc_spring.auth.JwtProvider;
 import euclid.lyc_spring.repository.token.TokenBlackListRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.HttpHeaders;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -41,7 +43,11 @@ public class SecurityConfig {
                 registry.addMapping("/**")
                         .allowedOrigins("*")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*");
+                        .allowedHeaders("*")
+                        .exposedHeaders(HttpHeaders.AUTHORIZATION)
+                        .exposedHeaders(HttpHeadersCustom.ACCESSTOKEN)
+                        .exposedHeaders(HttpHeadersCustom.REFRESHTOKEN)
+                        .exposedHeaders(HttpHeadersCustom.TEMPTOKEN);
             }
         };
     }
