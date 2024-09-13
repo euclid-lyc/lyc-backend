@@ -61,9 +61,15 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         Member director = memberRepository.findByLoginId(commissionRequestDTO.getDirectorId())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+
+        // 셀프 의뢰 금지
         if(member.equals(director)) {
-            throw new MemberHandler(ErrorStatus.BAD_REQUEST);
+            throw new CommissionHandler(ErrorStatus.DIRECTOR_EQUAL_MEMBER);
         }
+
+        // 의뢰 가능한 디렉터인지 확인해야됨 (추가 예정)
+        // if(){}
 
         InfoRequestDTO.BasicInfoDTO basicInfoDTO = commissionRequestDTO.getBasicInfo();
         StyleRequestDTO.StyleDTO styleDTO = commissionRequestDTO.getStyle();
@@ -264,6 +270,9 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
 
     //=== createOther ===//
     private void createOther(Commission commission, InfoRequestDTO.OtherMattersDTO otherMattersDTO) {
+
+        // 날짜가 유효한지 확인 필요(추가 예정)
+
         CommissionOther commissionOther = CommissionOther.builder()
                 .dateToUse(otherMattersDTO.getDateToUse())
                 .desiredDate(otherMattersDTO.getDesiredDate())

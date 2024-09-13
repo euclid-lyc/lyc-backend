@@ -61,6 +61,12 @@ public class AdminServiceImpl implements AdminService {
 
     }
 
+    @Transactional
+    public void resetAllPopularity() {
+        //checkAdmin();
+        memberRepository.resetAllPopularity();
+    }
+
 /*-------------------------------------------------- 관리자 인증 --------------------------------------------------*/
 
     private void checkAdmin() {

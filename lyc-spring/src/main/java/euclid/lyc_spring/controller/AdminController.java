@@ -2,7 +2,9 @@ package euclid.lyc_spring.controller;
 
 import euclid.lyc_spring.apiPayload.ApiResponse;
 import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
+import euclid.lyc_spring.repository.MemberRepository;
 import euclid.lyc_spring.service.admin.AdminService;
+import euclid.lyc_spring.service.member.MemberCommandServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -29,4 +31,14 @@ public class AdminController {
         return ApiResponse.onSuccess(SuccessStatus._OK);
     }
 
+
+    // 키워드 검색에서 인기도로 정렬하기 위해 사용되는 Member의 popularity룰 전부 초기화함
+    // 주기적으로 리셋이 되어야 인기도가 고이지 않지않을까 한달이나 일주일 간격으로?
+    @Operation(summary = "[구현완료] 인기도 초기화하기", description = """
+            """)
+    @PostMapping("/members/resetPopularity")
+    public ApiResponse<Void> resetAllPopularity() {
+        adminService.resetAllPopularity();
+        return ApiResponse.onSuccess(SuccessStatus._OK);
+    }
 }

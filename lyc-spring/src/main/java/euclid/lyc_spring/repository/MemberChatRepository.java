@@ -18,4 +18,7 @@ public interface MemberChatRepository extends JpaRepository<MemberChat, Long>, M
     Optional<MemberChat> findByMemberIdAndChatId(Long id, Long chatId);
 
     List<MemberChat> findAllByChatId(Long chatId);
+
+    // 더미데이터용
+    Optional<MemberChat> findById(Long chatId);
 }

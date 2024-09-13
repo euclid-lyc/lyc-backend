@@ -70,6 +70,7 @@ public enum ErrorStatus implements BaseErrorCode {
     COMMISSION_OTHER_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMISSION4042", "기타사항을 찾을 수 없습니다."),
     COMMISSION_STYLE_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMISSION4043", "원하는 스타일을 찾을 수 없습니다."),
     COMMISSION_INFO_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMISSION4044", "기본 정보를 찾을 수 없습니다."),
+    DIRECTOR_EQUAL_MEMBER(HttpStatus.BAD_REQUEST, "COMMISSION4044", "디렉터와 의뢰자가 동일합니다."),
 
     // clothes
     CLOTHES_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4041", "옷장 게시글이 존재하지 않습니다."),
@@ -86,8 +87,11 @@ public enum ErrorStatus implements BaseErrorCode {
     CHAT_PARTNER_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT4005", "대화상대를 찾을 수 없습니다."),
     CHAT_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT4006", "채팅방 회원이 아닙니다."),
 
+    // SEARCH
+    CATEGORY_NOT_CORRECT(HttpStatus.BAD_REQUEST, "SEARCH4001", "카테고리가 올바르지 않습니다."),
+
     // WEATHER
-    _WEATHER_NOT_FOUND(HttpStatus.NOT_FOUND, "WEATHER4001", "날씨 정보를 찾을 수 없습")
+    _WEATHER_NOT_FOUND(HttpStatus.NOT_FOUND, "WEATHER4001", "날씨 정보를 찾을 수 없습니다.")
 
     ;
 

@@ -4,4 +4,5 @@ public interface AdminService {
 
 /*-------------------------------------------------- Auth --------------------------------------------------*/
     void deleteMember();
+    void resetAllPopularity();
 }

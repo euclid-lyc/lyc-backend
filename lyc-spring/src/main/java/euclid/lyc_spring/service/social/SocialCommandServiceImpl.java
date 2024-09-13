@@ -55,6 +55,9 @@ public class SocialCommandServiceImpl implements SocialCommandService {
         following.reloadFollower(following.getFollower()+1);
         follower.reloadFollowing(follower.getFollowing()+1);
 
+        // 인기도 증가
+        following.reloadPopularity(following.getPopularity()+1);
+
         followRepository.save(follow);
 
         return MemberDTO.MemberInfoDTO.toDTO(following);
@@ -83,6 +86,10 @@ public class SocialCommandServiceImpl implements SocialCommandService {
 
         followingMember.reloadFollower(followingMember.getFollower()-1);
         member.reloadFollowing(member.getFollowing()-1);
+
+        // 언팔하면 인기도 하락(인기도작 금지)
+        if(followingMember.getPopularity() != 0L)
+            followingMember.reloadPopularity(followingMember.getPopularity()-1);
 
         followRepository.delete(follow);
         return MemberDTO.MemberInfoDTO.toDTO(followingMember);

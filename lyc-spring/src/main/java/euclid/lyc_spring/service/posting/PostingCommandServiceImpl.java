@@ -192,6 +192,10 @@ public class PostingCommandServiceImpl implements PostingCommandService {
             throw new PostingHandler(ErrorStatus.POSTING_ALREADY_LIKED);
         LikedPosting likedPosting = new LikedPosting(member, posting);
 
+        // 인기도 증가
+        Member uploader = posting.getFromMember();
+        uploader.reloadPopularity(uploader.getPopularity()+1);
+
         likedPostingRepository.save(likedPosting);
 
         posting.reloadLikes(posting.getLikes() + 1);
@@ -227,11 +231,15 @@ public class PostingCommandServiceImpl implements PostingCommandService {
         if (likedPostings.isEmpty()) {
             throw new PostingHandler(ErrorStatus.POSTING_NOT_LIKED);
         }
-
         likedPostingRepository.deleteAll(likedPostings);
 
         Posting posting = postingRepository.findById(postingId)
                 .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
+
+        // 인기도 하락(인기도작 금지)
+        Member uploader = posting.getFromMember();
+        if(uploader.getPopularity() != 0L)
+            uploader.reloadPopularity(uploader.getPopularity()-1);
 
         posting.reloadLikes(posting.getLikes() - 1);
         postingRepository.save(posting);
