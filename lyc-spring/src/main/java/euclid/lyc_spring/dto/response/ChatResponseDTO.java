@@ -204,4 +204,18 @@ public class ChatResponseDTO {
                     .build();
         }
     }
+
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class ShareClothesListDTO{
+        private final Long chatId;
+        private final boolean share;
+        public static ShareClothesListDTO toDTO(Chat chat) {
+            return ShareClothesListDTO.builder()
+                    .chatId(chat.getId())
+                    .share(chat.isShareClothesList())
+                    .build();
+        }
+    }
 }

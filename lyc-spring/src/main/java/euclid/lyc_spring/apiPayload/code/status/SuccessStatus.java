@@ -79,6 +79,11 @@ public enum SuccessStatus implements BaseCode {
     _COMMISSION_REQUEST_TERMINATION(HttpStatus.OK, "COMMISSION2007", "의뢰 종료 요청 완료"),
     _COMMISSION_TERMINATION(HttpStatus.OK, "COMMISSION2008", "의뢰 종료 승낙 완료"),
     _COMMISSION_TERMINATION_DECLINED(HttpStatus.OK, "COMMISSION2009", "의뢰 종료 거절 완료"),
+    _COMMISSION_CLOTHES_LIST_FETCHED(HttpStatus.OK, "COMMISSION2010", "저장한 옷 리스트 불러오기 완료"),
+    _COMMISSION_CLOTHES_SAVED(HttpStatus.CREATED, "COMMISSION2011", "옷 저장 완료"),
+    _COMMISSION_CLOTHES_DELETED(HttpStatus.OK, "COMMISSION2012", "저장된 옷 삭제 완료"),
+    _COMMISSION_CLOTHES_PRIVATE(HttpStatus.OK, "COMMISSION2013", "저장된 옷 숨기기 완료"),
+    _COMMISSION_CLOTHES_PUBLIC(HttpStatus.OK, "COMMISSION2014", "저장된 옷 공개 완료"),
 
     // WEATHER
     _WEATHER_FETCHED(HttpStatus.OK, "WEATHER2001", "오늘 날씨 불러오기 완료"),

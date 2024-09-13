@@ -70,6 +70,8 @@ public enum ErrorStatus implements BaseErrorCode {
     COMMISSION_OTHER_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMISSION4042", "기타사항을 찾을 수 없습니다."),
     COMMISSION_STYLE_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMISSION4043", "원하는 스타일을 찾을 수 없습니다."),
     COMMISSION_INFO_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMISSION4044", "기본 정보를 찾을 수 없습니다."),
+    COMMISSION_CLOTHES_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMISSION4045", "저장된 옷을 찾을 수 없습니다."),
+    COMMISSION_CLOTHES_NOT_SAVED(HttpStatus.BAD_REQUEST, "COMMISSION4046", "옷을 저장할 수 없습니다."),
 
     // clothes
     CLOTHES_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4041", "옷장 게시글이 존재하지 않습니다."),

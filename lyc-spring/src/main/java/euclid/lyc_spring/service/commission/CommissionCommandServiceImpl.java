@@ -7,6 +7,7 @@ import euclid.lyc_spring.apiPayload.exception.handler.MemberHandler;
 import euclid.lyc_spring.auth.SecurityUtils;
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.chat.Chat;
+import euclid.lyc_spring.domain.chat.CommissionClothes;
 import euclid.lyc_spring.domain.chat.Schedule;
 import euclid.lyc_spring.domain.chat.commission.Commission;
 import euclid.lyc_spring.domain.chat.commission.CommissionOther;
@@ -16,6 +17,7 @@ import euclid.lyc_spring.domain.mapping.MemberChat;
 import euclid.lyc_spring.dto.request.CommissionRequestDTO;
 import euclid.lyc_spring.dto.request.InfoRequestDTO;
 import euclid.lyc_spring.dto.request.StyleRequestDTO;
+import euclid.lyc_spring.dto.response.ChatResponseDTO;
 import euclid.lyc_spring.dto.response.CommissionDTO;
 import euclid.lyc_spring.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +39,8 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
     private final ScheduleRepository scheduleRepository;
 
     private final MemberChatRepository memberChatRepository;
+
+    private final CommissionClotheRepository clotheRepository;
 
     private final CommissionInfoRepository commissionInfoRepository;
     private final CommissionInfoStyleRepository commissionInfoStyleRepository;
@@ -83,6 +87,90 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
         createOther(commission, otherMattersDTO);
 
         return CommissionDTO.CommissionViewDTO.toDTO(commission);
+    }
+
+    @Override
+    public CommissionDTO.ClothesViewDTO saveCommissionedClothes(Long chatId, CommissionRequestDTO.ClothesDTO clothesRequestDTO) {
+
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Chat chat = chatRepository.findById(chatId).
+                orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
+
+        if(chat.getSavedClothesCount()==9)
+            throw new CommissionHandler(ErrorStatus.COMMISSION_CLOTHES_NOT_SAVED);
+
+        CommissionClothes commissionClothes = CommissionClothes.builder()
+                .chat(chat)
+                .image(clothesRequestDTO.getImage())
+                .url(clothesRequestDTO.getUrl())
+                .build();
+
+        clotheRepository.save(commissionClothes);
+        chat.reloadSavedClothesCount(chat.getSavedClothesCount()+1);
+
+        return CommissionDTO.ClothesViewDTO.toDTO(commissionClothes);
+    }
+
+    @Override
+    public CommissionDTO.ClothesViewDTO deleteCommissionedClothes(Long chatId, Long clothesId) {
+
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Chat chat = chatRepository.findById(chatId)
+                .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
+
+        CommissionClothes clothes = clotheRepository.findCommissionClothesByIdAndChat(clothesId,chat)
+                .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_CLOTHES_NOT_FOUND));
+
+        clotheRepository.delete(clothes);
+        chat.reloadSavedClothesCount(chat.getSavedClothesCount()-1);
+
+        return CommissionDTO.ClothesViewDTO.toDTO(clothes);
+    }
+
+    @Override
+    public ChatResponseDTO.ShareClothesListDTO changeCommissionedClothesPublic(Long chatId) {
+
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Chat chat = chatRepository.findById(chatId)
+                .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
+
+        if(chat.isShareClothesList())
+            throw new CommissionHandler(ErrorStatus.COMMISSION_CLOTHES_NOT_SAVED);
+        else
+            chat.reloadShareClothesList(false);
+
+        return ChatResponseDTO.ShareClothesListDTO.toDTO(chat);
+    }
+
+    @Override
+    public ChatResponseDTO.ShareClothesListDTO changeCommissionedClothesPrivate(Long chatId) {
+
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        Chat chat = chatRepository.findById(chatId)
+                .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
+
+        if(chat.isShareClothesList())
+            chat.reloadShareClothesList(true);
+        else
+            throw new CommissionHandler(ErrorStatus.COMMISSION_CLOTHES_NOT_SAVED);
+
+        return ChatResponseDTO.ShareClothesListDTO.toDTO(chat);
     }
 
     @Override
