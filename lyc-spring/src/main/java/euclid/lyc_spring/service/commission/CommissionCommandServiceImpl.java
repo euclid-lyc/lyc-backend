@@ -147,9 +147,9 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
 
         if(chat.isShareClothesList())
-            throw new CommissionHandler(ErrorStatus.COMMISSION_CLOTHES_NOT_SAVED);
+            throw new CommissionHandler(ErrorStatus.BAD_REQUEST);
         else
-            chat.reloadShareClothesList(false);
+            chat.reloadShareClothesList(true);
 
         return ChatResponseDTO.ShareClothesListDTO.toDTO(chat);
     }
@@ -166,9 +166,9 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
 
         if(chat.isShareClothesList())
-            chat.reloadShareClothesList(true);
+            chat.reloadShareClothesList(false);
         else
-            throw new CommissionHandler(ErrorStatus.COMMISSION_CLOTHES_NOT_SAVED);
+            throw new CommissionHandler(ErrorStatus.BAD_REQUEST);
 
         return ChatResponseDTO.ShareClothesListDTO.toDTO(chat);
     }
