@@ -89,7 +89,7 @@ public enum ErrorStatus implements BaseErrorCode {
     CHAT_MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAT4006", "채팅방 회원이 아닙니다."),
 
     // WEATHER
-    _WEATHER_NOT_FOUND(HttpStatus.NOT_FOUND, "WEATHER4001", "날씨 정보를 찾을 수 없습")
+    _WEATHER_NOT_FOUND(HttpStatus.NOT_FOUND, "WEATHER4001", "날씨 정보를 찾을 수 없습니다.")
 
     ;
 

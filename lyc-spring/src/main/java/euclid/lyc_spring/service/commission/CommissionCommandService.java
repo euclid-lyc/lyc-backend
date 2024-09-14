@@ -4,6 +4,8 @@ import euclid.lyc_spring.dto.request.CommissionRequestDTO;
 import euclid.lyc_spring.dto.response.ChatResponseDTO;
 import euclid.lyc_spring.dto.response.CommissionDTO;
 
+import java.util.List;
+
 public interface CommissionCommandService {
 
     CommissionDTO.CommissionViewDTO writeCommission(CommissionRequestDTO.CommissionDTO commissionRequestDTO);
