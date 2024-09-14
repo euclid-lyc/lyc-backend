@@ -53,6 +53,8 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_PW_NOT_MATCHED(HttpStatus.BAD_REQUEST, "MEMBER4013", "새 패스워드와 패스워드 확인이 일치하지 않습니다."),
     MEMBER_OLD_PW_NOT_MATCHED(HttpStatus.BAD_REQUEST, "MEMBER4014", "기존 패스워드가 올바르지 않습니다."),
     MEMBER_NEW_PW_NOT_CHANGED(HttpStatus.BAD_REQUEST, "MEMBER4015", "새 패스워드가 기존 패스워드와 동일합니다."),
+    MEMBER_INFO_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER4016", "회원의 스타일 정보를 찾을 수 없습니다."),
+    MEMBER_STYLE_INFO_IS_PRIVATE(HttpStatus.FORBIDDEN, "MEMBER4017", "비공개된 회원 스타일 정보입니다."),
 
     // posting
     POSTING_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4041", "포스팅이 존재하지 않습니다."),
@@ -71,6 +73,8 @@ public enum ErrorStatus implements BaseErrorCode {
     COMMISSION_STYLE_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMISSION4043", "원하는 스타일을 찾을 수 없습니다."),
     COMMISSION_INFO_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMISSION4044", "기본 정보를 찾을 수 없습니다."),
     DIRECTOR_EQUAL_MEMBER(HttpStatus.BAD_REQUEST, "COMMISSION4044", "디렉터와 의뢰자가 동일합니다."),
+    COMMISSION_CLOTHES_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMISSION4045", "저장된 옷을 찾을 수 없습니다."),
+    COMMISSION_CLOTHES_NOT_SAVED(HttpStatus.BAD_REQUEST, "COMMISSION4046", "옷을 저장할 수 없습니다."),
 
     // clothes
     CLOTHES_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4041", "옷장 게시글이 존재하지 않습니다."),

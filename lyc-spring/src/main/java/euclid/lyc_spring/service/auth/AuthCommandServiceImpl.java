@@ -125,8 +125,8 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                 .member(member)
                 .build();
 
+        pushSet = pushSetRepository.save(pushSet);
         member.addPushSet(pushSet);
-        pushSetRepository.save(pushSet);
     }
 
     private void createInfo(Member member, InfoRequestDTO.BasicInfoDTO infoDto) {
@@ -143,8 +143,8 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                 .text(infoDto.getText())
                 .build();
 
-        member.setInfo(info);
         info = infoRepository.save(info);
+        member.setInfo(info);
 
         createInfoStyle(info, infoDto.getInfoStyle());
         createInfoFit(info, infoDto.getInfoFit());
@@ -155,105 +155,103 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     private void createInfoStyle(Info info, InfoRequestDTO.InfoStyleListDTO infoStyleListDTO) {
 
-        // null 체크
-        if (infoStyleListDTO == null || infoStyleListDTO.getPreferredStyleList() == null) {return;}
-
         infoStyleListDTO.getPreferredStyleList()
                 .forEach(style -> {
                     InfoStyle infoStyle = InfoStyle.builder()
+                            .info(info)
                             .style(style)
                             .isPrefer(true)
                             .build();
+                    infoStyle = infoStyleRepository.save(infoStyle);
                     info.addInfoStyle(infoStyle);
-                    infoStyleRepository.save(infoStyle);
+
                 });
 
         infoStyleListDTO.getNonPreferredStyleList()
                 .forEach(style -> {
                     InfoStyle infoStyle = InfoStyle.builder()
+                            .info(info)
                             .style(style)
                             .isPrefer(false)
                             .build();
+                    infoStyle = infoStyleRepository.save(infoStyle);
                     info.addInfoStyle(infoStyle);
-                    infoStyleRepository.save(infoStyle);
+
                 });
     }
 
     private void createInfoFit(Info info, InfoRequestDTO.InfoFitListDTO infoFitListDTO) {
 
-        // null 체크
-        if (infoFitListDTO == null || infoFitListDTO.getPreferredFitList() == null) {return;}
-
         infoFitListDTO.getPreferredFitList()
                 .forEach(style -> {
                     InfoFit infoFit = InfoFit.builder()
+                            .info(info)
                             .fit(style)
                             .isPrefer(true)
                             .build();
+                    infoFit = infoFitRepository.save(infoFit);
                     info.addInfoFit(infoFit);
-                    infoFitRepository.save(infoFit);
                 });
 
         infoFitListDTO.getNonPreferredFitList()
                 .forEach(style -> {
                     InfoFit infoFit = InfoFit.builder()
+                            .info(info)
                             .fit(style)
                             .isPrefer(false)
                             .build();
+                    infoFit = infoFitRepository.save(infoFit);
                     info.addInfoFit(infoFit);
-                    infoFitRepository.save(infoFit);
                 });
     }
 
     private void createInfoMaterial(Info info, InfoRequestDTO.InfoMaterialListDTO infoMaterialListDTO) {
 
-        // null 체크
-        if (infoMaterialListDTO == null || infoMaterialListDTO.getPreferredMaterialList() == null) {return;}
-
         infoMaterialListDTO.getPreferredMaterialList()
                 .forEach(material -> {
                     InfoMaterial infoMaterial = InfoMaterial.builder()
+                            .info(info)
                             .material(material)
                             .isPrefer(true)
                             .build();
+                    infoMaterial = infoMaterialRepository.save(infoMaterial);
                     info.addInfoMaterial(infoMaterial);
-                    infoMaterialRepository.save(infoMaterial);
                 });
 
         infoMaterialListDTO.getNonPreferredMaterialList()
                 .forEach(material -> {
                     InfoMaterial infoMaterial = InfoMaterial.builder()
+                            .info(info)
                             .material(material)
                             .isPrefer(false)
                             .build();
+                    infoMaterial = infoMaterialRepository.save(infoMaterial);
                     info.addInfoMaterial(infoMaterial);
-                    infoMaterialRepository.save(infoMaterial);
                 });
     }
 
     private void createInfoBodyType(Info info, InfoRequestDTO.InfoBodyTypeListDTO infoBodyTypeListDTO) {
 
-        // null 체크
-        if (infoBodyTypeListDTO == null || infoBodyTypeListDTO.getGoodBodyTypeList() == null) {return;}
-
         infoBodyTypeListDTO.getGoodBodyTypeList()
                 .forEach(bodyType -> {
                     InfoBodyType infoBodyType = InfoBodyType.builder()
+                            .info(info)
                             .bodyType(bodyType)
                             .isGood(true)
                             .build();
+                    infoBodyType = infoBodyTypeRepository.save(infoBodyType);
                     info.addInfoBodyType(infoBodyType);
-                    infoBodyTypeRepository.save(infoBodyType);
                 });
 
         infoBodyTypeListDTO.getBadBodyTypeList()
                 .forEach(bodyType -> {
                     InfoBodyType infoBodyType = InfoBodyType.builder()
+                            .info(info)
                             .bodyType(bodyType)
                             .isGood(false)
                             .build();
+                    infoBodyType = infoBodyTypeRepository.save(infoBodyType);
                     info.addInfoBodyType(infoBodyType);
-                    infoBodyTypeRepository.save(infoBodyType);
                 });
     }
 

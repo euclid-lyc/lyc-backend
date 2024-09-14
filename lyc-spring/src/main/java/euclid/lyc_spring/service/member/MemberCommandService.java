@@ -9,8 +9,8 @@ public interface MemberCommandService {
 
 /*-------------------------------------------------- 회원정보 설정 --------------------------------------------------*/
     MemberDTO.MemberSettingInfoDTO updateMemberInfo(MemberRequestDTO.MemberSettingInfoDTO infoDTO);
-    MemberDTO.AdrressDTO updateAddress(MemberRequestDTO.AddressDTO addressDTO);
-    MemberDTO.MemberPreviewDTO updateLoginPw(HttpServletRequest request, VerificationRequestDTO.ChangePasswordDTO passwordDTO);
+    MemberDTO.AddressDTO updateAddress(MemberRequestDTO.AddressReqDTO addressReqDTO);
+    MemberDTO.MemberPreviewDTO updateLoginPw(VerificationRequestDTO.ChangePasswordDTO passwordDTO);
 /*-------------------------------------------------- 푸시알림 설정 --------------------------------------------------*/
     MemberDTO.PushSetDTO updatePushSet(MemberRequestDTO.PushSetDTO pushSetDTO);
 }

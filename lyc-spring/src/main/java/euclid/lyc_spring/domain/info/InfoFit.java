@@ -5,9 +5,13 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Getter
 @Entity
+@DynamicUpdate
+@DynamicInsert
 public class InfoFit {
 
     @Id
@@ -30,7 +34,8 @@ public class InfoFit {
     protected InfoFit() {}
 
     @Builder
-    public InfoFit(Fit fit, Boolean isPrefer) {
+    public InfoFit(Info info, Fit fit, Boolean isPrefer) {
+        this.info = info;
         this.fit = fit;
         this.isPrefer = isPrefer;
     }

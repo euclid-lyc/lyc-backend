@@ -12,6 +12,8 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,6 +24,8 @@ import java.util.List;
 
 @Getter
 @Entity
+@DynamicUpdate
+@DynamicInsert
 @EntityListeners(AuditingEntityListener.class)
 public class Member {
 
@@ -142,6 +146,9 @@ public class Member {
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     private List<Posting> postingList;
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Report> reportList;
+
     protected Member() {}
 
     // followerMember
@@ -182,6 +189,7 @@ public class Member {
         this.fromPostingList = new ArrayList<>();
         this.toPostingList = new ArrayList<>();
         this.postingList = new ArrayList<>();
+        this.reportList = new ArrayList<>();
     }
 
 
@@ -266,6 +274,8 @@ public class Member {
         postingList.add(posting);
         posting.setWriter(this);
     }
+
+    public void addReport(Report report) { this.reportList.add(report); }
 
     //=== remove Methods ===//
 

@@ -1,5 +1,8 @@
 package euclid.lyc_spring.service.social;
 
+import euclid.lyc_spring.dto.request.InfoRequestDTO;
+import euclid.lyc_spring.dto.request.MemberRequestDTO;
+import euclid.lyc_spring.dto.response.InfoResponseDTO;
 import euclid.lyc_spring.dto.response.MemberDTO;
 
 public interface SocialCommandService {
@@ -14,11 +17,15 @@ public interface SocialCommandService {
 
 /*-------------------------------------------------- 프로필 --------------------------------------------------*/
 
+    InfoResponseDTO.AllInfoDTO updateStyleInfo(InfoRequestDTO.StyleInfoDTO styleInfoDTO);
+
 /*-------------------------------------------------- 회원 차단 --------------------------------------------------*/
 
-    MemberDTO.MemberInfoDTO blockMember(Long myId, Long memberId);
-    MemberDTO.MemberInfoDTO unblockMember(Long myId, Long memberId);
+    MemberDTO.MemberInfoDTO blockMember(Long blockMemberId);
+    MemberDTO.MemberInfoDTO unblockMember(Long blockMemberId);
 
 /*-------------------------------------------------- 회원 신고 --------------------------------------------------*/
+
+    MemberDTO.MemberProfileDTO reportMember(Long reportedMemberId, MemberRequestDTO.ReportDTO reportDTO);
 
 }

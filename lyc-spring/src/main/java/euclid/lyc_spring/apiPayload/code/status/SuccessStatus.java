@@ -41,10 +41,14 @@ public enum SuccessStatus implements BaseCode {
     _MEMBER_PW_CHANGED(HttpStatus.OK, "MEMBER2014", "회원 패스워드 변경 완료"),
     _MEMBER_SETTING_INFO_FETCHED(HttpStatus.OK, "MEMBER2015", "회원 정보 불러오기 완료"),
     _MEMBER_SETTING_INFO_UPDATED(HttpStatus.OK, "MEMBER2016", "회원 정보 변경 완료"),
-    _ADRRESS_FETCHED(HttpStatus.OK, "MEMBER2017", "배송지 정보 불러오기 완료"),
-    _ADRRESS_UPDATED(HttpStatus.OK, "MEMBER2018", "배송지 정보 변경 완료"),
+    _ADDRESS_FETCHED(HttpStatus.OK, "MEMBER2017", "배송지 정보 불러오기 완료"),
+    _ADDRESS_UPDATED(HttpStatus.OK, "MEMBER2018", "배송지 정보 변경 완료"),
     _PUSH_SET_FETCHED(HttpStatus.OK, "MEMBER2019", "푸시 알람 설정 불러오기 완료"),
     _PUSH_SET_UPDATED(HttpStatus.OK, "MEMBER2020", "푸시 알람 설정 변경 완료"),
+    _BLOCK_MEMBER_LIST_FOUND(HttpStatus.OK, "MEMBER2021", "차단 회원 목록 조회 완료"),
+    _MEMBER_REPORTED(HttpStatus.CREATED, "MEMBER2022", "회원 신고 완료"),
+    _MEMBER_STYLE_INFO_FOUND(HttpStatus.OK, "MEMBER2023", "회원 스타일 정보 조회 완료"),
+    _MEMBER_STYLE_INFO_UPDATED(HttpStatus.OK, "MEMBER2024", "회원 스타일 정보 변경 완료"),
 
     // coordie
     _MEMBER_COORDIES_FETCHED(HttpStatus.OK, "COORDIE2001", "유저의 코디 목록 불러오기 완료"),
@@ -63,6 +67,8 @@ public enum SuccessStatus implements BaseCode {
     _SAVED_POSTING_DELETED(HttpStatus.OK, "POSTING2007", "저장한 게시글 삭제 완료"),
     _POSTING_LIKED(HttpStatus.CREATED, "POSTING2008", "게시글 좋아요 완료"),
     _POSTING_LIKE_CANCELED(HttpStatus.OK, "POSTING2009", "게시글 좋아요 취소 완료"),
+    _POSTING_LIKE_STATUS_FOUND(HttpStatus.OK, "POSTING2010", "게시글 좋아요 여부 조회 완료"),
+    _POSTING_SAVE_STATUS_FOUND(HttpStatus.OK, "POSTING2011", "게시글 저장 여부 조회 완료"),
 
     // FEED
     _RECENT_TEN_FEEDS_FETCHED(HttpStatus.OK, "FEED2001", "최신 피드 10개 불러오기 완료"),
@@ -77,6 +83,11 @@ public enum SuccessStatus implements BaseCode {
     _COMMISSION_REQUEST_TERMINATION(HttpStatus.OK, "COMMISSION2007", "의뢰 종료 요청 완료"),
     _COMMISSION_TERMINATION(HttpStatus.OK, "COMMISSION2008", "의뢰 종료 승낙 완료"),
     _COMMISSION_TERMINATION_DECLINED(HttpStatus.OK, "COMMISSION2009", "의뢰 종료 거절 완료"),
+    _COMMISSION_CLOTHES_LIST_FETCHED(HttpStatus.OK, "COMMISSION2010", "저장한 옷 리스트 불러오기 완료"),
+    _COMMISSION_CLOTHES_SAVED(HttpStatus.CREATED, "COMMISSION2011", "옷 저장 완료"),
+    _COMMISSION_CLOTHES_DELETED(HttpStatus.OK, "COMMISSION2012", "저장된 옷 삭제 완료"),
+    _COMMISSION_CLOTHES_PRIVATE(HttpStatus.OK, "COMMISSION2013", "저장된 옷 숨기기 완료"),
+    _COMMISSION_CLOTHES_PUBLIC(HttpStatus.OK, "COMMISSION2014", "저장된 옷 공개 완료"),
 
     // WEATHER
     _WEATHER_FETCHED(HttpStatus.OK, "WEATHER2001", "오늘 날씨 불러오기 완료"),

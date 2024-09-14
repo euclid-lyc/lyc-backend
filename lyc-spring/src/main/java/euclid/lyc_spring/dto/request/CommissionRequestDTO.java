@@ -17,4 +17,12 @@ public class CommissionRequestDTO {
         private StyleRequestDTO.StyleDTO style;
         private InfoRequestDTO.OtherMattersDTO otherMatters;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ClothesDTO {
+        private String image;
+        private String url;
+    }
 }

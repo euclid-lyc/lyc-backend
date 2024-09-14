@@ -12,4 +12,6 @@ import java.util.Optional;
 public interface CommissionOtherRepository extends JpaRepository<CommissionOther, Long> {
 
     Optional<CommissionOther> findByCommission(Commission commission);
+
+    void deleteByCommissionId(Long commissionId);
 }

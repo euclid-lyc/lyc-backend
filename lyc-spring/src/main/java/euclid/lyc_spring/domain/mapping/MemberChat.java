@@ -5,12 +5,16 @@ import euclid.lyc_spring.domain.chat.Chat;
 import euclid.lyc_spring.domain.chat.Message;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Entity
+@DynamicUpdate
+@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberChat {
 

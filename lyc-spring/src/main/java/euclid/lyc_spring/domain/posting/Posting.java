@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Check;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -18,6 +20,8 @@ import java.util.List;
 
 @Getter
 @Entity
+@DynamicUpdate
+@DynamicInsert
 @Check(constraints = "likes >= 0")
 @EntityListeners(AuditingEntityListener.class)
 public class Posting {

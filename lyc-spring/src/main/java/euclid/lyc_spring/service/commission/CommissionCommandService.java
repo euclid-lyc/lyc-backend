@@ -1,7 +1,10 @@
 package euclid.lyc_spring.service.commission;
 
 import euclid.lyc_spring.dto.request.CommissionRequestDTO;
+import euclid.lyc_spring.dto.response.ChatResponseDTO;
 import euclid.lyc_spring.dto.response.CommissionDTO;
+
+import java.util.List;
 
 public interface CommissionCommandService {
 
@@ -12,4 +15,10 @@ public interface CommissionCommandService {
     CommissionDTO.CommissionViewDTO requestCommissionTermination(Long chatId);
     CommissionDTO.CommissionViewDTO terminateCommission(Long chatId);
     CommissionDTO.CommissionViewDTO declineCommissionTermination(Long chatId);
+
+    // CommissionClothes
+    CommissionDTO.ClothesViewDTO saveCommissionedClothes(Long chatId, CommissionRequestDTO.ClothesDTO clothesRequestDTO);
+    CommissionDTO.ClothesViewDTO deleteCommissionedClothes(Long chatId, Long clothesId);
+    ChatResponseDTO.ShareClothesListDTO changeCommissionedClothesPublic(Long chatId);
+    ChatResponseDTO.ShareClothesListDTO changeCommissionedClothesPrivate(Long chatId);
 }

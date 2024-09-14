@@ -53,22 +53,20 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public MemberDTO.AdrressDTO updateAddress(MemberRequestDTO.AddressDTO addressDTO) {
+    public MemberDTO.AddressDTO updateAddress(MemberRequestDTO.AddressReqDTO addressReqDTO) {
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
         Member loginMember = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         Info info = loginMember.getInfo();
 
-        info.reloadAdrress(addressDTO);
+        info.reloadAdrress(addressReqDTO);
         infoRepository.save(info);
-        return MemberDTO.AdrressDTO.toDTO(loginMember);
+        return MemberDTO.AddressDTO.toDTO(loginMember);
     }
 
     @Override
-    public MemberDTO.MemberPreviewDTO updateLoginPw(HttpServletRequest request, VerificationRequestDTO.ChangePasswordDTO passwordDTO) {
-        String tempToken = jwtProvider.resolveToken(request);
-        SecurityUtils.checkTempAuthorization();
+    public MemberDTO.MemberPreviewDTO updateLoginPw(VerificationRequestDTO.ChangePasswordDTO passwordDTO) {
 
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
@@ -90,9 +88,6 @@ public class MemberCommandServiceImpl implements MemberCommandService {
 
         member.changeLoginPw(passwordDTO.getNewPassword(), bCryptPasswordEncoder);
         memberRepository.save(member);
-
-        // 임시 인증 정보 삭제
-        verificationCodeRepository.removeVerificationCode(tempToken);
 
         return MemberDTO.MemberPreviewDTO.toDTO(member);
     }

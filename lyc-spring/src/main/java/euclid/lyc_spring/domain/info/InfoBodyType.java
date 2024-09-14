@@ -5,9 +5,13 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Getter
 @Entity
+@DynamicUpdate
+@DynamicInsert
 public class InfoBodyType {
 
     @Id
@@ -30,7 +34,8 @@ public class InfoBodyType {
     protected InfoBodyType() {}
 
     @Builder
-    public InfoBodyType(BodyType bodyType, Boolean isGood) {
+    public InfoBodyType(Info info, BodyType bodyType, Boolean isGood) {
+        this.info = info;
         this.bodyType = bodyType;
         this.isGood = isGood;
     }

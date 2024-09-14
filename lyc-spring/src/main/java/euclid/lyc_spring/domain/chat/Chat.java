@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -16,6 +18,8 @@ import java.util.List;
 
 @Getter
 @Entity
+@DynamicUpdate
+@DynamicInsert
 @EntityListeners(AuditingEntityListener.class)
 public class Chat {
 
@@ -38,7 +42,7 @@ public class Chat {
 
     @Setter
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "commission_id", nullable = false)
     private Commission commission;
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
@@ -46,6 +50,17 @@ public class Chat {
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
     private List<MemberChat> memberChatList;
+
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
+    private List<CommissionClothes> commissionClothesList;
+
+    @Setter
+    @Column
+    private Integer savedClothesCount;
+
+    @Setter
+    @Column
+    private boolean shareClothesList;
 
     protected Chat(){}
 
@@ -56,10 +71,20 @@ public class Chat {
         this.commission = commission;
         this.scheduleList = new ArrayList<>();
         this.memberChatList = new ArrayList<>();
+        this.commissionClothesList = new ArrayList<>();
+        this.savedClothesCount = 0;
+        this.shareClothesList = true;
     }
 
     public void addSchedule(Schedule schedule){
         scheduleList.add(schedule);
     }
 
+    public void reloadSavedClothesCount(int count){ this.savedClothesCount = count; }
+
+    public void reloadShareClothesList(boolean share) { this.shareClothesList = share; }
+  
+    public void addMemberChat(MemberChat chat){ memberChatList.add(chat); }
+
+  
 }

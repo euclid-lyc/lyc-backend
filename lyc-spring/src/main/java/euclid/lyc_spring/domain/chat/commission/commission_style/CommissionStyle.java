@@ -3,6 +3,8 @@ package euclid.lyc_spring.domain.chat.commission.commission_style;
 import euclid.lyc_spring.domain.chat.commission.Commission;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +12,8 @@ import java.util.List;
 // CommissionStyle 관련 도메인이 추가되어 새롭게 패키지 만들었음
 @Getter
 @Entity
+@DynamicUpdate
+@DynamicInsert
 public class CommissionStyle {
 
     @Id

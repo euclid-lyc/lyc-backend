@@ -1,6 +1,7 @@
 package euclid.lyc_spring.repository;
 
 import euclid.lyc_spring.domain.BlockMember;
+import euclid.lyc_spring.repository.querydsl.BlockMemberRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BlockMemberRepository extends JpaRepository<BlockMember, Long> {
+public interface BlockMemberRepository extends JpaRepository<BlockMember, Long>, BlockMemberRepositoryCustom {
     // 유저 차단한 멤버 목록 조회
     List<BlockMember> findByMemberId(Long memberId);
 

@@ -46,18 +46,18 @@ public class MemberController {
             유저의 배송지 정보를 불러옵니다.
             """)
     @GetMapping("/members/delivery")
-    public ApiResponse<MemberDTO.AdrressDTO> getDeliveryInfo() {
-        MemberDTO.AdrressDTO responseDTO = memberQueryService.getAdrress();
-        return ApiResponse.onSuccess(SuccessStatus._ADRRESS_FETCHED, responseDTO);
+    public ApiResponse<MemberDTO.AddressDTO> getDeliveryInfo() {
+        MemberDTO.AddressDTO responseDTO = memberQueryService.getAdrress();
+        return ApiResponse.onSuccess(SuccessStatus._ADDRESS_FETCHED, responseDTO);
     }
 
     @Operation(summary = "[구현완료] 배송지 정보 변경하기", description = """
             입력받은 배송지 데이터로 유저의 배송지 정보를 변경합니다.
             """)
     @PatchMapping("/members/delivery")
-    public ApiResponse<MemberDTO.AdrressDTO> updateDeliveryInfo(@RequestBody MemberRequestDTO.AddressDTO addressDTO) {
-        MemberDTO.AdrressDTO responseDTO = memberCommandService.updateAddress(addressDTO);
-        return ApiResponse.onSuccess(SuccessStatus._ADRRESS_UPDATED, responseDTO);
+    public ApiResponse<MemberDTO.AddressDTO> updateDeliveryInfo(@RequestBody MemberRequestDTO.AddressReqDTO addressReqDTO) {
+        MemberDTO.AddressDTO responseDTO = memberCommandService.updateAddress(addressReqDTO);
+        return ApiResponse.onSuccess(SuccessStatus._ADDRESS_UPDATED, responseDTO);
     }
 
     // 보안에 신경쓰라고 하셨는데 이게 신경을 쓴건지 잘 모르겠습니다 함 봐주세용 ㅠ
@@ -65,9 +65,9 @@ public class MemberController {
             기존 패스워드를 확인하고 일치하면 입력받은 패스워드로 변경합니다.
             """)
     @PatchMapping("/members/pw-info")
-    public ApiResponse<MemberDTO.MemberPreviewDTO> updateLoginPw(HttpServletRequest request
-            , @RequestBody VerificationRequestDTO.ChangePasswordDTO passwordDTO) {
-        MemberDTO.MemberPreviewDTO responseDTO = memberCommandService.updateLoginPw(request, passwordDTO);
+    public ApiResponse<MemberDTO.MemberPreviewDTO> updateLoginPw(
+            @RequestBody VerificationRequestDTO.ChangePasswordDTO passwordDTO) {
+        MemberDTO.MemberPreviewDTO responseDTO = memberCommandService.updateLoginPw(passwordDTO);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_PW_CHANGED, responseDTO);
     }
 
@@ -83,7 +83,7 @@ public class MemberController {
     }
 
     @Operation(summary = "[구현완료] 푸시알림 설정 변경하기", description = """
-            입력받은 푸시알림 데이터로 유저의 푸시알림 정보를 변경합니다. 
+            입력받은 푸시알림 데이터로 유저의 푸시알림 정보를 변경합니다.
             """)
     @PatchMapping("/members/push-sets")
     public ApiResponse<MemberDTO.PushSetDTO> updatePushSet(@RequestBody MemberRequestDTO.PushSetDTO pushSetDTO) {

@@ -1,9 +1,8 @@
-package euclid.lyc_spring.domain.clothes;
+package euclid.lyc_spring.domain.chat;
 
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -11,25 +10,29 @@ import org.hibernate.annotations.DynamicUpdate;
 @Entity
 @DynamicUpdate
 @DynamicInsert
-public class ClothesImage {
+public class CommissionClothes {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, unique = true)
     private Long id;
 
-    @Column(nullable = false)
+    @Column
     private String image;
 
-    @Setter
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "clothes_id", nullable = false)
-    private Clothes clothes;
+    @Column
+    private String url;
 
-    protected ClothesImage() {}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chat_id", nullable = false)
+    private Chat chat;
+
+    protected CommissionClothes() {}
 
     @Builder
-    public ClothesImage(String image) {
+    public CommissionClothes(String image, String url, Chat chat) {
         this.image = image;
+        this.url = url;
+        this.chat = chat;
     }
 }
