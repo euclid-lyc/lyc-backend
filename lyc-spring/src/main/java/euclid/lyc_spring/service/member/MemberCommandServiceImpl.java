@@ -53,16 +53,16 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     }
 
     @Override
-    public MemberDTO.AdrressDTO updateAddress(MemberRequestDTO.AddressDTO addressDTO) {
+    public MemberDTO.AddressDTO updateAddress(MemberRequestDTO.AddressReqDTO addressReqDTO) {
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
         Member loginMember = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         Info info = loginMember.getInfo();
 
-        info.reloadAdrress(addressDTO);
+        info.reloadAdrress(addressReqDTO);
         infoRepository.save(info);
-        return MemberDTO.AdrressDTO.toDTO(loginMember);
+        return MemberDTO.AddressDTO.toDTO(loginMember);
     }
 
     @Override

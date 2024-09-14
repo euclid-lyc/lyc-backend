@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface CommissionRepository extends JpaRepository<Commission, Long>, CommissionRepositoryCustom {
+
     public List<Commission> findByDirector(Member director);
     public Optional<Commission> findByChat(Chat chat);
 }

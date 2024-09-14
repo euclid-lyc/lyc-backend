@@ -1,6 +1,8 @@
 package euclid.lyc_spring.dto.request;
 
 import euclid.lyc_spring.domain.enums.*;
+import euclid.lyc_spring.domain.info.*;
+import euclid.lyc_spring.dto.response.InfoResponseDTO;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -8,6 +10,25 @@ import java.util.List;
 
 @Getter
 public class InfoRequestDTO {
+
+    @Getter
+    @RequiredArgsConstructor
+    public static class StyleInfoDTO {
+        private final Boolean isPublic;
+        private final Short height;
+        private final Short weight;
+        private final TopSize topSize;
+        private final BottomSize bottomSize;
+        private final List<Style> preferredStyleList;
+        private final List<Style> nonPreferredStyleList;
+        private final List<Material> preferredMaterialList;
+        private final List<Material> nonPreferredMaterialList;
+        private final List<Fit> preferredFitList;
+        private final List<Fit> nonPreferredFitList;
+        private final List<BodyType> goodBodyTypeList;
+        private final List<BodyType> badBodyTypeList;
+        private final String details;
+    }
 
     @Getter
     @RequiredArgsConstructor

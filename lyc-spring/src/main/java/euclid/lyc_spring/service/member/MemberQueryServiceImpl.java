@@ -31,14 +31,14 @@ public class MemberQueryServiceImpl implements MemberQueryService {
     }
 
     @Override
-    public MemberDTO.AdrressDTO getAdrress() {
+    public MemberDTO.AddressDTO getAdrress() {
 
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
         Member loginMember = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        return MemberDTO.AdrressDTO.toDTO(loginMember);
+        return MemberDTO.AddressDTO.toDTO(loginMember);
     }
 
     /*-------------------------------------------------- 푸시알림 설정 --------------------------------------------------*/

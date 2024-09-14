@@ -34,7 +34,8 @@ public class InfoFit {
     protected InfoFit() {}
 
     @Builder
-    public InfoFit(Fit fit, Boolean isPrefer) {
+    public InfoFit(Info info, Fit fit, Boolean isPrefer) {
+        this.info = info;
         this.fit = fit;
         this.isPrefer = isPrefer;
     }

@@ -34,7 +34,8 @@ public class InfoBodyType {
     protected InfoBodyType() {}
 
     @Builder
-    public InfoBodyType(BodyType bodyType, Boolean isGood) {
+    public InfoBodyType(Info info, BodyType bodyType, Boolean isGood) {
+        this.info = info;
         this.bodyType = bodyType;
         this.isGood = isGood;
     }
