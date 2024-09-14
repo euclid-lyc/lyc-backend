@@ -51,6 +51,17 @@ public class Chat {
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
     private List<MemberChat> memberChatList;
 
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
+    private List<CommissionClothes> commissionClothesList;
+
+    @Setter
+    @Column
+    private Integer savedClothesCount;
+
+    @Setter
+    @Column
+    private boolean shareClothesList;
+
     protected Chat(){}
 
     @Builder
@@ -60,12 +71,20 @@ public class Chat {
         this.commission = commission;
         this.scheduleList = new ArrayList<>();
         this.memberChatList = new ArrayList<>();
+        this.commissionClothesList = new ArrayList<>();
+        this.savedClothesCount = 0;
+        this.shareClothesList = true;
     }
 
     public void addSchedule(Schedule schedule){
         scheduleList.add(schedule);
     }
 
+    public void reloadSavedClothesCount(int count){ this.savedClothesCount = count; }
+
+    public void reloadShareClothesList(boolean share) { this.shareClothesList = share; }
+  
     public void addMemberChat(MemberChat chat){ memberChatList.add(chat); }
 
+  
 }

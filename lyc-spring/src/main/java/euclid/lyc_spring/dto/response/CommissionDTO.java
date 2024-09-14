@@ -1,6 +1,7 @@
 package euclid.lyc_spring.dto.response;
 
 import euclid.lyc_spring.domain.Member;
+import euclid.lyc_spring.domain.chat.CommissionClothes;
 import euclid.lyc_spring.domain.chat.commission.Commission;
 import euclid.lyc_spring.domain.chat.commission.CommissionOther;
 import euclid.lyc_spring.domain.chat.commission.commission_info.*;
@@ -42,6 +43,28 @@ public class CommissionDTO {
                     .loginId(member.getLoginId())
                     .commissionId(commission.getId())
                     .createdAt(commission.getCreatedAt())
+                    .build();
+        }
+    }
+
+    @Getter
+    public static class ClothesViewDTO{
+        private final Long clothesId;
+        private final String imageUrl;
+        private final String clothesUrl;
+
+        @Builder(access = AccessLevel.PRIVATE)
+        public ClothesViewDTO(Long clothesId, String imageUrl, String clothesUrl) {
+            this.clothesId = clothesId;
+            this.imageUrl = imageUrl;
+            this.clothesUrl = clothesUrl;
+        }
+
+        public static ClothesViewDTO toDTO(CommissionClothes commissionClothes) {
+            return ClothesViewDTO.builder()
+                    .clothesId(commissionClothes.getId())
+                    .imageUrl(commissionClothes.getImage())
+                    .clothesUrl(commissionClothes.getUrl())
                     .build();
         }
     }

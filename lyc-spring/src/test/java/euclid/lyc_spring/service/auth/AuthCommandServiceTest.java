@@ -53,21 +53,21 @@ class AuthCommandServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    //@Test
-    //void join() {
+//    @Test
+//    void join() {
 //
-    //    MemberRequestDTO.MemberDTO memberDTO = new MemberRequestDTO.MemberDTO("string", "string", "string",
-    //            "string", "string", "string", "string", "string");
-    //    RegisterDTO.RegisterMemberDTO registerDTO = new RegisterDTO.RegisterMemberDTO(memberDTO, basicInfoDTO);
+//        MemberRequestDTO.MemberDTO memberDTO = new MemberRequestDTO.MemberDTO("string", "string", "string",
+//                "string", "string", "string", "string", "string");
+//        RegisterDTO.RegisterMemberDTO registerDTO = new RegisterDTO.RegisterMemberDTO(memberDTO, basicInfoDTO);
 //
-    //    when(memberRepository.findByEmail(registerDTO.getMember().getEmail())).thenReturn(Optional.empty());
-    //    when(bCryptPasswordEncoder.encode(registerDTO.getMember().getLoginPw())).thenReturn("비밀번호 정상적");
-    //    when(memberRepository.save(any(Member.class))).thenAnswer(invocation -> invocation.getArgument(0));
+//        when(memberRepository.findByEmail(registerDTO.getMember().getEmail())).thenReturn(Optional.empty());
+//        when(bCryptPasswordEncoder.encode(registerDTO.getMember().getLoginPw())).thenReturn("비밀번호 정상적");
+//        when(memberRepository.save(any(Member.class))).thenAnswer(invocation -> invocation.getArgument(0));
 //
-    //    MemberDTO.MemberInfoDTO result = authCommandService.join(registerDTO);
-    //    assertNotNull(result);
-    //    assertEquals("string", result.getLoginId());
-    //    assertEquals("string", result.getNickname());
-    //    verify(memberRepository, times(1)).save(any(Member.class));
-    //}
+//        MemberDTO.MemberInfoDTO result = authCommandService.join(registerDTO);
+//        assertNotNull(result);
+//        assertEquals("string", result.getLoginId());
+//        assertEquals("string", result.getNickname());
+//        verify(memberRepository, times(1)).save(any(Member.class));
+//    }
 }
