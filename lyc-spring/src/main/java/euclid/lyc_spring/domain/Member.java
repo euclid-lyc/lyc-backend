@@ -137,6 +137,9 @@ public class Member {
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     private List<Posting> postingList;
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Report> reportList;
+
     protected Member() {}
 
     // followerMember
@@ -176,6 +179,7 @@ public class Member {
         this.fromPostingList = new ArrayList<>();
         this.toPostingList = new ArrayList<>();
         this.postingList = new ArrayList<>();
+        this.reportList = new ArrayList<>();
     }
 
 
@@ -260,6 +264,8 @@ public class Member {
         postingList.add(posting);
         posting.setWriter(this);
     }
+
+    public void addReport(Report report) { this.reportList.add(report); }
 
     //=== remove Methods ===//
 

@@ -42,7 +42,7 @@ public class Chat {
 
     @Setter
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "commission_id", nullable = false)
     private Commission commission;
 
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
@@ -83,4 +83,8 @@ public class Chat {
     public void reloadSavedClothesCount(int count){ this.savedClothesCount = count; }
 
     public void reloadShareClothesList(boolean share) { this.shareClothesList = share; }
+  
+    public void addMemberChat(MemberChat chat){ memberChatList.add(chat); }
+
+  
 }

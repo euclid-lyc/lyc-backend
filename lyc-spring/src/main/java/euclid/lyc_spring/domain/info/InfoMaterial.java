@@ -34,7 +34,8 @@ public class InfoMaterial {
     protected InfoMaterial() {}
 
     @Builder
-    public InfoMaterial(Material material, Boolean isPrefer) {
+    public InfoMaterial(Info info, Material material, Boolean isPrefer) {
+        this.info = info;
         this.material = material;
         this.isPrefer = isPrefer;
     }

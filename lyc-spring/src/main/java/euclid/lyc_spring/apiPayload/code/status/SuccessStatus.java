@@ -41,10 +41,14 @@ public enum SuccessStatus implements BaseCode {
     _MEMBER_PW_CHANGED(HttpStatus.OK, "MEMBER2014", "회원 패스워드 변경 완료"),
     _MEMBER_SETTING_INFO_FETCHED(HttpStatus.OK, "MEMBER2015", "회원 정보 불러오기 완료"),
     _MEMBER_SETTING_INFO_UPDATED(HttpStatus.OK, "MEMBER2016", "회원 정보 변경 완료"),
-    _ADRRESS_FETCHED(HttpStatus.OK, "MEMBER2017", "배송지 정보 불러오기 완료"),
-    _ADRRESS_UPDATED(HttpStatus.OK, "MEMBER2018", "배송지 정보 변경 완료"),
+    _ADDRESS_FETCHED(HttpStatus.OK, "MEMBER2017", "배송지 정보 불러오기 완료"),
+    _ADDRESS_UPDATED(HttpStatus.OK, "MEMBER2018", "배송지 정보 변경 완료"),
     _PUSH_SET_FETCHED(HttpStatus.OK, "MEMBER2019", "푸시 알람 설정 불러오기 완료"),
     _PUSH_SET_UPDATED(HttpStatus.OK, "MEMBER2020", "푸시 알람 설정 변경 완료"),
+    _BLOCK_MEMBER_LIST_FOUND(HttpStatus.OK, "MEMBER2021", "차단 회원 목록 조회 완료"),
+    _MEMBER_REPORTED(HttpStatus.CREATED, "MEMBER2022", "회원 신고 완료"),
+    _MEMBER_STYLE_INFO_FOUND(HttpStatus.OK, "MEMBER2023", "회원 스타일 정보 조회 완료"),
+    _MEMBER_STYLE_INFO_UPDATED(HttpStatus.OK, "MEMBER2024", "회원 스타일 정보 변경 완료"),
 
     // coordie
     _MEMBER_COORDIES_FETCHED(HttpStatus.OK, "COORDIE2001", "유저의 코디 목록 불러오기 완료"),

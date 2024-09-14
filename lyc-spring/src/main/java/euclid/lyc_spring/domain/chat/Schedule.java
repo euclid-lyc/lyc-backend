@@ -3,9 +3,9 @@ package euclid.lyc_spring.domain.chat;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 
@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @Entity
 @DynamicUpdate
 @DynamicInsert
+@EntityListeners(AuditingEntityListener.class)
 public class Schedule {
 
     @Id
