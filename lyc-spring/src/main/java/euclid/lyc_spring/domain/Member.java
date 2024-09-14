@@ -94,7 +94,6 @@ public class Member {
 
     @Column
     @Setter
-    @CreatedDate
     private LocalDateTime lastLoginAt;
 
     @Setter
@@ -168,7 +167,7 @@ public class Member {
         this.following = 0L;
         this.role = role;
         this.isPublic = true;
-        this.popularity = 5L;
+        this.popularity = 0L;
         this.notificationList = new ArrayList<>();
         this.attendanceList = new ArrayList<>();
         this.memberChatList = new ArrayList<>();
