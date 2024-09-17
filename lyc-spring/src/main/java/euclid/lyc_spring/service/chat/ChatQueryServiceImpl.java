@@ -42,11 +42,6 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        //List<ChatResponseDTO.ChatPreviewDTO> chatPreviewDTOS = memberChatRepository.findAllByMemberId(member.getId()).stream()
-        //        .filter(memberChat -> memberChat.getChat().getInactive() == null)
-        //        .map(memberChat ->getChatMemberPreviewDTO(memberChat.getChat()))
-        //        .toList();
-
         List<ChatResponseDTO.ChatPreviewDTO> chatPreviewDTOS = memberChatRepository
                 .findAllChatsByMemberId(member.getId(), pageRequest).stream()
                 .map(latestMessageDTO -> {

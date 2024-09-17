@@ -45,11 +45,11 @@ public class MemberChatRepositoryCustomImpl implements MemberChatRepositoryCusto
     }
 
     private SubQueryExpression<Long> findChatIdsByMemberId(Long memberId) {
-        QMemberChat memberChat = QMemberChat.memberChat;
+        QMemberChat subMemberChat = new QMemberChat("subMemberChat");
         return JPAExpressions
-                .select(memberChat.chat.id)
-                .from(memberChat)
-                .where(memberChat.member.id.eq(memberId));
+                .select(subMemberChat.chat.id)
+                .from(subMemberChat)
+                .where(subMemberChat.member.id.eq(memberId));
     }
 
     @Override
