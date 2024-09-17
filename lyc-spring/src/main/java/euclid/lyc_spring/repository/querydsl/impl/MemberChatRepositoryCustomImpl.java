@@ -1,6 +1,5 @@
 package euclid.lyc_spring.repository.querydsl.impl;
 
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.jpa.JPAExpressions;
@@ -15,9 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class MemberChatRepositoryCustomImpl implements MemberChatRepositoryCustom {
@@ -41,11 +38,10 @@ public class MemberChatRepositoryCustomImpl implements MemberChatRepositoryCusto
                 .join(memberChat).on(memberChat.id.eq(message.memberChat.id))
                 .where(memberChat.chat.id.in(chatIdSubQuery))
                 .groupBy(memberChat.chat.id)
-                .orderBy(message.createdAt.max().desc(), message.id.desc())
+                .orderBy(message.createdAt.desc(), message.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-
     }
 
     private SubQueryExpression<Long> findChatIdsByMemberId(Long memberId) {
@@ -64,9 +60,9 @@ public class MemberChatRepositoryCustomImpl implements MemberChatRepositoryCusto
 
         return queryFactory
                 .select(Projections.constructor(ChatResponseDTO.MemberPreviewDTO.class,
-                                member.nickname,
-                                member.loginId,
-                                member.profileImage))
+                        member.nickname,
+                        member.loginId,
+                        member.profileImage))
                 .from(member)
                 .join(memberChat).on(member.id.eq(memberChat.member.id))
                 .where(memberChat.chat.id.eq(chatId)
