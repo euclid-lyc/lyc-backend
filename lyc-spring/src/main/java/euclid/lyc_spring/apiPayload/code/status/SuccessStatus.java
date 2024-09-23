@@ -74,7 +74,8 @@ public enum SuccessStatus implements BaseCode {
 
     // FEED
     _RECENT_TEN_FEEDS_FETCHED(HttpStatus.OK, "FEED2001", "최신 피드 10개 불러오기 완료"),
-    _FEEDS_FOR_MEMBER_FOUND(HttpStatus.OK, "FEED2002", "회원 맞춤 추천 게시글 조회 완료"),
+    _FEEDS_FOR_MEMBER_FOUND(HttpStatus.OK, "FEED2002", "회원 맞춤 추천 게시글 목록 조회 완료"),
+    _FEEDS_BY_WEATHER_FOUND(HttpStatus.OK, "FEED2003", "날씨 기반 추천 게시글 목록 조회 완료"),
 
     // COMMISSION
     _COMMISSION_CREATED(HttpStatus.CREATED, "COMMISSION2001", "의뢰서 작성 완료"),
