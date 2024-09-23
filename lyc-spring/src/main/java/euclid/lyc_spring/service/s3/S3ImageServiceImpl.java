@@ -35,22 +35,6 @@ public class S3ImageServiceImpl implements S3ImageService {
     private String bucketName;
 
     @Override
-    public List<String> uploadImagesToBucket(List<MultipartFile> images) {
-
-        List<String> imageUrls = new ArrayList<>();
-
-        for (MultipartFile image : images) {
-            String imageUrl = this.upload(image);
-            imageUrls.add(imageUrl);
-        }
-        if (imageUrls.isEmpty()) {
-            throw new S3Handler(ErrorStatus._PUT_OBJECT_EXCEPTION);
-        }
-
-        return imageUrls;
-    }
-
-    @Override
     public String upload(MultipartFile image) {
         // image가 비어있으면 오류
         if (image.isEmpty() || Objects.isNull(image.getOriginalFilename())) {
