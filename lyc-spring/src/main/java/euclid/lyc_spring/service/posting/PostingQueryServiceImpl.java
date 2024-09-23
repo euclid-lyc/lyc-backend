@@ -8,6 +8,7 @@ import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.posting.Posting;
 import euclid.lyc_spring.dto.response.InfoResponseDTO;
 import euclid.lyc_spring.dto.response.PostingDTO;
+import euclid.lyc_spring.dto.response.WeatherDTO;
 import euclid.lyc_spring.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -71,8 +72,24 @@ public class PostingQueryServiceImpl implements PostingQueryService {
         return PostingDTO.RecommendedPostingListDTO.toDTO(postings);
     }
 
+    @Override
+    public PostingDTO.RecentPostingListDTO getPostingsAccordingToWeather(WeatherDTO weatherDTO) {
 
-/*-------------------------------------------------- 게시글 공통 --------------------------------------------------*/
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        List<PostingDTO.PostingImageDTO> postingImageDTOList = postingRepository.findPostingsByWeather(weatherDTO.getTemp_min(), weatherDTO.getTemp_max())
+                .stream()
+                .map(PostingDTO.PostingImageDTO::toDTO)
+                .toList();
+
+        return new PostingDTO.RecentPostingListDTO(postingImageDTOList);
+    }
+
+
+    /*-------------------------------------------------- 게시글 공통 --------------------------------------------------*/
 
     @Override
     public PostingDTO.PostingViewDTO getPosting(Long postingId) {

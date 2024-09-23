@@ -1,6 +1,7 @@
 package euclid.lyc_spring.service.posting;
 
 import euclid.lyc_spring.dto.response.PostingDTO;
+import euclid.lyc_spring.dto.response.WeatherDTO;
 
 import java.time.LocalDateTime;
 
@@ -10,6 +11,7 @@ public interface PostingQueryService {
 
     PostingDTO.RecentPostingListDTO getRecentPostings();
     PostingDTO.RecommendedPostingListDTO getPostingsForMember(Integer pageSize, Long cursorScore, Long cursorId);
+    PostingDTO.RecentPostingListDTO getPostingsAccordingToWeather(WeatherDTO weatherDTO);
 
 /*-------------------------------------------------- 게시글 공통 --------------------------------------------------*/
 

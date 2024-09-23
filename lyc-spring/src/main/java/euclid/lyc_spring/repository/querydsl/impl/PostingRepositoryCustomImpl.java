@@ -117,4 +117,21 @@ public class PostingRepositoryCustomImpl implements PostingRepositoryCustom {
         return whereClause;
     }
 
+    @Override
+    public List<Posting> findPostingsByWeather(Double minTemp, Double maxTemp) {
+
+        QPosting posting = QPosting.posting;
+
+        return queryFactory
+                .selectFrom(posting)
+                .where((posting.minTemp.lt(minTemp+5)
+                        .and(posting.minTemp.gt(minTemp-5)))
+                        .and(posting.maxTemp.lt(maxTemp+5)
+                        .and(posting.maxTemp.gt(maxTemp-5))))
+                .orderBy(posting.likes.desc(), posting.createdAt.desc())
+                .fetch();
+    }
+
+
+
 }

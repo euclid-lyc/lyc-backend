@@ -62,8 +62,8 @@ public class PostingDTO {
         private final String nickname;
         private final String loginId;
         private final Long postingId;
-        private final Short minTemp;
-        private final Short maxTemp;
+        private final Double minTemp;
+        private final Double maxTemp;
         private final String content;
         private final List<ImageInfoDTO> imageInfo;
         private final Long likes;

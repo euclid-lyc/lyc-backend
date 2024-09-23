@@ -14,11 +14,10 @@ public class PostingRequestDTO {
     @AllArgsConstructor
     public static class PostingSaveDTO {
 
-        private Short minTemp;
-        private Short maxTemp;
+        private Double minTemp;
+        private Double maxTemp;
         private Style style;
         private String content;
-        //private List<LinkDTO> images;
         private Long fromMemberId;
         private Long toMemberId;
         private Long writerId;

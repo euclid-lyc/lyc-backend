@@ -14,4 +14,6 @@ public interface PostingRepositoryCustom {
     List<Posting> findReviewsByToMemberId(Long memberId, Integer pageSize, LocalDateTime cursorDateTime);
 
     List<PostingDTO.PostingScoreDTO> findPostingsForMember(InfoResponseDTO.AllInfoDTO member, Integer pageSize, Long cursorScore, Long cursorId);
+
+    List<Posting> findPostingsByWeather(Double minTemp, Double maxTemp);
 }

@@ -5,9 +5,11 @@ import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
 import euclid.lyc_spring.dto.request.ImageRequestDTO;
 import euclid.lyc_spring.dto.request.PostingRequestDTO;
 import euclid.lyc_spring.dto.response.PostingDTO;
+import euclid.lyc_spring.dto.response.WeatherDTO;
 import euclid.lyc_spring.service.posting.PostingCommandService;
 import euclid.lyc_spring.service.posting.PostingQueryService;
 import euclid.lyc_spring.service.s3.S3ImageService;
+import euclid.lyc_spring.service.social.WeatherService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,6 +32,7 @@ public class PostingController {
     private final PostingQueryService postingQueryService;
     private final PostingCommandService postingCommandService;
     private final S3ImageService s3ImageService;
+    private final WeatherService weatherService;
 
 /*-------------------------------------------------- 피드 --------------------------------------------------*/
 
@@ -40,11 +43,15 @@ public class PostingController {
         return ApiResponse.onSuccess(SuccessStatus._RECENT_TEN_FEEDS_FETCHED, recentPostingListDTO);
     }
 
-    @Operation(summary = "[구현중] 날씨 기반 추천 게시글 10개 불러오기", description = "피드 화면에 노출할 날씨 기반 추천 게시글 10개를 불러옵니다.")
+    @Operation(summary = "[구현완료] 날씨 기반 추천 게시글 10개 불러오기", description = "피드 화면에 노출할 날씨 기반 추천 게시글 10개를 불러옵니다.")
     @GetMapping("/feeds/by-weather")
-    public void getPostingsAccordingToWeather() {}
+    public ApiResponse<PostingDTO.RecentPostingListDTO> getPostingsAccordingToWeather(@RequestParam String city) {
+        WeatherDTO weatherDTO = weatherService.getTodayWeather(city);
+        PostingDTO.RecentPostingListDTO postingListDTO = postingQueryService.getPostingsAccordingToWeather(weatherDTO);
+        return ApiResponse.onSuccess(SuccessStatus._FEEDS_BY_WEATHER_FOUND, postingListDTO);
+    }
 
-    @Operation(summary = "[구현중] 회원 맞춤 추천 게시글 목록 불러오기", description = """
+    @Operation(summary = "[구현완료] 회원 맞춤 추천 게시글 목록 불러오기", description = """
     피드 화면에 노출할 회원 맞춤 추천 게시글 목록을 불러옵니다.
     
     커서 기반 페이징을 사용합니다. (커서가 2개 -> cursorScore, cursorId)
@@ -54,8 +61,8 @@ public class PostingController {
             @RequestParam @Min(1) Integer pageSize,
             @RequestParam(required = false) Long cursorScore,
             @RequestParam(required = false) Long cursorId) {
-        PostingDTO.RecommendedPostingListDTO recentPostingListDTO = postingQueryService.getPostingsForMember(pageSize, cursorScore, cursorId);
-        return ApiResponse.onSuccess(SuccessStatus._FEEDS_FOR_MEMBER_FOUND, recentPostingListDTO);
+        PostingDTO.RecommendedPostingListDTO recommendedPostingListDTO = postingQueryService.getPostingsForMember(pageSize, cursorScore, cursorId);
+        return ApiResponse.onSuccess(SuccessStatus._FEEDS_FOR_MEMBER_FOUND, recommendedPostingListDTO);
     }
 
 /*-------------------------------------------------- 게시글 공통 --------------------------------------------------*/
