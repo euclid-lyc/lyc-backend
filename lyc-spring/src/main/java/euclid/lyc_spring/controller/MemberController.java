@@ -27,9 +27,6 @@ public class MemberController {
     private final MemberCommandService memberCommandService;
     private final S3ImageService s3ImageService;
 
-    @Value("${cloud.aws.s3.default-profile}")
-    private String defaultProfile;
-
 /*-------------------------------------------------- 회원정보 설정 --------------------------------------------------*/
 
     @Operation(summary = "[구현완료] 회원 정보 불러오기", description = """

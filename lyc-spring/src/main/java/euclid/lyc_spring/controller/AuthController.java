@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,7 +46,7 @@ public class AuthController {
     public ApiResponse<MemberDTO.MemberInfoDTO> signUp(
             @RequestPart RegisterDTO.RegisterMemberDTO registerMemberDTO,
             @RequestPart(required = false) MultipartFile image) {
-        String imageUrl = s3ImageService.upload(image);
+        String imageUrl = image != null ? s3ImageService.upload(image) : "";
         MemberDTO.MemberInfoDTO responseDTO = authCommandService.join(registerMemberDTO, imageUrl);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_CREATED, responseDTO);
     }
