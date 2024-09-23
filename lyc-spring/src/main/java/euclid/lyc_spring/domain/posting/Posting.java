@@ -32,10 +32,10 @@ public class Posting {
     private Long id;
 
     @Column(nullable = false)
-    private Short minTemp;
+    private Double minTemp;
 
     @Column(nullable = false)
-    private Short maxTemp;
+    private Double maxTemp;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -79,7 +79,7 @@ public class Posting {
     protected Posting() {}
 
     @Builder
-    public Posting(Short minTemp, Short maxTemp, Style style, Long likes, String content,
+    public Posting(Double minTemp, Double maxTemp, Style style, Long likes, String content,
                    Member fromMember, Member toMember, Member writer) {
         this.minTemp = minTemp;
         this.maxTemp = maxTemp;
