@@ -6,6 +6,7 @@ import euclid.lyc_spring.apiPayload.exception.handler.PostingHandler;
 import euclid.lyc_spring.auth.SecurityUtils;
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.posting.Posting;
+import euclid.lyc_spring.dto.response.InfoResponseDTO;
 import euclid.lyc_spring.dto.response.PostingDTO;
 import euclid.lyc_spring.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,11 @@ public class PostingQueryServiceImpl implements PostingQueryService {
     @Override
     public PostingDTO.RecentPostingListDTO getRecentPostings() {
 
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
         List<PostingDTO.RecentPostingDTO> postingImageDTOList = postingRepository.findAll().stream()
                 .sorted(Comparator.comparing(Posting::getCreatedAt).reversed())
                 .map(PostingDTO.RecentPostingDTO::toDTO)
@@ -43,10 +49,38 @@ public class PostingQueryServiceImpl implements PostingQueryService {
         return new PostingDTO.RecentPostingListDTO(postingImageDTOList);
     }
 
+    @Override
+    public PostingDTO.RecommendedPostingListDTO getPostingsForMember(Integer pageSize, Long cursorScore, Long cursorId) {
+
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        InfoResponseDTO.AllInfoDTO memberInfo = InfoResponseDTO.AllInfoDTO.toDTO(member.getInfo());
+
+        List<PostingDTO.RecommendedPostingDTO> postings = postingRepository.findPostingsForMember(memberInfo, pageSize, cursorScore, cursorId)
+                .stream()
+                .map(postingScoreDTO -> {
+                    Posting posting = postingRepository.findById(postingScoreDTO.getPostingId())
+                            .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
+                    return PostingDTO.RecommendedPostingDTO.toDTO(posting, postingScoreDTO.getTotalScore());
+                })
+                .toList();
+
+        return PostingDTO.RecommendedPostingListDTO.toDTO(postings);
+    }
+
+
 /*-------------------------------------------------- 게시글 공통 --------------------------------------------------*/
 
     @Override
     public PostingDTO.PostingViewDTO getPosting(Long postingId) {
+
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         Posting posting = postingRepository.findById(postingId)
                 .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));

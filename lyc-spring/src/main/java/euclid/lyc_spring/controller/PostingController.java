@@ -47,10 +47,16 @@ public class PostingController {
     @Operation(summary = "[구현중] 회원 맞춤 추천 게시글 목록 불러오기", description = """
     피드 화면에 노출할 회원 맞춤 추천 게시글 목록을 불러옵니다.
     
-    오프셋 기반 페이징을 사용합니다.
+    커서 기반 페이징을 사용합니다. (커서가 2개 -> cursorScore, cursorId)
     """)
     @GetMapping("feeds/for-member")
-    public void getPostingForMember() {}
+    public ApiResponse<PostingDTO.RecommendedPostingListDTO> getPostingsForMember(
+            @RequestParam @Min(1) Integer pageSize,
+            @RequestParam(required = false) Long cursorScore,
+            @RequestParam(required = false) Long cursorId) {
+        PostingDTO.RecommendedPostingListDTO recentPostingListDTO = postingQueryService.getPostingsForMember(pageSize, cursorScore, cursorId);
+        return ApiResponse.onSuccess(SuccessStatus._FEEDS_FOR_MEMBER_FOUND, recentPostingListDTO);
+    }
 
 /*-------------------------------------------------- 게시글 공통 --------------------------------------------------*/
 

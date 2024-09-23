@@ -148,6 +148,40 @@ public class PostingDTO {
     }
 
     @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class RecommendedPostingListDTO {
+
+        private final List<RecommendedPostingDTO> postings;
+
+        public static RecommendedPostingListDTO toDTO(List<RecommendedPostingDTO> postings) {
+            return RecommendedPostingListDTO.builder()
+                    .postings(postings)
+                    .build();
+        }
+    }
+
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class RecommendedPostingDTO {
+
+        private final Long postingId;
+        private final String image;
+        private final LocalDateTime createdAt;
+        private final Long totalScore;
+
+        public static RecommendedPostingDTO toDTO(Posting posting, Long totalScore) {
+            return RecommendedPostingDTO.builder()
+                    .postingId(posting.getId())
+                    .image(posting.getImageList().isEmpty() ? "" : posting.getImageList().get(0).getImage())
+                    .createdAt(posting.getCreatedAt())
+                    .totalScore(totalScore)
+                    .build();
+        }
+    }
+
+    @Getter
     @RequiredArgsConstructor
     public static class PostingIdDTO {
 
@@ -160,6 +194,14 @@ public class PostingDTO {
 
         private final Long postingId;
         private final Long savedPostingId;
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    public static class PostingScoreDTO {
+        private final Long memberId;
+        private final Long postingId;
+        private final Long totalScore;
     }
 
 }
