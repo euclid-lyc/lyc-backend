@@ -40,9 +40,9 @@ public class PostingQueryServiceImpl implements PostingQueryService {
         memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        List<PostingDTO.RecentPostingDTO> postingImageDTOList = postingRepository.findAll().stream()
+        List<PostingDTO.PostingImageDTO> postingImageDTOList = postingRepository.findAll().stream()
                 .sorted(Comparator.comparing(Posting::getCreatedAt).reversed())
-                .map(PostingDTO.RecentPostingDTO::toDTO)
+                .map(PostingDTO.PostingImageDTO::toDTO)
                 .limit(10)
                 .toList();
 
