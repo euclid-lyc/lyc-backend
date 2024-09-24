@@ -1,6 +1,7 @@
 package euclid.lyc_spring.domain.posting;
 
 import euclid.lyc_spring.domain.Member;
+import euclid.lyc_spring.domain.chat.commission.Commission;
 import euclid.lyc_spring.domain.enums.Style;
 import euclid.lyc_spring.domain.mapping.LikedPosting;
 import euclid.lyc_spring.domain.mapping.SavedPosting;
@@ -52,6 +53,10 @@ public class Posting {
     @Column(columnDefinition = "text")
     private String content;
 
+    @Setter
+    @OneToOne(mappedBy = "review", cascade = CascadeType.ALL)
+    private Commission commission;
+
     @OneToMany(mappedBy = "posting", cascade = CascadeType.ALL)
     private List<Image> imageList;
 
@@ -93,7 +98,6 @@ public class Posting {
         this.likedPostingList = new ArrayList<>();
         this.savedPostingList = new ArrayList<>();
     }
-
 
     //=== add Methods ===//
     public void addImage(Image image) {
