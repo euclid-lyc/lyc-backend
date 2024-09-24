@@ -20,7 +20,6 @@ public class PostingRequestDTO {
         private String content;
         private Long fromMemberId;
         private Long toMemberId;
-        private Long writerId;
     }
 
     @Getter

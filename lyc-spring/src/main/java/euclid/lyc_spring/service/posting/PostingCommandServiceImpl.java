@@ -93,7 +93,7 @@ public class PostingCommandServiceImpl implements PostingCommandService {
             commission.setReview(posting);
             commission = commissionRepository.save(commission);
             posting.setCommission(commission); // 연관관계 매핑
-            
+
         }
 
         return PostingDTO.PostingViewDTO.toDTO(posting);
