@@ -321,6 +321,9 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         // 헤더에 토큰 삽입
         setHeader(jwtTokenDTO, response);
 
+        // 최근활동순은 아무리 생각해도 최근 로그인이 맞지않나.. 싶습니다
+        member.setLastLoginAt(LocalDateTime.now());
+
         return SignDTO.SignInDTO.toDTO(member);
     }
 

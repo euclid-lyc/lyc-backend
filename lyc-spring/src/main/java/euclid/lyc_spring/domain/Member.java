@@ -91,6 +91,15 @@ public class Member {
     @Column(columnDefinition = "BIT DEFAULT 1")
     private Boolean isPublic; // 저장한 코디 공개 여부
 
+    // search용
+    @Setter
+    @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
+    private Long popularity;
+
+    @Column
+    @Setter
+    private LocalDateTime lastLoginAt;
+
     @Setter
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
     private PushSet pushSet;
@@ -165,6 +174,7 @@ public class Member {
         this.following = 0L;
         this.role = role;
         this.isPublic = true;
+        this.popularity = 0L;
         this.notificationList = new ArrayList<>();
         this.attendanceList = new ArrayList<>();
         this.memberChatList = new ArrayList<>();
@@ -297,7 +307,12 @@ public class Member {
 
     public void reloadProfileImage(String profileImage) { this.profileImage = profileImage; }
 
+    public void reloadPopularity(Long popularity) {this.popularity = popularity;}
+
+    //=== change Methods ===//
+
     public void changeLoginPw(String password, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.loginPw = bCryptPasswordEncoder.encode(password);
     }
+
 }

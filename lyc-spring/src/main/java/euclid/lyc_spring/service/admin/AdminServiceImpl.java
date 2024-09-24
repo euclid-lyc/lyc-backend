@@ -87,6 +87,15 @@ public class AdminServiceImpl implements AdminService {
 
     }
 
+
+    @Transactional
+    public void resetAllPopularity() {
+        //checkAdmin();
+        memberRepository.resetAllPopularity();
+    }
+
+/*-------------------------------------------------- 관리자 인증 --------------------------------------------------*/
+
     @Override
     @Transactional
     public void deleteChats() {
