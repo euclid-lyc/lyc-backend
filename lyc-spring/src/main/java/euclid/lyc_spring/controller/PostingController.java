@@ -4,6 +4,7 @@ import euclid.lyc_spring.apiPayload.ApiResponse;
 import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
 import euclid.lyc_spring.dto.request.ImageRequestDTO;
 import euclid.lyc_spring.dto.request.PostingRequestDTO;
+import euclid.lyc_spring.dto.response.CommissionDTO;
 import euclid.lyc_spring.dto.response.PostingDTO;
 import euclid.lyc_spring.dto.response.WeatherDTO;
 import euclid.lyc_spring.service.posting.PostingCommandService;
@@ -186,6 +187,26 @@ public class PostingController {
     }
 
 /*-------------------------------------------------- 리뷰 게시글 --------------------------------------------------*/
+
+    @Operation(summary = "[구현완료] 작성 가능한 리뷰 목록 불러오기", description = """
+            30일 이내에 종료된 의뢰 중 아직 리뷰를 작성하지 않은 의뢰의 목록을 불러옵니다.
+            
+            커서 기반 페이징이 적용됩니다.
+            
+            커서 1 : cursorDateTime (이전에 전달된 마지막 <의뢰>의 종료 시각)
+            
+            커서 2 : cursorId (이전에 전달된 마지막 <의뢰>의 id)
+            
+            이 API는 cursorDateTime보다 이전에 종료된 <의뢰>의 목록을 불러옵니다.
+            """)
+    @GetMapping("/reviews/directors")
+    public ApiResponse<CommissionDTO.TerminatedCommissionListDTO> getReviewsAvailableForSubmission(
+            @RequestParam @Min(1) Integer pageSize,
+            @RequestParam(required = false) LocalDateTime cursorDateTime,
+            @RequestParam(required = false) Long cursorId) {
+        CommissionDTO.TerminatedCommissionListDTO terminatedCommissionListDTO = postingQueryService.getReviewsAvailableForSubmission(pageSize, cursorDateTime, cursorId);
+        return ApiResponse.onSuccess(SuccessStatus._REVIEWS_AVAILABLE_FOR_SUBMISSION_FOUND, terminatedCommissionListDTO);
+    }
 
     @Operation(summary = "[구현완료] 유저의 리뷰 목록 불러오기", description = """
             마이페이지에 유저의 리뷰 목록을 불러옵니다.

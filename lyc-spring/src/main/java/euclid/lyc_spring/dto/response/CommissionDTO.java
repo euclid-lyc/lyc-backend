@@ -16,6 +16,41 @@ import java.util.List;
 public class CommissionDTO {
 
     @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class TerminatedCommissionListDTO {
+        private final List<TerminatedCommissionDTO> commissions;
+
+        public static TerminatedCommissionListDTO toDTO(List<Commission> commissions) {
+            return TerminatedCommissionListDTO.builder()
+                    .commissions(commissions.stream()
+                            .map(TerminatedCommissionDTO::toDTO)
+                            .toList())
+                    .build();
+        }
+    }
+
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class TerminatedCommissionDTO {
+
+        private final Long commissionId;
+        private final String profileImage;
+        private final String nickname;
+        private final LocalDateTime finishedAt;
+
+        public static TerminatedCommissionDTO toDTO(Commission commission) {
+            return TerminatedCommissionDTO.builder()
+                    .commissionId(commission.getId())
+                    .profileImage(commission.getDirector().getProfileImage())
+                    .nickname(commission.getDirector().getNickname())
+                    .finishedAt(commission.getFinishedAt())
+                    .build();
+        }
+    }
+
+    @Getter
     public static class CommissionViewDTO {
 
         private final Long commissionId;

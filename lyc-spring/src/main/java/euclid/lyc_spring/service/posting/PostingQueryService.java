@@ -1,5 +1,6 @@
 package euclid.lyc_spring.service.posting;
 
+import euclid.lyc_spring.dto.response.CommissionDTO;
 import euclid.lyc_spring.dto.response.PostingDTO;
 import euclid.lyc_spring.dto.response.WeatherDTO;
 
@@ -17,6 +18,8 @@ public interface PostingQueryService {
 
     PostingDTO.PostingViewDTO getPosting(Long memberId);
     PostingDTO.PostingImageListDTO getAllSavedPostings(Long memberId, Integer pageSize, LocalDateTime cursorDateTime);
+    Boolean getPostingLikeStatus(Long postingId);
+    Boolean getPostingSaveStatus(Long postingId);
 
 /*-------------------------------------------------- 코디 게시글 --------------------------------------------------*/
 
@@ -25,7 +28,6 @@ public interface PostingQueryService {
 /*-------------------------------------------------- 리뷰 게시글 --------------------------------------------------*/
 
     PostingDTO.PostingImageListDTO getAllMemberReviews(Long memberId, Integer pageSize, LocalDateTime cursorDateTime);
-    Boolean getPostingLikeStatus(Long postingId);
-    Boolean getPostingSaveStatus(Long postingId);
+    CommissionDTO.TerminatedCommissionListDTO getReviewsAvailableForSubmission(Integer pageSize, LocalDateTime cursorDateTime, Long cursorId);
 
 }
