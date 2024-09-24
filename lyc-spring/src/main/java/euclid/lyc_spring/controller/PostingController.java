@@ -71,8 +71,9 @@ public class PostingController {
     @Operation(summary = "[구현완료] 게시글(코디 or 리뷰) 작성하기", description = "게시글을 작성합니다.")
     @PostMapping("/postings")
     public ApiResponse<PostingDTO.PostingViewDTO> createPosting(
-            @RequestBody PostingRequestDTO.PostingSaveDTO postingSaveDTO) {
-        PostingDTO.PostingViewDTO postingViewDTO = postingCommandService.createPosting(postingSaveDTO);
+            @RequestBody PostingRequestDTO.PostingSaveDTO postingSaveDTO,
+            @RequestParam(required = false) Long commissionId) {
+        PostingDTO.PostingViewDTO postingViewDTO = postingCommandService.createPosting(postingSaveDTO, commissionId);
         return ApiResponse.onSuccess(SuccessStatus._POSTING_CREATED, postingViewDTO);
     }
 
