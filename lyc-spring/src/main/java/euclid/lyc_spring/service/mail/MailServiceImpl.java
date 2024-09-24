@@ -52,6 +52,21 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
+    public void checkEmail(VerificationRequestDTO.SignUpDTO signUpDTO) {
+
+        // 이미 동일한 이메일과 로그인 아이디로 가입된 회원이 존재하는지 확인
+        if (memberRepository.existsByEmail(signUpDTO.getEmail()) ||
+                memberRepository.existsByLoginId(signUpDTO.getLoginId())) {
+            throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_EXIST);
+        }
+
+        // 비밀번호와 비밀번호 확인이 일치하는지 확인
+        if (!signUpDTO.getLoginPw().equals(signUpDTO.getLoginPwCheck())) {
+            throw new MemberHandler(ErrorStatus.MEMBER_INVALID_LOGIN_PW);
+        }
+    }
+
+    @Override
     public void sendMailToFindId(HttpServletRequest request, HttpServletResponse response, String email) {
 
         String tempToken = jwtGenerator.generateTempToken(email);
@@ -68,6 +83,19 @@ public class MailServiceImpl implements MailService {
     public void sendMailToFindPw(HttpServletRequest request, HttpServletResponse response, String email, String loginId) {
 
         String tempToken = jwtGenerator.generateTempToken(loginId);
+        setHeader(tempToken, response);
+
+        String verificationCode = createCode();
+        MimeMessage message = createMessage(email, verificationCode);
+
+        verificationCodeRepository.addVerificationCode(tempToken, verificationCode);
+        javaMailSender.send(message);
+    }
+
+    @Override
+    public void sendMailToSignUp(HttpServletRequest request, HttpServletResponse response, String email) {
+
+        String tempToken = jwtGenerator.generateTempToken(email);
         setHeader(tempToken, response);
 
         String verificationCode = createCode();

@@ -10,6 +10,16 @@ public class VerificationRequestDTO {
     @Getter
     @RequiredArgsConstructor
     @Builder
+    public static class SignUpDTO {
+        private final String email;
+        private final String loginId;
+        private final String loginPw;
+        private final String loginPwCheck;
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    @Builder
     public static class FindIdDTO {
         private final String name;
         private final String email;

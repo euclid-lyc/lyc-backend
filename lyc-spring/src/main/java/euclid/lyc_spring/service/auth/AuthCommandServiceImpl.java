@@ -59,8 +59,28 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 /*-------------------------------------------------- 로그인 및 로그아웃 --------------------------------------------------*/
 
     @Override
+    public void verifyCode(HttpServletRequest request, String code) {
+
+        String tempToken = jwtProvider.resolveToken(request);
+        SecurityUtils.checkTempAuthorization();
+
+        // 인증 코드 확인
+        if (!code.equals(verificationCodeRepository.getVerificationCode(tempToken))) {
+            throw new MemberHandler(ErrorStatus.MAIL_NOT_VERIFIED);
+        }
+    }
+
+    @Override
     @Transactional
-    public MemberDTO.MemberInfoDTO join(RegisterDTO.RegisterMemberDTO registerMemberDTO, String imageUrl) {
+    public MemberDTO.MemberInfoDTO join(HttpServletRequest request, RegisterDTO.RegisterMemberDTO registerMemberDTO, String imageUrl) {
+
+        String tempToken = jwtProvider.resolveToken(request);
+        SecurityUtils.checkTempAuthorization();
+
+        // 인증 코드 확인
+        if (!registerMemberDTO.getVerificationCode().equals(verificationCodeRepository.getVerificationCode(tempToken))) {
+            throw new MemberHandler(ErrorStatus.MAIL_NOT_VERIFIED);
+        }
 
         MemberRequestDTO.MemberDTO memberDTO = registerMemberDTO.getMember();
         InfoRequestDTO.BasicInfoDTO basicInfoDTO = registerMemberDTO.getInfo();
@@ -70,10 +90,6 @@ public class AuthCommandServiceImpl implements AuthCommandService {
             imageUrl = defaultProfile;
         }
 
-        // 이미 회원가입이 되어있음
-        if (memberRepository.findByEmail(memberDTO.getEmail()).isPresent()) {
-            handleMemberAndS3Bucket(imageUrl, ErrorStatus.MEMBER_ALREADY_EXIST);
-        }
         // 중복된 아이디가 있음
         if (memberRepository.findByLoginId(memberDTO.getLoginId()).isPresent()) {
             handleMemberAndS3Bucket(imageUrl, ErrorStatus.MEMBER_DUPLICATED_LOGIN_ID);
@@ -354,19 +370,6 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         verificationCodeRepository.removeVerificationCode(tempToken);
 
         return MemberDTO.MemberPreviewDTO.toDTO(member);
-
-    }
-
-    @Override
-    public void findPw(HttpServletRequest request, String code) {
-
-        String tempToken = jwtProvider.resolveToken(request);
-        SecurityUtils.checkTempAuthorization();
-
-        // 인증 코드 확인
-        if (!code.equals(verificationCodeRepository.getVerificationCode(tempToken))) {
-            throw new MemberHandler(ErrorStatus.MAIL_NOT_VERIFIED);
-        }
 
     }
 
