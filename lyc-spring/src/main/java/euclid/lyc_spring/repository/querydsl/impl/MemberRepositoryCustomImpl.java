@@ -36,7 +36,7 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
     }
 
     @Override
-    public List<SearchResponseDTO.MemberKeywordPreviewDTO> searchDirectorByKeywordMode(List<String> term, String category) {
+    public List<SearchResponseDTO.MemberKeywordPreviewDTO> searchDirectorByKeywordMode(List<String> term, String orderType) {
         QMember member = QMember.member;
         QInfo info = QInfo.info;
         QInfoStyle infoStyle = QInfoStyle.infoStyle;
@@ -47,7 +47,7 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
                 .toList();
 
         // 인기도 정렬
-        if(Objects.equals(category, "popularity")) {
+        if(Objects.equals(orderType, "popularity")) {
             List<Member> members = queryFactory
                     .selectFrom(member)
                     .join(member.info, info)
@@ -62,7 +62,7 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
                     .map(SearchResponseDTO.MemberKeywordPreviewDTO::toDTO)
                     .collect(Collectors.toList());
 
-        } else if(Objects.equals(category, "recentAct")){ // 최근활동순 정렬
+        } else if(Objects.equals(orderType, "recentAct")){ // 최근활동순 정렬
             List<Member> members = queryFactory
                     .selectFrom(member)
                     .join(member.info, info)

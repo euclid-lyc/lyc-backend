@@ -1,3 +1,4 @@
+
 package euclid.lyc_spring.service.chat;
 
 import euclid.lyc_spring.apiPayload.code.status.ErrorStatus;
@@ -32,7 +33,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
     private final MemberChatRepository memberChatRepository;
 
 
-/*-------------------------------------------------- 채팅방 --------------------------------------------------*/
+    /*-------------------------------------------------- 채팅방 --------------------------------------------------*/
 
     @Override
     public ChatResponseDTO.ChatPreviewListDTO getAllChats(PageRequest pageRequest) {
@@ -86,8 +87,8 @@ public class ChatQueryServiceImpl implements ChatQueryService {
     }
 
 
-/*-------------------------------------------------- 메시지 --------------------------------------------------*/
-/*-------------------------------------------------- 일정 --------------------------------------------------*/
+    /*-------------------------------------------------- 메시지 --------------------------------------------------*/
+    /*-------------------------------------------------- 일정 --------------------------------------------------*/
 
     @Override
     public ChatResponseDTO.ScheduleListDTO getSchedules(Long chatId, Integer year, Integer month) {
@@ -126,15 +127,15 @@ public class ChatQueryServiceImpl implements ChatQueryService {
 
         List<Schedule> schedules = chat.getScheduleList().stream()
                 .filter(schedule -> schedule.getDate().getYear() == year &&
-                                    schedule.getDate().getMonthValue() == month &&
-                                    schedule.getDate().getDayOfMonth() == day)
+                        schedule.getDate().getMonthValue() == month &&
+                        schedule.getDate().getDayOfMonth() == day)
                 .sorted(Comparator.comparing(Schedule::getDate))
                 .toList();
 
         return ChatResponseDTO.ScheduleListDTO.toDTO(schedules);
     }
 
-/*-------------------------------------------------- 사진 및 동영상 --------------------------------------------------*/
+    /*-------------------------------------------------- 사진 및 동영상 --------------------------------------------------*/
 
     @Override
     public ChatResponseDTO.ImageListDTO getAllChatImages(Long chatId, Integer pageSize, LocalDateTime cursorDateTime) {

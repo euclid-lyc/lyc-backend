@@ -16,8 +16,8 @@ public class DataLoader {
 //        return args -> {
 //            // MemberChat 객체를 먼저 생성해야 합니다.
 //            // 이를 위한 더미 데이터 생성 예제입니다.
-//            MemberChat memberChat1 = memberChatRepository.findById(11L).orElseThrow(); // 적절한 데이터를 세팅해 주세요.
-//            MemberChat memberChat2 = memberChatRepository.findById(12L).orElseThrow();
+//            MemberChat memberChat1 = memberChatRepository.findById(1L).orElseThrow(); // 적절한 데이터를 세팅해 주세요.
+//            MemberChat memberChat2 = memberChatRepository.findById(2L).orElseThrow();
 //
 //            // 더미 데이터 생성
 //            Message message1 = Message.builder()

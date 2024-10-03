@@ -8,5 +8,5 @@ import java.util.List;
 public interface MemberRepositoryCustom {
 
     List<SearchResponseDTO.MemberPreviewDTO> searchDirectorByGenMode(String term);
-    List<SearchResponseDTO.MemberKeywordPreviewDTO> searchDirectorByKeywordMode(List<String> term, String category);
+    List<SearchResponseDTO.MemberKeywordPreviewDTO> searchDirectorByKeywordMode(List<String> term, String orderType);
 }
