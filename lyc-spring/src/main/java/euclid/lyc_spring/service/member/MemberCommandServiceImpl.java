@@ -14,7 +14,6 @@ import euclid.lyc_spring.repository.InfoRepository;
 import euclid.lyc_spring.repository.MemberRepository;
 import euclid.lyc_spring.repository.PushSetRepository;
 import euclid.lyc_spring.repository.mail.VerificationCodeRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,7 +35,8 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     /*-------------------------------------------------- 회원정보 설정 --------------------------------------------------*/
 
     @Override
-    public MemberDTO.MemberSettingInfoDTO updateMemberInfo(MemberRequestDTO.MemberSettingInfoDTO infoDTO) {
+    public MemberDTO.MemberSettingInfoDTO updateMemberInfo(MemberRequestDTO.MemberSettingInfoDTO infoDTO, String imageUrl) {
+
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
         Member loginMember = memberRepository.findByLoginId(loginId)
@@ -45,7 +45,10 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         loginMember.reloadLoginId(infoDTO.getLoginId());
         loginMember.reloadIntroduction(infoDTO.getIntroduction());
         loginMember.reloadNickname(infoDTO.getNickname());
-        loginMember.reloadProfileImage(infoDTO.getProfileImage());
+
+        if (!imageUrl.isEmpty()) {
+            loginMember.reloadProfileImage(imageUrl);
+        }
 
         memberRepository.save(loginMember);
 

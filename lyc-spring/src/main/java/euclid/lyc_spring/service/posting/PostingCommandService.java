@@ -8,7 +8,7 @@ import java.util.List;
 public interface PostingCommandService {
     /*-------------------------------------------------- 공통 --------------------------------------------------*/
 
-    PostingDTO.PostingViewDTO createPosting(PostingRequestDTO.PostingSaveDTO postingSaveDTO);
+    PostingDTO.PostingViewDTO createPosting(PostingRequestDTO.PostingSaveDTO postingSaveDTO, Long commissionId);
     PostingDTO.PostingViewDTO createPostingImage(Long postingId, List<List<String>> links, List<String> images);
     PostingDTO.PostingIdDTO deletePosting(Long memberId);
     PostingDTO.PostingViewDTO savePosting(Long postingId);

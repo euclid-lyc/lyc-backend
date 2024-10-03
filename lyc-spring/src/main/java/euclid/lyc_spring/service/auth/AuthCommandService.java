@@ -12,7 +12,8 @@ public interface AuthCommandService {
 
 /*-------------------------------------------------- 회원가입 및 탈퇴 --------------------------------------------------*/
 
-    MemberDTO.MemberInfoDTO join(RegisterDTO.RegisterMemberDTO registerMemberDTO, String imageUrl);
+    void verifyCode(HttpServletRequest request, String code);
+    MemberDTO.MemberInfoDTO join(HttpServletRequest request, RegisterDTO.RegisterMemberDTO registerMemberDTO, String imageUrl);
     MemberDTO.MemberPreviewDTO withdraw();
 
 /*-------------------------------------------------- 로그인 및 로그아웃 --------------------------------------------------*/
@@ -20,6 +21,5 @@ public interface AuthCommandService {
     SignDTO.SignInDTO signIn(SignRequestDTO.SignInDTO signInRequestDTO, HttpServletResponse response);
     SignDTO.SignOutDTO signOut(HttpServletRequest request);
     MemberDTO.MemberPreviewDTO findId(HttpServletRequest request, VerificationRequestDTO.IdVerificationDTO memberAuthDTO);
-    void findPw(HttpServletRequest request, String code);
     MemberDTO.MemberPreviewDTO updatePw(HttpServletRequest request, VerificationRequestDTO.PwVerificationDTO pwVerificationDTO);
 }

@@ -10,9 +10,11 @@ public interface MailService {
 
     void checkEmail(VerificationRequestDTO.FindPwDTO findPwDTO);
 
+    void checkEmail(VerificationRequestDTO.SignUpDTO signUpDTO);
+
     void sendMailToFindId(HttpServletRequest request, HttpServletResponse response, String email);
 
     void sendMailToFindPw(HttpServletRequest request, HttpServletResponse response, String email, String loginId);
 
-
+    void sendMailToSignUp(HttpServletRequest request, HttpServletResponse response, String email);
 }

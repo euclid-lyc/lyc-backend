@@ -7,11 +7,15 @@ import euclid.lyc_spring.dto.request.VerificationRequestDTO;
 import euclid.lyc_spring.dto.response.MemberDTO;
 import euclid.lyc_spring.service.member.MemberCommandService;
 import euclid.lyc_spring.service.member.MemberQueryService;
+import euclid.lyc_spring.service.s3.S3ImageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "Member", description = "회원 관련 API")
 @RestController
@@ -21,6 +25,7 @@ public class MemberController {
 
     private final MemberQueryService memberQueryService;
     private final MemberCommandService memberCommandService;
+    private final S3ImageService s3ImageService;
 
 /*-------------------------------------------------- 회원정보 설정 --------------------------------------------------*/
 
@@ -35,10 +40,15 @@ public class MemberController {
 
     @Operation(summary = "[구현완료] 회원 정보 변경하기", description = """
             입력받은 회원 정보 데이터로 유저의 닉네임, 아이디, 자기소개, 프로필 이미지를 변경합니다.
+            
+            이미지 요청 형식은 'multipart/form-data', 나머지 데이터의 요청 형식은 'application/json'입니다.
             """)
-    @PatchMapping("/members/info")
-    public ApiResponse<MemberDTO.MemberSettingInfoDTO> updateMemberInfo(@RequestBody MemberRequestDTO.MemberSettingInfoDTO infoDTO) {
-        MemberDTO.MemberSettingInfoDTO responseDTO = memberCommandService.updateMemberInfo(infoDTO);
+    @PatchMapping(value = "/members/info", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<MemberDTO.MemberSettingInfoDTO> updateMemberInfo(
+            @RequestPart MemberRequestDTO.MemberSettingInfoDTO infoDTO,
+            @RequestPart(required = false) MultipartFile image) {
+        String imageUrl = image != null ? s3ImageService.upload(image) : "";
+        MemberDTO.MemberSettingInfoDTO responseDTO = memberCommandService.updateMemberInfo(infoDTO, imageUrl);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_SETTING_INFO_UPDATED, responseDTO);
     }
 

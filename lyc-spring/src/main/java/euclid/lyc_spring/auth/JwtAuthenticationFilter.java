@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         // 필터가 적용되지 않는 URI
-        if (request.getRequestURI().startsWith("/lyc/auths/sign-up") || request.getRequestURI().startsWith("/lyc/auths/sign-in") ||
+        if (request.getRequestURI().equals("/lyc/auths/sign-up/send-verification-code") || request.getRequestURI().startsWith("/lyc/auths/sign-in") ||
             request.getRequestURI().startsWith("/swagger-ui") || request.getRequestURI().startsWith("/v3/api-docs") ||
             request.getRequestURI().startsWith("/ws/lyc")) {
             filterChain.doFilter(request, response);
@@ -40,7 +40,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         // 임시 토큰이 적용되는 URI
-        if (request.getRequestURI().equals("/lyc/auths/find-id") || request.getRequestURI().equals("/lyc/auths/find-pw")) {
+        if (request.getRequestURI().equals("/lyc/auths/find-id") || request.getRequestURI().equals("/lyc/auths/find-pw") ||
+            request.getRequestURI().startsWith("/lyc/auths/sign-up")) {
             String accessToken = jwtProvider.resolveToken(request);
             if (accessToken != null && jwtProvider.validateToken(accessToken)) {
                 setAuthentication(accessToken);

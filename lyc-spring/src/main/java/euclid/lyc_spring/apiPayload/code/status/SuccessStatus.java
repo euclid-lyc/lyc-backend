@@ -16,9 +16,11 @@ public enum SuccessStatus implements BaseCode {
     // clothes
     _CLOTHES_BY_IMAGE_CREATED(HttpStatus.CREATED, "CLOTHES2001", "옷장 게시글(이미지) 작성 완료"),
     _CLOTHES_BY_TEXT_CREATED(HttpStatus.CREATED, "CLOTHES2002", "옷장 게시글(텍스트) 작성 완료"),
-    _CLOTHES_LIST_FETCHED(HttpStatus.OK, "CLOTHES2003", "옷장 게시글 목록 불러오기 완료"),
-    _CLOTHES_FETCHED(HttpStatus.OK, "CLOTHES2003", "옷장 게시글 불러오기 완료"),
-    _CLOTHES_DELETED(HttpStatus.OK, "CLOTHES2004", "옷장 게시글 삭제 완료"),
+    _CLOTHES_LIST_FETCHED(HttpStatus.OK, "CLOTHES2004", "옷장 게시글 목록 불러오기 완료"),
+    _CLOTHES_FETCHED(HttpStatus.OK, "CLOTHES2005", "옷장 게시글 불러오기 완료"),
+    _CLOTHES_DELETED(HttpStatus.OK, "CLOTHES2006", "옷장 게시글 삭제 완료"),
+    _CLOTHES_BY_TEXT_FOUND(HttpStatus.OK, "CLOTHES2007", "옷장 게시글(텍스트) 조회 완료"),
+    _CLOTHES_BY_IMAGE_FOUND(HttpStatus.OK, "CLOTHES2008", "옷장 게시글(이미지) 조회 완료"),
 
     // authentication & authorization
     _VERIFICATION_CODE_SENT(HttpStatus.CREATED, "AA2001", "인증 코드 전송 완료"),
@@ -27,7 +29,7 @@ public enum SuccessStatus implements BaseCode {
     // member
     _MEMBER_CREATED(HttpStatus.CREATED, "MEMBER2001", "회원가입 완료"),
     _MEMBER_FOUND(HttpStatus.OK, "MEMBER2002", "회원 조회 완료"),
-    _TODAY_DIRECTOR_FETCHED(HttpStatus.OK, "MEMBER2003", "오늘의 디렉터 불러오기 완료"),
+    _TODAY_DIRECTOR_FETCHED(HttpStatus.OK, "MEMBER2003", "오늘의 디렉터 조회 완료"),
     _MEMBER_SIGNED_IN(HttpStatus.CREATED, "MEMBER2004", "로그인 완료"),
     _MEMBER_FOLLOWER_FOUND(HttpStatus.OK, "MEMBER2005", "팔로워 조회 완료"),
     _MEMBER_FOLLOWING_FOUND(HttpStatus.OK, "MEMBER2006", "팔로잉 조회 완료"),
@@ -39,7 +41,7 @@ public enum SuccessStatus implements BaseCode {
     _MEMBER_WITHDRAWN(HttpStatus.OK, "MEMBER2012", "회원 탈퇴 완료"),
     _MEMBER_LOGIN_ID_FOUND(HttpStatus.OK, "MEMBER2013", "회원 아이디 조회 완료"),
     _MEMBER_PW_CHANGED(HttpStatus.OK, "MEMBER2014", "회원 패스워드 변경 완료"),
-    _MEMBER_SETTING_INFO_FETCHED(HttpStatus.OK, "MEMBER2015", "회원 정보 불러오기 완료"),
+    _MEMBER_SETTING_INFO_FETCHED(HttpStatus.OK, "MEMBER2015", "회원 정보 조회 완료"),
     _MEMBER_SETTING_INFO_UPDATED(HttpStatus.OK, "MEMBER2016", "회원 정보 변경 완료"),
     _ADDRESS_FETCHED(HttpStatus.OK, "MEMBER2017", "배송지 정보 불러오기 완료"),
     _ADDRESS_UPDATED(HttpStatus.OK, "MEMBER2018", "배송지 정보 변경 완료"),
@@ -51,17 +53,18 @@ public enum SuccessStatus implements BaseCode {
     _MEMBER_STYLE_INFO_UPDATED(HttpStatus.OK, "MEMBER2024", "회원 스타일 정보 변경 완료"),
 
     // coordie
-    _MEMBER_COORDIES_FETCHED(HttpStatus.OK, "COORDIE2001", "유저의 코디 목록 불러오기 완료"),
-    _SAVED_COORDIES_FETCHED(HttpStatus.OK, "COORDIE2002", "저장한 코디 목록 불러오기 완료"),
+    _MEMBER_COORDIES_FETCHED(HttpStatus.OK, "COORDIE2001", "유저의 코디 목록 조회 완료"),
+    _SAVED_COORDIES_FETCHED(HttpStatus.OK, "COORDIE2002", "저장한 코디 목록 조회 완료"),
 
     // REVIEW
-    _MEMBER_REVIEWS_FETCHED(HttpStatus.OK, "REVIEW2001", "유저의 리뷰 목록 불러오기 완료"),
+    _MEMBER_REVIEWS_FETCHED(HttpStatus.OK, "REVIEW2001", "유저의 리뷰 목록 조회 완료"),
+    _REVIEWS_AVAILABLE_FOR_SUBMISSION_FOUND(HttpStatus.OK, "REVIEW2002", "작성 가능한 리뷰 목록 조회 완료"),
 
     // POSTING(GENERAL)
-    _SAVED_POSTING_FETCHED(HttpStatus.OK, "POSTING2001", "저장한 게시글 불러오기 완료"),
+    _SAVED_POSTING_FETCHED(HttpStatus.OK, "POSTING2001", "저장한 게시글 조회 완료"),
     _SAVED_POSTING_CREATED(HttpStatus.CREATED, "POSTING2002", "게시글 저장 완료"),
-    _IS_CLICKED_LIKE_FETCHED(HttpStatus.OK, "POSTING2003", "게시글 좋아요 클릭 여부 불러오기 완료"),
-    _IS_SAVED_POSTING_FETCHED(HttpStatus.OK, "POSTING2004", "게시글 저장 여부 불러오기 완료"),
+    _IS_CLICKED_LIKE_FETCHED(HttpStatus.OK, "POSTING2003", "게시글 좋아요 클릭 여부 조회 완료"),
+    _IS_SAVED_POSTING_FETCHED(HttpStatus.OK, "POSTING2004", "게시글 저장 여부 조회 완료"),
     _POSTING_CREATED(HttpStatus.CREATED, "POSTING2005", "게시글 작성 완료"),
     _POSTING_DELETED(HttpStatus.OK, "POSTING2006", "게시글 삭제 완료"),
     _SAVED_POSTING_DELETED(HttpStatus.OK, "POSTING2007", "저장한 게시글 삭제 완료"),
@@ -72,6 +75,8 @@ public enum SuccessStatus implements BaseCode {
 
     // FEED
     _RECENT_TEN_FEEDS_FETCHED(HttpStatus.OK, "FEED2001", "최신 피드 10개 불러오기 완료"),
+    _FEEDS_FOR_MEMBER_FOUND(HttpStatus.OK, "FEED2002", "회원 맞춤 추천 게시글 목록 조회 완료"),
+    _FEEDS_BY_WEATHER_FOUND(HttpStatus.OK, "FEED2003", "날씨 기반 추천 게시글 목록 조회 완료"),
 
     // COMMISSION
     _COMMISSION_CREATED(HttpStatus.CREATED, "COMMISSION2001", "의뢰서 작성 완료"),

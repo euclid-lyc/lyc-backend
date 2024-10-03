@@ -66,6 +66,8 @@ public enum ErrorStatus implements BaseErrorCode {
     POSTING_NOT_LIKED(HttpStatus.FORBIDDEN, "POST4047", "좋아요 기록이 없습니다."),
     WRITER_ONLY_ALLOWED(HttpStatus.BAD_REQUEST, "POST4048", "게시글 작성자에게만 권한이 부여됩니다."),
     POSTING_CANNOT_SAVED_BY_WRITER(HttpStatus.BAD_REQUEST, "POST4049", "자신의 게시글을 저장할 수 업습니다."),
+    REVIEW_FROM_MEMBER_NOT_MATCHED(HttpStatus.BAD_REQUEST, "POST4010", "디렉터의 id가 잘못되었습니다."),
+    REVIEW_TO_MEMBER_NOT_MATCHED(HttpStatus.BAD_REQUEST, "POST4011", "코디를 받은 회원의 id가 잘못되었습니다."),
 
     // Commission
     COMMISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMISSION4041", "의뢰를 찾을 수 없습니다."),
@@ -75,6 +77,7 @@ public enum ErrorStatus implements BaseErrorCode {
     DIRECTOR_EQUAL_MEMBER(HttpStatus.BAD_REQUEST, "COMMISSION4044", "디렉터와 의뢰자가 동일합니다."),
     COMMISSION_CLOTHES_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMISSION4045", "저장된 옷을 찾을 수 없습니다."),
     COMMISSION_CLOTHES_NOT_SAVED(HttpStatus.BAD_REQUEST, "COMMISSION4046", "옷을 저장할 수 없습니다."),
+    COMMISSION_NOT_TERMINATED(HttpStatus.BAD_REQUEST, "COMMISSION4007", "종료되지 않은 의뢰입니다."),
 
     // clothes
     CLOTHES_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4041", "옷장 게시글이 존재하지 않습니다."),

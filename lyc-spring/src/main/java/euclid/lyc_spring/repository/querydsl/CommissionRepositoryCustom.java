@@ -8,4 +8,6 @@ import java.util.List;
 public interface CommissionRepositoryCustom {
 
     List<Commission> findCommissionsByDirectorId(Long directorId, Integer pageSize, LocalDateTime cursorDateTime);
+
+    List<Commission> findUnreviewedCommissions(Integer pageSize, LocalDateTime cursorDateTime, Long cursorId);
 }

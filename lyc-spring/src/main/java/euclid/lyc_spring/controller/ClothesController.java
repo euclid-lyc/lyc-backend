@@ -75,7 +75,16 @@ public class ClothesController {
 
     @Operation(summary = "[구현중] 옷장 게시글 불러오기", description = "옷장 게시글을 불러옵니다.")
     @GetMapping("/clothes/{clothesId}")
-    void getClothes(@PathVariable("clothesId") Long clothesId) {}
+    ApiResponse<?> getClothes(@PathVariable("clothesId") Long clothesId) {
+        boolean isText = clothesQueryService.getIsText(clothesId);
+        if (isText) {
+            ClothesDTO.ClothesWithTextDTO clothesWithTextDTO = clothesQueryService.getClothesUploadedWithText(clothesId);
+            return ApiResponse.onSuccess(SuccessStatus._CLOTHES_BY_IMAGE_FOUND, clothesWithTextDTO);
+        } else {
+            ClothesDTO.ClothesWithImageDTO clothesWithImageDTO = clothesQueryService.getClothesUploadedWithImage(clothesId);
+            return ApiResponse.onSuccess(SuccessStatus._CLOTHES_BY_TEXT_FOUND, clothesWithImageDTO);
+        }
+    }
 
 
 }
