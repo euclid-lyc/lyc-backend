@@ -60,9 +60,9 @@ public class MemberChatRepositoryCustomImpl implements MemberChatRepositoryCusto
 
         return queryFactory
                 .select(Projections.constructor(ChatResponseDTO.MemberPreviewDTO.class,
-                                member.nickname,
-                                member.loginId,
-                                member.profileImage))
+                        member.nickname,
+                        member.loginId,
+                        member.profileImage))
                 .from(member)
                 .join(memberChat).on(member.id.eq(memberChat.member.id))
                 .where(memberChat.chat.id.eq(chatId)
