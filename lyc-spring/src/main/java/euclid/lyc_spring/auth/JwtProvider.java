@@ -3,11 +3,12 @@ package euclid.lyc_spring.auth;
 import euclid.lyc_spring.apiPayload.code.status.ErrorStatus;
 import euclid.lyc_spring.apiPayload.exception.handler.JwtHandler;
 import euclid.lyc_spring.domain.RefreshToken;
-import euclid.lyc_spring.repository.RefreshTokenRepository;
+import euclid.lyc_spring.repository.token.RefreshTokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -36,12 +37,18 @@ public class JwtProvider {
 
     // Authorization 요청 헤더 값 불러오기
     public String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
+        String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
         return null;
+    }
 
+    public String resolveToken(String bearerToken) {
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 
     // accessToken 검증하기(요청으로 받은 토큰이 유효한지 확인)
@@ -108,5 +115,4 @@ public class JwtProvider {
         refreshToken.updateToken(token);
         refreshTokenRepository.save(refreshToken);
     }
-
 }

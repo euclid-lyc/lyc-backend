@@ -1,19 +1,22 @@
 package euclid.lyc_spring.service.posting;
 
 import euclid.lyc_spring.apiPayload.code.status.ErrorStatus;
+import euclid.lyc_spring.apiPayload.exception.handler.CommissionHandler;
 import euclid.lyc_spring.apiPayload.exception.handler.MemberHandler;
 import euclid.lyc_spring.apiPayload.exception.handler.PostingHandler;
 import euclid.lyc_spring.auth.SecurityUtils;
 import euclid.lyc_spring.domain.Member;
+import euclid.lyc_spring.domain.chat.commission.Commission;
+import euclid.lyc_spring.domain.enums.CommissionStatus;
 import euclid.lyc_spring.domain.mapping.LikedPosting;
 import euclid.lyc_spring.domain.mapping.SavedPosting;
 import euclid.lyc_spring.domain.posting.Image;
 import euclid.lyc_spring.domain.posting.ImageUrl;
 import euclid.lyc_spring.domain.posting.Posting;
-import euclid.lyc_spring.dto.request.ImageRequestDTO;
 import euclid.lyc_spring.dto.request.PostingRequestDTO;
 import euclid.lyc_spring.dto.response.PostingDTO;
 import euclid.lyc_spring.repository.*;
+import euclid.lyc_spring.service.s3.S3ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,11 +34,14 @@ public class PostingCommandServiceImpl implements PostingCommandService {
     private final LikedPostingRepository likedPostingRepository;
     private final ImageRepository imageRepository;
     private final ImageUrlRepository imageUrlRepository;
+    private final CommissionRepository commissionRepository;
+
+    private final S3ImageService s3ImageService;
 
 /*-------------------------------------------------- 게시글 공통 --------------------------------------------------*/
 
     @Override
-    public PostingDTO.PostingViewDTO createPosting(PostingRequestDTO.PostingSaveDTO postingSaveDTO) {
+    public PostingDTO.PostingViewDTO createPosting(PostingRequestDTO.PostingSaveDTO postingSaveDTO, Long commissionId) {
 
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
@@ -63,36 +69,70 @@ public class PostingCommandServiceImpl implements PostingCommandService {
 
         posting = postingRepository.save(posting);
 
-        createImage(posting, postingSaveDTO);
+        // 리뷰의 경우 연동 필요
+        if (commissionId != null) {
+            Commission commission = commissionRepository.findById(commissionId)
+                    .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
+
+            System.out.println("director : " + commission.getDirector().getId());
+            System.out.println("member : " + commission.getMember().getId());
+
+            // 아직 종료되지 않은 의뢰거나 이미 리뷰가 작성된 경우 새로운 리뷰를 작성할 수 없음
+            if (!commission.getStatus().equals(CommissionStatus.TERMINATED) || commission.getReview() != null) {
+                throw new PostingHandler(ErrorStatus.COMMISSION_NOT_TERMINATED);
+            }
+
+            if (!fromMember.equals(commission.getDirector())) {
+                throw new PostingHandler(ErrorStatus.REVIEW_FROM_MEMBER_NOT_MATCHED);
+            }
+
+            if (!toMember.equals(commission.getMember())) {
+                throw new PostingHandler(ErrorStatus.REVIEW_TO_MEMBER_NOT_MATCHED);
+            }
+
+            commission.setReview(posting);
+            commission = commissionRepository.save(commission);
+            posting.setCommission(commission); // 연관관계 매핑
+
+        }
 
         return PostingDTO.PostingViewDTO.toDTO(posting);
     }
 
-    private void createImage(Posting posting, PostingRequestDTO.PostingSaveDTO postingSaveDTO) {
-
-        postingSaveDTO.getImageList()
-                .forEach(imageSaveDTO -> {
-                    Image image = Image.builder()
-                            .image(imageSaveDTO.getImage())
-                            .posting(posting)
-                            .build();
-                    posting.addImage(image);
-                    imageRepository.save(image);
-                    createImageUrl(image, imageSaveDTO);
+    @Override
+    public PostingDTO.PostingViewDTO createPostingImage(Long postingId, List<List<String>> links, List<String> images) {
+        Posting posting = postingRepository.findById(postingId)
+                .orElseThrow(() -> {
+                    images.forEach(s3ImageService::deleteImageFromS3);
+                    return new PostingHandler(ErrorStatus.POSTING_NOT_FOUND);
                 });
 
+        createImage(posting, links, images);
+        return PostingDTO.PostingViewDTO.toDTO(posting);
     }
 
-    private void createImageUrl(Image image, ImageRequestDTO.ImageSaveDTO imageSaveDTO) {
-        imageSaveDTO.getImageUrlList()
-                .forEach(link -> {
-                    ImageUrl imageUrl = ImageUrl.builder()
-                            .link(imageSaveDTO.getImage())
-                            .image(image)
-                            .build();
-                    image.addImageUrl(imageUrl);
-                    imageUrlRepository.save(imageUrl);
-                });
+    private void createImage(Posting posting, List<List<String>> links, List<String> images) {
+        for (int i=0; i<images.size(); i++) {
+            Image image = Image.builder()
+                    .image(images.get(i))
+                    .posting(posting)
+                    .build();
+            posting.addImage(image);
+            imageRepository.save(image);
+
+            links.get(i).forEach(link -> {
+                createLink(image, link);
+            });
+        }
+    }
+
+    private void createLink(Image image, String link) {
+        ImageUrl imageUrl = ImageUrl.builder()
+                .link(link)
+                .image(image)
+                .build();
+        image.addImageUrl(imageUrl);
+        imageUrlRepository.save(imageUrl);
     }
 
     @Override
@@ -110,6 +150,7 @@ public class PostingCommandServiceImpl implements PostingCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.WRITER_ONLY_ALLOWED));
 
         posting.getImageList().forEach(image -> {
+            s3ImageService.deleteImageFromS3(image.getImage());
             imageUrlRepository.deleteAll(image.getImageUrlList());
             imageRepository.delete(image);
         });
@@ -182,6 +223,10 @@ public class PostingCommandServiceImpl implements PostingCommandService {
             throw new PostingHandler(ErrorStatus.POSTING_ALREADY_LIKED);
         LikedPosting likedPosting = new LikedPosting(member, posting);
 
+        // 인기도 증가
+        Member uploader = posting.getFromMember();
+        uploader.reloadPopularity(uploader.getPopularity()+1);
+
         likedPostingRepository.save(likedPosting);
 
         posting.reloadLikes(posting.getLikes() + 1);
@@ -217,11 +262,15 @@ public class PostingCommandServiceImpl implements PostingCommandService {
         if (likedPostings.isEmpty()) {
             throw new PostingHandler(ErrorStatus.POSTING_NOT_LIKED);
         }
-
         likedPostingRepository.deleteAll(likedPostings);
 
         Posting posting = postingRepository.findById(postingId)
                 .orElseThrow(() -> new PostingHandler(ErrorStatus.POSTING_NOT_FOUND));
+
+        // 인기도 하락(인기도작 금지)
+        Member uploader = posting.getFromMember();
+        if(uploader.getPopularity() != 0L)
+            uploader.reloadPopularity(uploader.getPopularity()-1);
 
         posting.reloadLikes(posting.getLikes() - 1);
         postingRepository.save(posting);

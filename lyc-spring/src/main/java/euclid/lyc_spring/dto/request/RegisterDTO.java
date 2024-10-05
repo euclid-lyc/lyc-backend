@@ -3,17 +3,18 @@ package euclid.lyc_spring.dto.request;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @Getter
 public class RegisterDTO {
 
     @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
+    @RequiredArgsConstructor
     public static class RegisterMemberDTO {
-
-        private MemberRequestDTO.MemberDTO member;
-        private InfoRequestDTO.BasicInfoDTO info;
+        private final String verificationCode;
+        private final MemberRequestDTO.MemberDTO member;
+        private final InfoRequestDTO.BasicInfoDTO info;
+        private final MemberRequestDTO.PushSetDTO pushSet;
     }
 }

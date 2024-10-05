@@ -1,66 +1,93 @@
 package euclid.lyc_spring.dto.request;
 
 import euclid.lyc_spring.domain.enums.*;
+import euclid.lyc_spring.domain.info.*;
+import euclid.lyc_spring.dto.response.InfoResponseDTO;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
 public class InfoRequestDTO {
 
     @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
+    @RequiredArgsConstructor
+    public static class StyleInfoDTO {
+        private final Boolean isPublic;
+        private final Short height;
+        private final Short weight;
+        private final TopSize topSize;
+        private final BottomSize bottomSize;
+        private final List<Style> preferredStyleList;
+        private final List<Style> nonPreferredStyleList;
+        private final List<Material> preferredMaterialList;
+        private final List<Material> nonPreferredMaterialList;
+        private final List<Fit> preferredFitList;
+        private final List<Fit> nonPreferredFitList;
+        private final List<BodyType> goodBodyTypeList;
+        private final List<BodyType> badBodyTypeList;
+        private final String details;
+    }
+
+    @Getter
+    @RequiredArgsConstructor
     public static class BasicInfoDTO {
 
-        private Short height;
-        private Short weight;
-        private TopSize topSize;
-        private BottomSize bottomSize;
-        private Integer postalCode;
-        private String address;
-        private String detailAddress;
-        private String text;
-        private InfoStyleListDTO infoStyle;
-        private InfoFitListDTO infoFit;
-        private InfoMaterialListDTO infoMaterial;
-        private InfoBodyTypeListDTO infoBodyType;
+        private final Short height;
+        private final Short weight;
+        private final TopSize topSize;
+        private final BottomSize bottomSize;
+        private final Integer postalCode;
+        private final String address;
+        private final String detailAddress;
+        private final String text;
+        private final InfoStyleListDTO infoStyle;
+        private final InfoFitListDTO infoFit;
+        private final InfoMaterialListDTO infoMaterial;
+        private final InfoBodyTypeListDTO infoBodyType;
     }
 
     @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
+    @RequiredArgsConstructor
     public static class InfoStyleListDTO {
 
-        private List<Style> preferredStyleList;
-        private List<Style> nonPreferredStyleList;
+        private final List<Style> preferredStyleList;
+        private final List<Style> nonPreferredStyleList;
     }
 
     @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
+    @RequiredArgsConstructor
     public static class InfoFitListDTO {
 
-        private List<Fit> preferredFitList;
-        private List<Fit> nonPreferredFitList;
+        private final List<Fit> preferredFitList;
+        private final List<Fit> nonPreferredFitList;
     }
 
     @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
+    @RequiredArgsConstructor
     public static class InfoMaterialListDTO {
 
-        private List<Material> preferredMaterialList;
-        private List<Material> nonPreferredMaterialList;
+        private final List<Material> preferredMaterialList;
+        private final List<Material> nonPreferredMaterialList;
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    public static class InfoBodyTypeListDTO {
+
+        private final List<BodyType> goodBodyTypeList;
+        private final List<BodyType> badBodyTypeList;
     }
 
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class InfoBodyTypeListDTO {
-
-        private List<BodyType> goodBodyTypeList;
-        private List<BodyType> badBodyTypeList;
+    public static class OtherMattersDTO {
+        private Integer minPrice;
+        private Integer maxPrice;
+        private LocalDate dateToUse;
+        private LocalDate desiredDate;
+        private String text;
     }
-
 }

@@ -2,10 +2,16 @@ package euclid.lyc_spring.domain.chat.commission.commission_info;
 
 import euclid.lyc_spring.domain.enums.BodyType;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Getter
 @Entity
+@DynamicUpdate
+@DynamicInsert
 public class CommissionInfoBodyType {
 
     @Id
@@ -20,7 +26,17 @@ public class CommissionInfoBodyType {
     @Column(nullable = false)
     private Boolean isGood;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "commission_info_id", nullable = false)
     private CommissionInfo commissionInfo;
+
+    protected CommissionInfoBodyType() {}
+
+    @Builder
+    public CommissionInfoBodyType(BodyType bodyType, Boolean isGood, CommissionInfo commissionInfo) {
+        this.bodyType = bodyType;
+        this.isGood = isGood;
+        this.commissionInfo = commissionInfo;
+    }
 }

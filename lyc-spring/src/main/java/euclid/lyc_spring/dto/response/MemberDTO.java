@@ -4,54 +4,81 @@ import euclid.lyc_spring.domain.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+import java.util.List;
 
 @Getter
 public class MemberDTO {
 
     @Getter
-    public static class TodayDirectorDTO {
-
-        private final Long memberId;
-        private final String nickname;
-        private final String profileImage;
-        private final Long follower;
-
-        @Builder(access = AccessLevel.PRIVATE)
-        private TodayDirectorDTO(Long memberId, String nickname, String profileImage, Long follower) {
-            this.memberId =memberId;
-            this.nickname = nickname;
-            this.profileImage = profileImage;
-            this.follower = follower;
-        }
-
-        public static TodayDirectorDTO toDTO(Member member) {
-            return TodayDirectorDTO.builder()
-                    .memberId(member.getId())
-                    .nickname(member.getNickname())
-                    .profileImage(member.getProfileImage())
-                    .follower(member.getFollower())
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class TodayDirectorListDTO {
+        private final List<TodayDirectorDTO> directors;
+        public static TodayDirectorListDTO toDTO(List<TodayDirectorDTO> directors) {
+            return TodayDirectorListDTO.builder()
+                    .directors(directors)
                     .build();
         }
     }
 
     @Getter
-    public static class FollowDTO {
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class TodayDirectorDTO {
+
+        private final Long memberId;
+        private final String nickname;
+        private final String profileImage;
+        private final Long followerCount;
+
+        public static TodayDirectorDTO toDTO(Member member, Long followerCount) {
+            return TodayDirectorDTO.builder()
+                    .memberId(member.getId())
+                    .nickname(member.getNickname())
+                    .profileImage(member.getProfileImage())
+                    .followerCount(followerCount)
+                    .build();
+        }
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    @Builder
+    public static class FollowerCountDTO {
+        private final Long memberId;
+        private final Long followerCount;
+    }
+
+    ////
+
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class MemberIntroListDTO {
+        private final List<MemberIntroDTO> members;
+        public static MemberIntroListDTO toDTO(List<Member> members) {
+            return MemberIntroListDTO.builder()
+                    .members(members.stream()
+                            .map(MemberIntroDTO::toDTO)
+                            .toList())
+                    .build();
+        }
+    }
+
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class MemberIntroDTO {
 
         private final Long memberId;
         private final String nickname;
         private final String profileImage;
         private final String introduction;
 
-        @Builder(access = AccessLevel.PRIVATE)
-        private FollowDTO(Long memberId, String nickname, String profileImage, String introduction) {
-            this.memberId = memberId;
-            this.nickname = nickname;
-            this.profileImage = profileImage;
-            this.introduction = introduction;
-        }
-
-        public static FollowDTO toDTO(Member member) {
-            return FollowDTO.builder()
+        public static MemberIntroDTO toDTO(Member member) {
+            return MemberIntroDTO.builder()
                     .memberId(member.getId())
                     .nickname(member.getNickname())
                     .profileImage(member.getProfileImage())
@@ -113,4 +140,84 @@ public class MemberDTO {
         }
     }
 
+    @Getter
+    @Builder(access = AccessLevel.PRIVATE)
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class MemberPreviewDTO {
+
+        private final Long memberId;
+        private final String loginId;
+        private final String profileImage;
+        private final String nickname;
+
+        public static MemberPreviewDTO toDTO(Member member) {
+            return MemberPreviewDTO.builder()
+                    .memberId(member.getId())
+                    .loginId(member.getLoginId())
+                    .profileImage(member.getProfileImage())
+                    .nickname(member.getNickname())
+                    .build();
+        }
+    }
+
+    @Getter
+    @Builder(access = AccessLevel.PRIVATE)
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class MemberSettingInfoDTO {
+        private final Long memberId;
+        private final String loginId;
+        private final String profileImage;
+        private final String nickname;
+        private final String introduction;
+
+        public static MemberSettingInfoDTO toDTO(Member member) {
+            return MemberSettingInfoDTO.builder()
+                    .memberId(member.getId())
+                    .loginId(member.getLoginId())
+                    .nickname(member.getNickname())
+                    .profileImage(member.getProfileImage())
+                    .introduction(member.getIntroduction())
+                    .build();
+        }
+    }
+
+    @Getter
+    @Builder(access = AccessLevel.PRIVATE)
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class AddressDTO {
+        private final Integer postalCode;
+        private final String address;
+        private final String detailAddress;
+
+        public static AddressDTO toDTO(Member member) {
+            return AddressDTO.builder()
+                    .postalCode(member.getInfo().getPostalCode())
+                    .address(member.getInfo().getAddress())
+                    .detailAddress(member.getInfo().getDetailAddress())
+                    .build();
+        }
+    }
+
+    @Getter
+    @Builder(access = AccessLevel.PRIVATE)
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class PushSetDTO{
+        private final Boolean dm;
+        private final Boolean feed;
+        private final Boolean schedule;
+        private final Boolean likeMark;
+        private final Boolean event;
+        private final Boolean ad;
+
+        public static PushSetDTO toDTO(Member member) {
+            return PushSetDTO.builder()
+                    .dm(member.getPushSet().getDm())
+                    .feed(member.getPushSet().getFeed())
+                    .schedule(member.getPushSet().getSchedule())
+                    .likeMark(member.getPushSet().getLikeMark())
+                    .event(member.getPushSet().getEvent())
+                    .ad(member.getPushSet().getAd())
+                    .build();
+        }
+    }
 }

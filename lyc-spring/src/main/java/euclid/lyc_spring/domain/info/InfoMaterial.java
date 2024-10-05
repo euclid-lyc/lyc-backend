@@ -5,9 +5,13 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Getter
 @Entity
+@DynamicUpdate
+@DynamicInsert
 public class InfoMaterial {
 
     @Id
@@ -30,7 +34,8 @@ public class InfoMaterial {
     protected InfoMaterial() {}
 
     @Builder
-    public InfoMaterial(Material material, Boolean isPrefer) {
+    public InfoMaterial(Info info, Material material, Boolean isPrefer) {
+        this.info = info;
         this.material = material;
         this.isPrefer = isPrefer;
     }

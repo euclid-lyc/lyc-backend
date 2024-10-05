@@ -12,8 +12,11 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,6 +24,8 @@ import java.util.List;
 
 @Getter
 @Entity
+@DynamicUpdate
+@DynamicInsert
 @EntityListeners(AuditingEntityListener.class)
 public class Member {
 
@@ -38,8 +43,11 @@ public class Member {
     @Column(nullable = false)
     private String loginPw;
 
-    @Column(length = 30, nullable = false)
+    @Column(length = 30, nullable = false, unique = true)
     private String email;
+
+    @Column(length = 30, nullable = false)
+    private String phone;
 
     @Column(length = 10, nullable = false)
     private String nickname;
@@ -58,6 +66,7 @@ public class Member {
     private LocalDateTime createdAt;
 
     @Column
+    @Setter
     private LocalDateTime inactive;
 
     @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
@@ -81,6 +90,15 @@ public class Member {
     @Setter
     @Column(columnDefinition = "BIT DEFAULT 1")
     private Boolean isPublic; // 저장한 코디 공개 여부
+
+    // search용
+    @Setter
+    @Column(nullable = false, columnDefinition = "BIGINT DEFAULT 0")
+    private Long popularity;
+
+    @Column
+    @Setter
+    private LocalDateTime lastLoginAt;
 
     @Setter
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
@@ -128,6 +146,9 @@ public class Member {
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     private List<Posting> postingList;
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Report> reportList;
+
     protected Member() {}
 
     // followerMember
@@ -136,13 +157,14 @@ public class Member {
     }
 
     @Builder
-    public Member(String name, String loginId, String loginPw,
-                  String email, String nickname, String introduction,
+    public Member(String name, String loginId, String loginPw, String email,
+                  String phone, String nickname, String introduction,
                   String profileImage, Role role) {
         this.name = name;
         this.loginId = loginId;
         this.loginPw = loginPw;
         this.email = email;
+        this.phone = phone;
         this.nickname = nickname;
         this.introduction = introduction;
         this.profileImage = profileImage;
@@ -152,6 +174,7 @@ public class Member {
         this.following = 0L;
         this.role = role;
         this.isPublic = true;
+        this.popularity = 0L;
         this.notificationList = new ArrayList<>();
         this.attendanceList = new ArrayList<>();
         this.memberChatList = new ArrayList<>();
@@ -166,6 +189,7 @@ public class Member {
         this.fromPostingList = new ArrayList<>();
         this.toPostingList = new ArrayList<>();
         this.postingList = new ArrayList<>();
+        this.reportList = new ArrayList<>();
     }
 
 
@@ -251,6 +275,8 @@ public class Member {
         posting.setWriter(this);
     }
 
+    public void addReport(Report report) { this.reportList.add(report); }
+
     //=== remove Methods ===//
 
     public void removePosting(Posting posting) {
@@ -263,6 +289,8 @@ public class Member {
         savedPostingList.remove(savedPosting);
     }
 
+    //=== reload Methods ===//
+
     public void reloadFollowing(Long following) {
         this.following = following;
     }
@@ -270,4 +298,21 @@ public class Member {
     public void reloadFollower(Long follower) {
         this.follower = follower;
     }
+
+    public void reloadNickname(String nickname) { this.nickname = nickname; }
+
+    public void reloadIntroduction(String introduction) { this.introduction = introduction; }
+
+    public void reloadLoginId(String loginId) { this.loginId = loginId; }
+
+    public void reloadProfileImage(String profileImage) { this.profileImage = profileImage; }
+
+    public void reloadPopularity(Long popularity) {this.popularity = popularity;}
+
+    //=== change Methods ===//
+
+    public void changeLoginPw(String password, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.loginPw = bCryptPasswordEncoder.encode(password);
+    }
+
 }

@@ -16,12 +16,12 @@ public class CollageController {
 
     private final CollageCommandService collageCommandService;
 
-    @Operation(summary = "콜라주 생성하기", description = """
+    @Operation(summary = "[구현중]콜라주 생성하기", description = """
            """)
     @PostMapping("/collages")
     public void createCollage() {}
 
-    @Operation(summary = "콜라주 공유하기", description = """
+    @Operation(summary = "[구현중] 콜라주 공유하기", description = """
             """)
     @PostMapping("/chats/{chatId}/messages/collages")
     public void sendMessageByImage() {}

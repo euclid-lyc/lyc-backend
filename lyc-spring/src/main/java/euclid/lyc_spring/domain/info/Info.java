@@ -3,16 +3,22 @@ package euclid.lyc_spring.domain.info;
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.enums.BottomSize;
 import euclid.lyc_spring.domain.enums.TopSize;
+import euclid.lyc_spring.dto.request.InfoRequestDTO;
+import euclid.lyc_spring.dto.request.MemberRequestDTO;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Entity
+@DynamicUpdate
+@DynamicInsert
 public class Info {
 
     @Id
@@ -88,7 +94,7 @@ public class Info {
     }
 
 
-    //=== Methods ===//
+    //=== add Methods ===//
 
     public void addInfoStyle(InfoStyle infoStyle) {
         infoStyleList.add(infoStyle);
@@ -110,4 +116,37 @@ public class Info {
         infoBodyType.setInfo(this);
     }
 
+    //=== reload Methods ===//
+    public void reloadAdrress(MemberRequestDTO.AddressReqDTO addressReqDTO) {
+        this.postalCode = addressReqDTO.getPostalCode();
+        this.address = addressReqDTO.getAddress();
+        this.detailAddress = addressReqDTO.getDetailAddress();
+    }
+
+    public void updateInfo(InfoRequestDTO.StyleInfoDTO styleInfoDTO) {
+        this.isPublic = styleInfoDTO.getIsPublic();
+        this.topSize = styleInfoDTO.getTopSize();
+        this.bottomSize = styleInfoDTO.getBottomSize();
+        this.height = styleInfoDTO.getHeight();
+        this.weight = styleInfoDTO.getWeight();
+        this.text = styleInfoDTO.getDetails();
+    }
+
+
+    //=== deleteMethods ===//
+    public void deleteInfoStyle(InfoStyle infoStyle) {
+        infoStyleList.remove(infoStyle);
+    }
+
+    public void deleteInfoFit(InfoFit infoFit) {
+        infoFitList.remove(infoFit);
+    }
+
+    public void deleteInfoMaterial(InfoMaterial infoMaterial) {
+        infoMaterialList.remove(infoMaterial);
+    }
+
+    public void deleteInfoBodyType(InfoBodyType infoBodyType) {
+        infoBodyTypeList.remove(infoBodyType);
+    }
 }

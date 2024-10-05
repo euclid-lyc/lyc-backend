@@ -1,6 +1,7 @@
 package euclid.lyc_spring.domain.posting;
 
 import euclid.lyc_spring.domain.Member;
+import euclid.lyc_spring.domain.chat.commission.Commission;
 import euclid.lyc_spring.domain.enums.Style;
 import euclid.lyc_spring.domain.mapping.LikedPosting;
 import euclid.lyc_spring.domain.mapping.SavedPosting;
@@ -9,6 +10,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Check;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -18,6 +21,8 @@ import java.util.List;
 
 @Getter
 @Entity
+@DynamicUpdate
+@DynamicInsert
 @Check(constraints = "likes >= 0")
 @EntityListeners(AuditingEntityListener.class)
 public class Posting {
@@ -28,10 +33,10 @@ public class Posting {
     private Long id;
 
     @Column(nullable = false)
-    private Short minTemp;
+    private Double minTemp;
 
     @Column(nullable = false)
-    private Short maxTemp;
+    private Double maxTemp;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -47,6 +52,10 @@ public class Posting {
 
     @Column(columnDefinition = "text")
     private String content;
+
+    @Setter
+    @OneToOne(mappedBy = "review", cascade = CascadeType.ALL)
+    private Commission commission;
 
     @OneToMany(mappedBy = "posting", cascade = CascadeType.ALL)
     private List<Image> imageList;
@@ -75,7 +84,7 @@ public class Posting {
     protected Posting() {}
 
     @Builder
-    public Posting(Short minTemp, Short maxTemp, Style style, Long likes, String content,
+    public Posting(Double minTemp, Double maxTemp, Style style, Long likes, String content,
                    Member fromMember, Member toMember, Member writer) {
         this.minTemp = minTemp;
         this.maxTemp = maxTemp;
@@ -89,7 +98,6 @@ public class Posting {
         this.likedPostingList = new ArrayList<>();
         this.savedPostingList = new ArrayList<>();
     }
-
 
     //=== add Methods ===//
     public void addImage(Image image) {

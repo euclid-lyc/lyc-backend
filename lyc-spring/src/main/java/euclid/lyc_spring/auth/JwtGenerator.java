@@ -46,4 +46,19 @@ public class JwtGenerator {
         return JwtTokenDTO.toDTO(accessToken, refreshToken);
 
     }
+
+    public String generateTempToken(String email) {
+
+        Date now = new Date();
+        Date tempTokenExpiredAt = new Date(now.getTime() + JwtConstant.TEMP_TOKEN_EXPIRE_TIME);
+
+        return Jwts.builder()
+                .issuer("euclid-lyc")
+                .subject(email)
+                .issuedAt(now)
+                .expiration(tempTokenExpiredAt)
+                .signWith(key) // Temp Token에 digital signature 포함
+                .compact();
+    }
+
 }

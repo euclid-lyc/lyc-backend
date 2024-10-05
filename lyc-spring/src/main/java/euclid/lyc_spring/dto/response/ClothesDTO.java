@@ -9,7 +9,9 @@ import euclid.lyc_spring.domain.enums.Material;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -92,12 +94,14 @@ public class ClothesDTO {
         private final Long clothesId;
         private final String image;
         private final String title;
+        private final LocalDateTime createdAt;
 
         @Builder(access = AccessLevel.PRIVATE)
-        private ClothesInfoDTO(Long clothesId, String image, String title) {
+        private ClothesInfoDTO(Long clothesId, String image, String title, LocalDateTime createdAt) {
             this.clothesId = clothesId;
             this.image = image;
             this.title = title;
+            this.createdAt = createdAt;
         }
 
         public static ClothesInfoDTO toDTO(Clothes clothes) {
@@ -105,6 +109,7 @@ public class ClothesDTO {
                     .clothesId(clothes.getId())
                     .image(clothes.getClothesImage() != null ? clothes.getClothesImage().getImage() : null)
                     .title(clothes.getTitle())
+                    .createdAt(clothes.getCreatedAt())
                     .build();
         }
     }
@@ -155,6 +160,63 @@ public class ClothesDTO {
                     .fit(clothes.getClothesText() != null ? clothes.getClothesText().getFit() : null)
                     .material(clothes.getClothesText() != null ? clothes.getClothesText().getMaterial() : null)
                     .image(clothes.getClothesImage() != null ? clothes.getClothesImage().getImage() : null)
+                    .build();
+        }
+    }
+
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class ClothesPreviewDTO {
+
+        private final Long clothesId;
+        private final String title;
+
+        public static ClothesPreviewDTO toDTO(Clothes clothes){
+            return ClothesPreviewDTO.builder()
+                    .clothesId(clothes.getId())
+                    .title(clothes.getTitle())
+                    .build();
+        }
+    }
+
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class ClothesWithImageDTO {
+
+        private final MemberProfileDTO member;
+        private final String title;
+        private final String text;
+        private final String image;
+
+        public static ClothesWithImageDTO toDTO(Clothes clothes){
+            return ClothesWithImageDTO.builder()
+                    .member(MemberProfileDTO.toDTO(clothes.getMember()))
+                    .title(clothes.getTitle())
+                    .text(clothes.getText())
+                    .image(clothes.getClothesImage().getImage())
+                    .build();
+        }
+    }
+
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class ClothesWithTextDTO {
+        private final MemberProfileDTO member;
+        private final String title;
+        private final Material material;
+        private final Fit fit;
+        private final String detail;
+
+        public static ClothesWithTextDTO toDTO(Clothes clothes){
+            return ClothesWithTextDTO.builder()
+                    .member(MemberProfileDTO.toDTO(clothes.getMember()))
+                    .title(clothes.getTitle())
+                    .material(clothes.getClothesText().getMaterial())
+                    .fit(clothes.getClothesText().getFit())
+                    .detail(clothes.getText())
                     .build();
         }
     }
