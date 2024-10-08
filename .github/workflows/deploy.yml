@@ -44,6 +44,7 @@ jobs:
     - name: Copy Jar File
       run: |
         cd lyc-spring
+        cp ./appspec.yml ./deploy
         cp ./scripts/start.sh ./deploy
         cp ./scripts/stop.sh ./deploy
         cp ./build/libs/lyc-spring-0.0.1-SNAPSHOT.jar ./deploy
@@ -68,7 +69,7 @@ jobs:
         --application-name ${{ secrets.CODE_DEPLOY_APPLICATION_NAME }} \
         --ignore-hidden-files \
         --s3-location s3://${{ secrets.S3_BUCKET_NAME }}/lyc-project.zip \
-        --source .
+        --source lyc-project.zip
           
     - name: Deploy
       run: |
