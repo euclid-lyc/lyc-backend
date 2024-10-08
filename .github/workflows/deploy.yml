@@ -68,7 +68,7 @@ jobs:
         --application-name ${{ secrets.CODE_DEPLOY_APPLICATION_NAME }} \
         --ignore-hidden-files \
         --s3-location s3://${{ secrets.S3_BUCKET_NAME }}/lyc-project.zip \
-        --source ./deploy
+        --source .
           
     - name: Deploy
       run: |
