@@ -52,6 +52,7 @@ jobs:
     - name: Zip Directory
       run: |
         cd lyc-spring
+        ls ./deploy
         zip -r -qq -j ./lyc-project.zip ./deploy/*
 
 
