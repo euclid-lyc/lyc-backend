@@ -52,8 +52,8 @@ jobs:
     - name: Zip Directory
       run: |
         cd lyc-spring
-        ls ./deploy
-        zip -r -qq -j ./deploy/lyc-project.zip ./deploy/*
+        mkdir zip
+        zip -r -qq -j ./zip/lyc-project.zip ./deploy/*
 
 
     - name: Configure AWS Credentials
@@ -69,7 +69,7 @@ jobs:
         --application-name ${{ secrets.CODE_DEPLOY_APPLICATION_NAME }} \
         --ignore-hidden-files \
         --s3-location s3://${{ secrets.S3_BUCKET_NAME }}/lyc-project.zip \
-        --source ./lyc-spring/deploy
+        --source ./lyc-spring/zip
           
     - name: Deploy
       run: |
