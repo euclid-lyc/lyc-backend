@@ -44,14 +44,15 @@ jobs:
     - name: Copy Jar File
       run: |
         cd lyc-spring
-        cp ./scripts/start.sh ./deploy
-        cp ./scripts/stop.sh ./deploy
-        cp ./build/libs/lyc-spring-0.0.1-SNAPSHOT.jar ./deploy
+        cp ./appspec.yml ./deploy/
+        cp ./scripts/start.sh ./deploy/
+        cp ./scripts/stop.sh ./deploy/
+        cp ./build/libs/lyc-spring-0.0.1-SNAPSHOT.jar ./deploy/
 
     - name: Zip Directory
       run: |
         cd lyc-spring
-        zip -r -qq -j ./lyc-project.zip ./deploy
+        zip -r -qq -j ./deploy/lyc-project.zip ./deploy/*
 
 
     - name: Configure AWS Credentials
@@ -63,16 +64,14 @@ jobs:
 
     - name: Upload Zip File to S3 Bucket
       run: |
-        cd lyc-spring
         aws deploy push \
         --application-name ${{ secrets.CODE_DEPLOY_APPLICATION_NAME }} \
         --ignore-hidden-files \
         --s3-location s3://${{ secrets.S3_BUCKET_NAME }}/lyc-project.zip \
-        --source .
+        --source ./lyc-spring/deploy
           
     - name: Deploy
       run: |
-        cd lyc-spring
         aws deploy create-deployment \
         --application-name ${{ secrets.CODE_DEPLOY_APPLICATION_NAME }} \
         --deployment-group-name ${{ secrets.CODE_DEPLOY_GROUP_NAME }} \
