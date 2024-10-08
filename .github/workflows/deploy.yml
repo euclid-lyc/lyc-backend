@@ -47,5 +47,6 @@ jobs:
           target: /home/ubuntu/lyc
           script: |
             cd /home/ubuntu/lyc
-            java -jar lyc-spring-0.0.1-SNAPSHOT.jar # JAR 파일 실행
+            chmod 755 lyc-spring-0.0.1-SNAPSHOT.jar
+            java -jar lyc-spring-0.0.1-SNAPSHOT.jar
         
