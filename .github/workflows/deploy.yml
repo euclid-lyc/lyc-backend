@@ -36,6 +36,11 @@ jobs:
         chmod 755 ./gradlew
         ./gradlew clean build --exclude-task test
 
+    - name: Make Directory
+      run: |
+        cd lyc-spring
+        mkdir deploy
+
     - name: Copy Jar File
       run: |
         cd lyc-spring
