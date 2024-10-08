@@ -36,9 +36,16 @@ jobs:
         chmod 755 ./gradlew
         ./gradlew clean build --exclude-task test
 
+    - name: Make Directory
+      run: |
+        cd lyc-spring
+        mkdir deploy
+
     - name: Copy Jar File
       run: |
         cd lyc-spring
+        cp ./scripts/start.sh ./deploy
+        cp ./scripts/stop.sh ./deploy
         cp ./build/libs/lyc-spring-0.0.1-SNAPSHOT.jar ./deploy
 
     - name: Zip Directory
