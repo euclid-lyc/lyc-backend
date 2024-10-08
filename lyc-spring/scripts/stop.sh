@@ -1,5 +1,5 @@
 PROJECT_ROOT="/home/ubuntu/lyc/deploy"		# 배포할 프로젝트의 디렉토리
-JAR_FILE="$PROJECT_ROOT/lyc-server.jar"	# jar 파일
+JAR_FILE="$PROJECT_ROOT/lyc-spring-0.0.1-SNAPSHOT.jar"	# jar 파일
 
 DEPLOY_LOG="$PROJECT_ROOT/deploy.log"
 
