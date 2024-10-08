@@ -72,7 +72,7 @@ jobs:
           
     - name: Deploy
       run: |
-        cd lyc-spring/deploy
+        cd lyc-spring
         aws deploy create-deployment \
         --application-name ${{ secrets.CODE_DEPLOY_APPLICATION_NAME }} \
         --deployment-group-name ${{ secrets.CODE_DEPLOY_GROUP_NAME }} \
