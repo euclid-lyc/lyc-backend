@@ -23,7 +23,8 @@ jobs:
 
     - name: Make application.yaml
       run: |
-        mkdir -p lyc-spring/src/main/resources
+        cd lyc-spring
+        mkdir -p src/main/resources
         echo "${{ secrets.DEPLOY_PROPERTIES }}" > src/main/resources/application.yaml
 
     - name: Setup Gradle
@@ -31,7 +32,8 @@ jobs:
 
     - name: Build with Gradle Wrapper
       run: |
-        chmod 755 ./lyc-spring/gradlew
+        cd lyc-spring
+        chmod 755 ./gradlew
         ./gradlew clean build --exclude-task test
 
     - name: Deploy to server
