@@ -63,12 +63,12 @@ jobs:
 
     - name: Upload Zip File to S3 Bucket
       run: |
-        cd lyc-spring/deploy
+        cd lyc-spring
         aws deploy push \
         --application-name ${{ secrets.CODE_DEPLOY_APPLICATION_NAME }} \
         --ignore-hidden-files \
         --s3-location s3://${{ secrets.S3_BUCKET_NAME }}/lyc-project.zip \
-        --source .
+        --source ./deploy
           
     - name: Deploy
       run: |
