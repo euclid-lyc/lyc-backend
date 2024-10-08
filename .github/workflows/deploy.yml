@@ -23,7 +23,7 @@ jobs:
 
     - name: Make application.yaml
       run: |
-        mkdir -p src/main/resources
+        mkdir -p lyc-spring/src/main/resources
         echo "${{ secrets.DEPLOY_PROPERTIES }}" > src/main/resources/application.yaml
 
     - name: Setup Gradle
@@ -41,4 +41,9 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ubuntu
           key: ${{ secrets.KEY }}
+          source: lyc-spring/build/libs/*.jar
+          target: /home/ubuntu/lyc
+          script: |
+            cd /home/ubuntu/lyc
+            java -jar lyc-spring-0.0.1-SNAPSHOT.jar # JAR 파일 실행
         
