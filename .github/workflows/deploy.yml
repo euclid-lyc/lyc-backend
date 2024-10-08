@@ -44,6 +44,8 @@ jobs:
     - name: Copy Jar File
       run: |
         cd lyc-spring
+        cp ./scripts/start.sh ./deploy
+        cp ./scripts/stop.sh ./deploy
         cp ./build/libs/lyc-spring-0.0.1-SNAPSHOT.jar ./deploy
 
     - name: Zip Directory
@@ -61,7 +63,7 @@ jobs:
 
     - name: Upload Zip File to S3 Bucket
       run: |
-        cd lyc-spring
+        cd lyc-spring/deploy
         aws deploy push \
         --application-name ${{ secrets.CODE_DEPLOY_APPLICATION_NAME }} \
         --ignore-hidden-files \
@@ -70,7 +72,7 @@ jobs:
           
     - name: Deploy
       run: |
-        cd lyc-spring
+        cd lyc-spring/deploy
         aws deploy create-deployment \
         --application-name ${{ secrets.CODE_DEPLOY_APPLICATION_NAME }} \
         --deployment-group-name ${{ secrets.CODE_DEPLOY_GROUP_NAME }} \
