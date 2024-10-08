@@ -39,12 +39,12 @@ jobs:
     - name: Copy Jar File
       run: |
         cd lyc-spring
-        cp ./build/libs/lyc-spring-0.0.1-SNAPSHOT.jar /home/ubuntu/lyc/deploy
+        cp ./build/libs/lyc-spring-0.0.1-SNAPSHOT.jar ./deploy
 
     - name: Zip Directory
       run: |
         cd lyc-spring
-        run: zip -r -qq -j ./lyc-project.zip ./deploy
+        zip -r -qq -j ./lyc-project.zip ./deploy
 
 
     - name: Configure AWS Credentials
