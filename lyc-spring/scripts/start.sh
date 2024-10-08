@@ -1,5 +1,5 @@
 PROJECT_ROOT="/home/ubuntu/lyc/deploy"
-JAR_FILE="$PROJECT_ROOT/lyc-spring-0.0.1-SNAPSHOT.jar"
+JAR_FILE="$PROJECT_ROOT/lyc-server.jar"
 
 APP_LOG="$PROJECT_ROOT/application.log"
 ERROR_LOG="$PROJECT_ROOT/error.log"
