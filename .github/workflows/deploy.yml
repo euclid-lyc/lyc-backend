@@ -44,7 +44,7 @@ jobs:
     - name: Zip Directory
       run: |
         cd lyc-spring
-        run: zip -r -qq -j ./lyc-project.zip ./deploy
+        zip -r -qq -j ./lyc-project.zip ./deploy
 
 
     - name: Configure AWS Credentials
