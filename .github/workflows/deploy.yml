@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 17
@@ -23,6 +23,7 @@ jobs:
 
     - name: Make application.yaml
       run: |
+        cd lyc-spring
         mkdir -p src/main/resources
         echo "${{ secrets.DEPLOY_PROPERTIES }}" > src/main/resources/application.yaml
 
@@ -31,6 +32,45 @@ jobs:
 
     - name: Build with Gradle Wrapper
       run: |
+        cd lyc-spring
         chmod 755 ./gradlew
         ./gradlew clean build --exclude-task test
+
+    - name: Copy Jar File
+      run: |
+        cd lyc-spring
+        cp ./build/libs/lyc-spring-0.0.1-SNAPSHOT.jar /home/ubuntu/lyc/deploy
+
+    - name: Zip Directory
+      run: |
+        cd lyc-spring
+        run: zip -r -qq -j ./lyc-project.zip ./deploy
+
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Upload Zip File to S3 Bucket
+      run: |
+        cd lyc-spring
+        aws deploy push \
+        --application-name ${{ secrets.CODE_DEPLOY_APPLICATION_NAME }} \
+        --ignore-hidden-files \
+        --s3-location s3://${{ secrets.S3_BUCKET_NAME }}/lyc-project.zip \
+        --source .
+          
+    - name: Deploy
+      run: |
+        cd lyc-spring
+        aws deploy create-deployment \
+        --application-name ${{ secrets.CODE_DEPLOY_APPLICATION_NAME }} \
+        --deployment-group-name ${{ secrets.CODE_DEPLOY_GROUP_NAME }} \
+        --file-exists-behavior OVERWRITE \
+        --s3-location bucket=${{ secrets.S3_BUCKET_NAME }},bundleType=zip,key=lyc-project.zip \
+            
+
         
