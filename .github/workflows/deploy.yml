@@ -33,4 +33,12 @@ jobs:
       run: |
         chmod 755 ./gradlew
         ./gradlew clean build --exclude-task test
+
+    - name: Deploy to server
+      uses: appleboy/ssh-action@master
+      id: deploy
+      with:
+          host: ${{ secrets.HOST }}
+          username: ubuntu
+          key: ${{ secrets.KEY }}
         
