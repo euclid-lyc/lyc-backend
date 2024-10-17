@@ -24,7 +24,8 @@ public class WeatherController {
 
     private final WeatherService weatherService;
 
-    @Operation(summary = "[구현완료] 오늘 날씨 불러오기", description = "오늘 날씨의 최고 기온과 최저 기온을 불러옵니다.")
+    @Operation(summary = "[구현완료] 오늘 날씨 불러오기 ",
+            description = "오늘 날씨의 최고 기온과 최저 기온을 불러옵니다. 서울) 37.579871128849334, 126.98935225645432")
     @GetMapping("/weather")
     public ApiResponse<WeatherDTO> getTodayWeather(@RequestParam Double lat, @RequestParam Double lon) {
         WeatherDTO weatherInfoDTO = weatherService.getDailyWeather(lat, lon);
