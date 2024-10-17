@@ -49,13 +49,6 @@ public class ChatResponseDTO {
 
         private final Long chatId;
         private final LocalDateTime createdAt;
-
-        public static LatestMessageDTO toDTO(Message message){
-            return LatestMessageDTO.builder()
-                    .chatId(message.getMemberChat().getChat().getId())
-                    .createdAt(message.getCreatedAt())
-                    .build();
-        }
     }
 
     @Getter

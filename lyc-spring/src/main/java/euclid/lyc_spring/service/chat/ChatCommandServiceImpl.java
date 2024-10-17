@@ -36,7 +36,7 @@ public class ChatCommandServiceImpl implements ChatCommandService {
 
     private final JwtProvider jwtProvider;
 
-/*-------------------------------------------------- 채팅방 --------------------------------------------------*/
+    /*-------------------------------------------------- 채팅방 --------------------------------------------------*/
 
     @Override
     public ChatResponseDTO.ChatInactiveDTO terminateChat(Long chatId) {
@@ -56,8 +56,8 @@ public class ChatCommandServiceImpl implements ChatCommandService {
         return ChatResponseDTO.ChatInactiveDTO.builder().inactive(chat.getInactive()).build();
     }
 
-/*-------------------------------------------------- 메시지 --------------------------------------------------*/
-/*-------------------------------------------------- 일정 --------------------------------------------------*/
+    /*-------------------------------------------------- 메시지 --------------------------------------------------*/
+    /*-------------------------------------------------- 일정 --------------------------------------------------*/
 
     @Override
     public ChatResponseDTO.ScheduleDTO createSchedule(Long chatId, ChatRequestDTO.ScheduleReqDTO scheduleReqDTO) {
