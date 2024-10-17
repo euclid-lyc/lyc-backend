@@ -38,7 +38,7 @@ public class MemberChatRepositoryCustomImpl implements MemberChatRepositoryCusto
                 .join(memberChat).on(memberChat.id.eq(message.memberChat.id))
                 .where(memberChat.chat.id.in(chatIdSubQuery))
                 .groupBy(memberChat.chat.id)
-                .orderBy(message.createdAt.desc(), message.id.desc())
+                .orderBy(message.createdAt.max().desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -82,7 +82,7 @@ public class MemberChatRepositoryCustomImpl implements MemberChatRepositoryCusto
                 .where(memberChat.chat.id.eq(chatId)
                         .and(message.isText.eq(false))
                         .and(message.createdAt.before(cursorDateTime)))
-                .orderBy(message.createdAt.desc(), message.id.desc())
+                .orderBy(message.createdAt.desc())
                 .limit(pageSize)
                 .fetch();
     }
