@@ -5,6 +5,7 @@ import euclid.lyc_spring.domain.chat.Chat;
 import euclid.lyc_spring.domain.chat.commission.commission_info.CommissionInfo;
 import euclid.lyc_spring.domain.chat.commission.commission_style.CommissionStyle;
 import euclid.lyc_spring.domain.enums.CommissionStatus;
+import euclid.lyc_spring.domain.posting.Posting;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -60,6 +61,11 @@ public class Commission {
     @JoinColumn(name = "director_id", nullable = false)
     private Member director;
 
+    @Setter
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_id") // nullable
+    private Posting review;
+
     protected Commission() {}
 
     @Builder
@@ -69,7 +75,6 @@ public class Commission {
         this.finishedAt = null;
         this.member = member;
         this.director = director;
-
     }
 
     //=== Add Methods ===//

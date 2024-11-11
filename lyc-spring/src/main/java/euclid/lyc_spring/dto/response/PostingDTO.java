@@ -15,29 +15,6 @@ import java.util.List;
 public class PostingDTO {
 
     @Getter
-    public static class PostingImageDTO {
-
-        private final Long postingId;
-        private final String image;
-        private final LocalDateTime createdAt;
-
-        @Builder(access = AccessLevel.PRIVATE)
-        private PostingImageDTO(Long postingId, String image, LocalDateTime createdAt) {
-            this.postingId = postingId;
-            this.image = image;
-            this.createdAt = createdAt;
-        }
-
-        public static PostingImageDTO toDTO(Posting posting) {
-            return PostingImageDTO.builder()
-                    .postingId(posting.getId())
-                    .image(posting.getImageList().isEmpty() ? "" : posting.getImageList().get(0).getImage())
-                    .createdAt(posting.getCreatedAt())
-                    .build();
-        }
-    }
-
-    @Getter
     public static class PostingImageListDTO {
 
         private final Long memberId;
@@ -51,21 +28,22 @@ public class PostingDTO {
     }
 
     @Getter
-    public static class RecentPostingDTO {
+    @RequiredArgsConstructor
+    public static class RecentPostingListDTO {
+        private final List<PostingImageDTO> posting;
+    }
+
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class PostingImageDTO {
 
         private final Long postingId;
         private final String image;
         private final LocalDateTime createdAt;
 
-        @Builder(access = AccessLevel.PRIVATE)
-        private RecentPostingDTO(Long postingId, String image, LocalDateTime createdAt) {
-            this.postingId = postingId;
-            this.image = image;
-            this.createdAt = createdAt;
-        }
-
-        public static RecentPostingDTO toDTO(Posting posting) {
-            return RecentPostingDTO.builder()
+        public static PostingImageDTO toDTO(Posting posting) {
+            return PostingDTO.PostingImageDTO.builder()
                     .postingId(posting.getId())
                     .image(posting.getImageList().isEmpty() ? "" : posting.getImageList().get(0).getImage())
                     .createdAt(posting.getCreatedAt())
@@ -74,13 +52,8 @@ public class PostingDTO {
     }
 
     @Getter
-    @RequiredArgsConstructor
-    public static class RecentPostingListDTO {
-
-        private final List<RecentPostingDTO> posting;
-    }
-
-    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
     public static class PostingViewDTO {
 
         private final MemberProfileDTO fromMember;
@@ -89,29 +62,11 @@ public class PostingDTO {
         private final String nickname;
         private final String loginId;
         private final Long postingId;
-        private final Short minTemp;
-        private final Short maxTemp;
+        private final Double minTemp;
+        private final Double maxTemp;
         private final String content;
         private final List<ImageInfoDTO> imageInfo;
         private final Long likes;
-
-        @Builder(access = AccessLevel.PRIVATE)
-        private PostingViewDTO(MemberProfileDTO fromMember, MemberProfileDTO toMember,
-                               Long writerId, String nickname, String loginId,
-                               Long postingId, Short minTemp, Short maxTemp, String content,
-                               List<ImageInfoDTO> imageInfo, Long likes) {
-            this.fromMember = fromMember;
-            this.toMember = toMember;
-            this.writerId = writerId;
-            this.nickname = nickname;
-            this.loginId = loginId;
-            this.postingId = postingId;
-            this.minTemp = minTemp;
-            this.maxTemp = maxTemp;
-            this.content = content;
-            this.imageInfo = imageInfo;
-            this.likes = likes;
-        }
 
         public static PostingViewDTO toDTO(Posting posting) {
             return PostingViewDTO.builder()
@@ -148,6 +103,40 @@ public class PostingDTO {
     }
 
     @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class RecommendedPostingListDTO {
+
+        private final List<RecommendedPostingDTO> postings;
+
+        public static RecommendedPostingListDTO toDTO(List<RecommendedPostingDTO> postings) {
+            return RecommendedPostingListDTO.builder()
+                    .postings(postings)
+                    .build();
+        }
+    }
+
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class RecommendedPostingDTO {
+
+        private final Long postingId;
+        private final String image;
+        private final LocalDateTime createdAt;
+        private final Long totalScore;
+
+        public static RecommendedPostingDTO toDTO(Posting posting, Long totalScore) {
+            return RecommendedPostingDTO.builder()
+                    .postingId(posting.getId())
+                    .image(posting.getImageList().isEmpty() ? "" : posting.getImageList().get(0).getImage())
+                    .createdAt(posting.getCreatedAt())
+                    .totalScore(totalScore)
+                    .build();
+        }
+    }
+
+    @Getter
     @RequiredArgsConstructor
     public static class PostingIdDTO {
 
@@ -160,6 +149,14 @@ public class PostingDTO {
 
         private final Long postingId;
         private final Long savedPostingId;
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    public static class PostingScoreDTO {
+        private final Long memberId;
+        private final Long postingId;
+        private final Long totalScore;
     }
 
 }

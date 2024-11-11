@@ -10,15 +10,11 @@ import lombok.Setter;
 public class RegisterDTO {
 
     @Getter
+    @RequiredArgsConstructor
     public static class RegisterMemberDTO {
+        private final String verificationCode;
         private final MemberRequestDTO.MemberDTO member;
         private final InfoRequestDTO.BasicInfoDTO info;
         private final MemberRequestDTO.PushSetDTO pushSet;
-
-        public RegisterMemberDTO(MemberRequestDTO.MemberDTO member, InfoRequestDTO.BasicInfoDTO info, MemberRequestDTO.PushSetDTO pushSet) {
-            this.member = member;
-            this.info = info;
-            this.pushSet = pushSet;
-        }
     }
 }

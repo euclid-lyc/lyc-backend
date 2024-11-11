@@ -179,4 +179,45 @@ public class ClothesDTO {
                     .build();
         }
     }
+
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class ClothesWithImageDTO {
+
+        private final MemberProfileDTO member;
+        private final String title;
+        private final String text;
+        private final String image;
+
+        public static ClothesWithImageDTO toDTO(Clothes clothes){
+            return ClothesWithImageDTO.builder()
+                    .member(MemberProfileDTO.toDTO(clothes.getMember()))
+                    .title(clothes.getTitle())
+                    .text(clothes.getText())
+                    .image(clothes.getClothesImage().getImage())
+                    .build();
+        }
+    }
+
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class ClothesWithTextDTO {
+        private final MemberProfileDTO member;
+        private final String title;
+        private final Material material;
+        private final Fit fit;
+        private final String detail;
+
+        public static ClothesWithTextDTO toDTO(Clothes clothes){
+            return ClothesWithTextDTO.builder()
+                    .member(MemberProfileDTO.toDTO(clothes.getMember()))
+                    .title(clothes.getTitle())
+                    .material(clothes.getClothesText().getMaterial())
+                    .fit(clothes.getClothesText().getFit())
+                    .detail(clothes.getText())
+                    .build();
+        }
+    }
 }

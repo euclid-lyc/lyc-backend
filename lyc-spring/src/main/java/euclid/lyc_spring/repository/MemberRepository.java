@@ -16,16 +16,17 @@ import java.util.Optional;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Long> , MemberRepositoryCustom {
 
+    List<Member> findAllByInactiveBefore(LocalDateTime maxInactive);
+
     Optional<Member> findByEmail(String email);
     Optional<Member> findByLoginId(String loginId);
-    List<Member> findAllByInactiveBefore(LocalDateTime maxInactive);
-    boolean existsByIdAndInactiveIsNotNull(Long memberId);
     Optional<Member> findByLoginIdAndRole(String loginId, Role role);
-    Optional<Member> findByNameAndPhone(String name, String phone);
     Optional<Member> findByNameAndEmail(String name, String email);
-    Optional<Member> findByNameAndLoginIdAndPhone(String name, String loginId, String phone);
     Optional<Member> findByNameAndLoginIdAndEmail(String name, String loginId, String email);
-    Optional<Member> findById(Long id);
+
+    boolean existsByIdAndInactiveIsNotNull(Long memberId);
+    boolean existsByLoginId(String loginId);
+    boolean existsByEmail(String email);
 
     @Modifying
     @Transactional

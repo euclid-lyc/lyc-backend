@@ -4,10 +4,13 @@ import euclid.lyc_spring.apiPayload.ApiResponse;
 import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
 import euclid.lyc_spring.dto.request.ImageRequestDTO;
 import euclid.lyc_spring.dto.request.PostingRequestDTO;
+import euclid.lyc_spring.dto.response.CommissionDTO;
 import euclid.lyc_spring.dto.response.PostingDTO;
+import euclid.lyc_spring.dto.response.WeatherDTO;
 import euclid.lyc_spring.service.posting.PostingCommandService;
 import euclid.lyc_spring.service.posting.PostingQueryService;
 import euclid.lyc_spring.service.s3.S3ImageService;
+import euclid.lyc_spring.service.social.WeatherService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,6 +33,7 @@ public class PostingController {
     private final PostingQueryService postingQueryService;
     private final PostingCommandService postingCommandService;
     private final S3ImageService s3ImageService;
+    private final WeatherService weatherService;
 
 /*-------------------------------------------------- 피드 --------------------------------------------------*/
 
@@ -40,25 +44,36 @@ public class PostingController {
         return ApiResponse.onSuccess(SuccessStatus._RECENT_TEN_FEEDS_FETCHED, recentPostingListDTO);
     }
 
-    @Operation(summary = "[구현중] 날씨 기반 추천 게시글 10개 불러오기", description = "피드 화면에 노출할 날씨 기반 추천 게시글 10개를 불러옵니다.")
+    @Operation(summary = "[구현완료] 날씨 기반 추천 게시글 10개 불러오기", description = "피드 화면에 노출할 날씨 기반 추천 게시글 10개를 불러옵니다.")
     @GetMapping("/feeds/by-weather")
-    public void getPostingsAccordingToWeather() {}
+    public ApiResponse<PostingDTO.RecentPostingListDTO> getPostingsAccordingToWeather(@RequestParam String city) {
+        WeatherDTO weatherDTO = weatherService.getTodayWeather(city);
+        PostingDTO.RecentPostingListDTO postingListDTO = postingQueryService.getPostingsAccordingToWeather(weatherDTO);
+        return ApiResponse.onSuccess(SuccessStatus._FEEDS_BY_WEATHER_FOUND, postingListDTO);
+    }
 
-    @Operation(summary = "[구현중] 회원 맞춤 추천 게시글 목록 불러오기", description = """
+    @Operation(summary = "[구현완료] 회원 맞춤 추천 게시글 목록 불러오기", description = """
     피드 화면에 노출할 회원 맞춤 추천 게시글 목록을 불러옵니다.
     
-    오프셋 기반 페이징을 사용합니다.
+    커서 기반 페이징을 사용합니다. (커서가 2개 -> cursorScore, cursorId)
     """)
     @GetMapping("feeds/for-member")
-    public void getPostingForMember() {}
+    public ApiResponse<PostingDTO.RecommendedPostingListDTO> getPostingsForMember(
+            @RequestParam @Min(1) Integer pageSize,
+            @RequestParam(required = false) Long cursorScore,
+            @RequestParam(required = false) Long cursorId) {
+        PostingDTO.RecommendedPostingListDTO recommendedPostingListDTO = postingQueryService.getPostingsForMember(pageSize, cursorScore, cursorId);
+        return ApiResponse.onSuccess(SuccessStatus._FEEDS_FOR_MEMBER_FOUND, recommendedPostingListDTO);
+    }
 
 /*-------------------------------------------------- 게시글 공통 --------------------------------------------------*/
 
     @Operation(summary = "[구현완료] 게시글(코디 or 리뷰) 작성하기", description = "게시글을 작성합니다.")
     @PostMapping("/postings")
     public ApiResponse<PostingDTO.PostingViewDTO> createPosting(
-            @RequestBody PostingRequestDTO.PostingSaveDTO postingSaveDTO) {
-        PostingDTO.PostingViewDTO postingViewDTO = postingCommandService.createPosting(postingSaveDTO);
+            @RequestBody PostingRequestDTO.PostingSaveDTO postingSaveDTO,
+            @RequestParam(required = false) Long commissionId) {
+        PostingDTO.PostingViewDTO postingViewDTO = postingCommandService.createPosting(postingSaveDTO, commissionId);
         return ApiResponse.onSuccess(SuccessStatus._POSTING_CREATED, postingViewDTO);
     }
 
@@ -173,6 +188,26 @@ public class PostingController {
     }
 
 /*-------------------------------------------------- 리뷰 게시글 --------------------------------------------------*/
+
+    @Operation(summary = "[구현완료] 작성 가능한 리뷰 목록 불러오기", description = """
+            30일 이내에 종료된 의뢰 중 아직 리뷰를 작성하지 않은 의뢰의 목록을 불러옵니다.
+            
+            커서 기반 페이징이 적용됩니다.
+            
+            커서 1 : cursorDateTime (이전에 전달된 마지막 <의뢰>의 종료 시각)
+            
+            커서 2 : cursorId (이전에 전달된 마지막 <의뢰>의 id)
+            
+            이 API는 cursorDateTime보다 이전에 종료된 <의뢰>의 목록을 불러옵니다.
+            """)
+    @GetMapping("/reviews/directors")
+    public ApiResponse<CommissionDTO.TerminatedCommissionListDTO> getReviewsAvailableForSubmission(
+            @RequestParam @Min(1) Integer pageSize,
+            @RequestParam(required = false) LocalDateTime cursorDateTime,
+            @RequestParam(required = false) Long cursorId) {
+        CommissionDTO.TerminatedCommissionListDTO terminatedCommissionListDTO = postingQueryService.getReviewsAvailableForSubmission(pageSize, cursorDateTime, cursorId);
+        return ApiResponse.onSuccess(SuccessStatus._REVIEWS_AVAILABLE_FOR_SUBMISSION_FOUND, terminatedCommissionListDTO);
+    }
 
     @Operation(summary = "[구현완료] 유저의 리뷰 목록 불러오기", description = """
             마이페이지에 유저의 리뷰 목록을 불러옵니다.
