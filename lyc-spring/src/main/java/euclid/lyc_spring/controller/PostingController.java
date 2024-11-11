@@ -46,8 +46,8 @@ public class PostingController {
 
     @Operation(summary = "[구현완료] 날씨 기반 추천 게시글 10개 불러오기", description = "피드 화면에 노출할 날씨 기반 추천 게시글 10개를 불러옵니다.")
     @GetMapping("/feeds/by-weather")
-    public ApiResponse<PostingDTO.RecentPostingListDTO> getPostingsAccordingToWeather(@RequestParam String city) {
-        WeatherDTO weatherDTO = weatherService.getTodayWeather(city);
+    public ApiResponse<PostingDTO.RecentPostingListDTO> getPostingsAccordingToWeather(@RequestParam Double lat, @RequestParam Double lon) {
+        WeatherDTO weatherDTO = weatherService.getDailyWeather(lat, lon);
         PostingDTO.RecentPostingListDTO postingListDTO = postingQueryService.getPostingsAccordingToWeather(weatherDTO);
         return ApiResponse.onSuccess(SuccessStatus._FEEDS_BY_WEATHER_FOUND, postingListDTO);
     }
