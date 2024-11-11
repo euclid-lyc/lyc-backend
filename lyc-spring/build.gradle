@@ -59,6 +59,9 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
 	// weather
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.18.0'
+	implementation 'org.json:json:20210307'
 	// email verification
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	// aws
@@ -72,7 +75,6 @@ dependencies {
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 	// WebSocket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
-
 }
 
 tasks.named('test') {
