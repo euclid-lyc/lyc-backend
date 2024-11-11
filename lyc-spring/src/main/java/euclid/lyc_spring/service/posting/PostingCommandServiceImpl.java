@@ -1,10 +1,13 @@
 package euclid.lyc_spring.service.posting;
 
 import euclid.lyc_spring.apiPayload.code.status.ErrorStatus;
+import euclid.lyc_spring.apiPayload.exception.handler.CommissionHandler;
 import euclid.lyc_spring.apiPayload.exception.handler.MemberHandler;
 import euclid.lyc_spring.apiPayload.exception.handler.PostingHandler;
 import euclid.lyc_spring.auth.SecurityUtils;
 import euclid.lyc_spring.domain.Member;
+import euclid.lyc_spring.domain.chat.commission.Commission;
+import euclid.lyc_spring.domain.enums.CommissionStatus;
 import euclid.lyc_spring.domain.mapping.LikedPosting;
 import euclid.lyc_spring.domain.mapping.SavedPosting;
 import euclid.lyc_spring.domain.posting.Image;
@@ -31,13 +34,14 @@ public class PostingCommandServiceImpl implements PostingCommandService {
     private final LikedPostingRepository likedPostingRepository;
     private final ImageRepository imageRepository;
     private final ImageUrlRepository imageUrlRepository;
+    private final CommissionRepository commissionRepository;
 
     private final S3ImageService s3ImageService;
 
 /*-------------------------------------------------- 게시글 공통 --------------------------------------------------*/
 
     @Override
-    public PostingDTO.PostingViewDTO createPosting(PostingRequestDTO.PostingSaveDTO postingSaveDTO) {
+    public PostingDTO.PostingViewDTO createPosting(PostingRequestDTO.PostingSaveDTO postingSaveDTO, Long commissionId) {
 
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
@@ -64,6 +68,33 @@ public class PostingCommandServiceImpl implements PostingCommandService {
         writer.addPosting(posting);
 
         posting = postingRepository.save(posting);
+
+        // 리뷰의 경우 연동 필요
+        if (commissionId != null) {
+            Commission commission = commissionRepository.findById(commissionId)
+                    .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
+
+            System.out.println("director : " + commission.getDirector().getId());
+            System.out.println("member : " + commission.getMember().getId());
+
+            // 아직 종료되지 않은 의뢰거나 이미 리뷰가 작성된 경우 새로운 리뷰를 작성할 수 없음
+            if (!commission.getStatus().equals(CommissionStatus.TERMINATED) || commission.getReview() != null) {
+                throw new PostingHandler(ErrorStatus.COMMISSION_NOT_TERMINATED);
+            }
+
+            if (!fromMember.equals(commission.getDirector())) {
+                throw new PostingHandler(ErrorStatus.REVIEW_FROM_MEMBER_NOT_MATCHED);
+            }
+
+            if (!toMember.equals(commission.getMember())) {
+                throw new PostingHandler(ErrorStatus.REVIEW_TO_MEMBER_NOT_MATCHED);
+            }
+
+            commission.setReview(posting);
+            commission = commissionRepository.save(commission);
+            posting.setCommission(commission); // 연관관계 매핑
+
+        }
 
         return PostingDTO.PostingViewDTO.toDTO(posting);
     }

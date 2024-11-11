@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface S3ImageService {
 
-    List<String> uploadImagesToBucket(List<MultipartFile> images);
     String upload(MultipartFile image);
     void deleteImageFromS3(String imageAddress);
 

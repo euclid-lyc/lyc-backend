@@ -1,0 +1,73 @@
+name: Deploy
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Make application.yaml
+      run: |
+        cd lyc-spring
+        mkdir -p src/main/resources
+        echo "${{ secrets.DEPLOY_PROPERTIES }}" > src/main/resources/application.yaml
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+
+    - name: Build with Gradle Wrapper
+      run: |
+        cd lyc-spring
+        chmod 755 ./gradlew
+        ./gradlew clean build --exclude-task test
+    - name: Make Directory
+      run: |
+        cd lyc-spring
+        mkdir deploy
+    - name: Copy Jar File
+      run: |
+        cd lyc-spring
+        cp ./build/libs/lyc-spring-0.0.1-SNAPSHOT.jar ./deploy
+    - name: Zip Directory
+      run: |
+        cd lyc-spring
+        zip -r -qq -j ./lyc-project.zip ./deploy
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Upload Zip File to S3 Bucket
+      run: |
+        cd lyc-spring
+        aws deploy push \
+        --application-name ${{ secrets.CODE_DEPLOY_APPLICATION_NAME }} \
+        --ignore-hidden-files \
+        --s3-location s3://${{ secrets.S3_BUCKET_NAME }}/lyc-project.zip \
+        --source .
+          
+    - name: Deploy
+      run: |
+        cd lyc-spring
+        aws deploy create-deployment \
+        --application-name ${{ secrets.CODE_DEPLOY_APPLICATION_NAME }} \
+        --deployment-group-name ${{ secrets.CODE_DEPLOY_GROUP_NAME }} \
+        --file-exists-behavior OVERWRITE \
+        --s3-location bucket=${{ secrets.S3_BUCKET_NAME }},bundleType=zip,key=lyc-project.zip \
+            

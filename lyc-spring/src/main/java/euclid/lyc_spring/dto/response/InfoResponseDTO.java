@@ -17,6 +17,7 @@ public class InfoResponseDTO {
     @Builder(access = AccessLevel.PRIVATE)
     public static class AllInfoDTO {
 
+        private final Long memberId;
         private final PhysicalSpecDTO spec;
         private final StyleDTO preferredStyle;
         private final StyleDTO nonPreferredStyle;
@@ -30,6 +31,7 @@ public class InfoResponseDTO {
 
         public static AllInfoDTO toDTO(Info info) {
             return AllInfoDTO.builder()
+                    .memberId(info.getMember().getId())
                     .spec(PhysicalSpecDTO.toDTO(info))
                     .preferredStyle(StyleDTO.toDTO(info.getInfoStyleList().stream()
                             .filter(InfoStyle::getIsPrefer)
@@ -63,7 +65,7 @@ public class InfoResponseDTO {
     @Getter
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     @Builder(access = AccessLevel.PRIVATE)
-    private static class PhysicalSpecDTO {
+    public static class PhysicalSpecDTO {
 
         private final Short height;
         private final Short weight;
@@ -83,7 +85,7 @@ public class InfoResponseDTO {
     @Getter
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     @Builder(access = AccessLevel.PRIVATE)
-    private static class StyleDTO {
+    public static class StyleDTO {
 
         private final List<Style> styles;
 
@@ -99,7 +101,7 @@ public class InfoResponseDTO {
     @Getter
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     @Builder(access = AccessLevel.PRIVATE)
-    private static class MaterialDTO {
+    public static class MaterialDTO {
 
         private final List<Material> materials;
 
@@ -115,7 +117,7 @@ public class InfoResponseDTO {
     @Getter
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     @Builder(access = AccessLevel.PRIVATE)
-    private static class FitDTO {
+    public static class FitDTO {
 
         private final List<Fit> fits;
 
@@ -131,7 +133,7 @@ public class InfoResponseDTO {
     @Getter
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     @Builder(access = AccessLevel.PRIVATE)
-    private static class BodyTypeDTO {
+    public static class BodyTypeDTO {
 
         private final List<BodyType> bodyTypes;
 

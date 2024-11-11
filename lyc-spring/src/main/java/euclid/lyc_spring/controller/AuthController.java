@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,7 +35,38 @@ public class AuthController {
 
 /*-------------------------------------------------- 회원가입 및 탈퇴 --------------------------------------------------*/
 
-    @Operation(summary = "[구현완료] 회원가입 하기", description = """
+    @Operation(summary = "[구현완료] 회원가입 - 이메일 인증 코드 전송", description = """
+            회원가입하고자 하는 이메일로 인증 코드를 전송합니다.
+            """)
+    @PostMapping("/sign-up/send-verification-code")
+    public ApiResponse<Void> sendVerificationCodeToSignUp(
+            HttpServletRequest request, HttpServletResponse response,
+            @RequestBody VerificationRequestDTO.SignUpDTO signUpDTO) {
+        if (signUpDTO.getEmail() != null && !signUpDTO.getEmail().isEmpty()) {
+            mailService.checkEmail(signUpDTO);
+            mailService.sendMailToSignUp(request, response, signUpDTO.getEmail());
+            return ApiResponse.onSuccess(SuccessStatus._VERIFICATION_CODE_SENT);
+        } else {
+            return ApiResponse.onFailure(ErrorStatus.UNABLE_TO_SEND_VERIFICATION_CODE);
+        }
+    }
+
+    @Operation(summary = "[구현완료] 회원가입 - 인증 코드 검증", description = """
+            인증 코드를 확인합니다.
+            
+            해당 API는 클라이언트에서 이메일 인증을 먼저 수행한 후 송신 가능합니다.
+            
+            Request Header에는 반드시 임시 토큰이 포함되어 있어야 합니다.
+         
+            """)
+    @PostMapping("/sign-up/verification")
+    public ApiResponse<Void> verifyCodeToSignUp(
+            HttpServletRequest request, @RequestParam String code) {
+        authCommandService.verifyCode(request, code);
+        return ApiResponse.onSuccess(SuccessStatus._VERIFICATION_CODE_CHECKED);
+    }
+
+    @Operation(summary = "[구현완료] 회원가입 - 회원 정보 등록", description = """
             회원가입 데이터를 입력받아 member 테이블에 새로운 회원을 추가합니다.
             
             동시에 member와 연결된 info, info_style, info_fit, info_material, info_body_type도 초기화됩니다.
@@ -43,10 +75,11 @@ public class AuthController {
             """)
     @PostMapping(value = "/sign-up", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<MemberDTO.MemberInfoDTO> signUp(
+            HttpServletRequest request,
             @RequestPart RegisterDTO.RegisterMemberDTO registerMemberDTO,
             @RequestPart(required = false) MultipartFile image) {
-        String imageUrl = s3ImageService.upload(image);
-        MemberDTO.MemberInfoDTO responseDTO = authCommandService.join(registerMemberDTO, imageUrl);
+        String imageUrl = image != null ? s3ImageService.upload(image) : "";
+        MemberDTO.MemberInfoDTO responseDTO = authCommandService.join(request, registerMemberDTO, imageUrl);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_CREATED, responseDTO);
     }
 
@@ -138,7 +171,7 @@ public class AuthController {
     @PostMapping("/find-pw")
     public ApiResponse<Void> findPw(
             HttpServletRequest request, @RequestParam String code) {
-        authCommandService.findPw(request, code);
+        authCommandService.verifyCode(request, code);
         return ApiResponse.onSuccess(SuccessStatus._VERIFICATION_CODE_CHECKED);
     }
 

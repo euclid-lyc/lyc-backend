@@ -44,6 +44,8 @@ public class CommissionController {
             커서 기반 페이징이 적용됩니다. cursorDateTime은 이전에 전달된 마지막 의뢰의 업로드 시각입니다.
             
             이 API는 cursorDateTime보다 이전에 업로드된 의뢰의 목록을 불러옵니다.
+            
+            2024-09-30T13:30:00.000000
             """)
     // 이거도 굳이 내 의뢰함만 보면 되니까 directerId 필요 없을 듯
     // 근데 의뢰함 기능 확인을 위해 아직 살려둠 나중에 수정하겠음~
@@ -61,7 +63,8 @@ public class CommissionController {
     @Operation(summary = "[구현완료] 의뢰서 확인하기", description = """
             의뢰서의 전체 내용을 확인합니다.
             """)
-    @GetMapping("/chats/commissions/{commissionId}")
+    // url이 의뢰함 불러오기랑 겹쳐서 수정함
+    @GetMapping("/chats/commission/{commissionId}")
     public ApiResponse<CommissionDTO.CommissionInfoDTO> getCommission(@PathVariable Long commissionId) {
         CommissionDTO.CommissionInfoDTO responseDTO = commissionQueryService.getCommission(commissionId);
         return ApiResponse.onSuccess(SuccessStatus._COMMISSION_FETCHED, responseDTO);
