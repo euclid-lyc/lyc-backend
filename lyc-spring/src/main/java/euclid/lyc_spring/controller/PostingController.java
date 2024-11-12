@@ -44,13 +44,13 @@ public class PostingController {
         return ApiResponse.onSuccess(SuccessStatus._RECENT_TEN_FEEDS_FETCHED, recentPostingListDTO);
     }
 
-    @Operation(summary = "[구현완료] 날씨 기반 추천 게시글 10개 불러오기", description = "피드 화면에 노출할 날씨 기반 추천 게시글 10개를 불러옵니다.")
-    @GetMapping("/feeds/by-weather")
-    public ApiResponse<PostingDTO.RecentPostingListDTO> getPostingsAccordingToWeather(@RequestParam String city) {
-        WeatherDTO weatherDTO = weatherService.getTodayWeather(city);
-        PostingDTO.RecentPostingListDTO postingListDTO = postingQueryService.getPostingsAccordingToWeather(weatherDTO);
-        return ApiResponse.onSuccess(SuccessStatus._FEEDS_BY_WEATHER_FOUND, postingListDTO);
-    }
+    //@Operation(summary = "[구현완료] 날씨 기반 추천 게시글 10개 불러오기", description = "피드 화면에 노출할 날씨 기반 추천 게시글 10개를 불러옵니다.")
+    //@GetMapping("/feeds/by-weather")
+    //public ApiResponse<PostingDTO.RecentPostingListDTO> getPostingsAccordingToWeather(@RequestParam String city) {
+    //    WeatherDTO weatherDTO = weatherService.getTodayWeather(city);
+    //    PostingDTO.RecentPostingListDTO postingListDTO = postingQueryService.getPostingsAccordingToWeather(weatherDTO);
+    //    return ApiResponse.onSuccess(SuccessStatus._FEEDS_BY_WEATHER_FOUND, postingListDTO);
+    //}
 
     @Operation(summary = "[구현완료] 회원 맞춤 추천 게시글 목록 불러오기", description = """
     피드 화면에 노출할 회원 맞춤 추천 게시글 목록을 불러옵니다.
