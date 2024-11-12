@@ -1,6 +1,5 @@
 package euclid.lyc_spring.domain.chat.commission;
 
-import euclid.lyc_spring.dto.request.InfoRequestDTO;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

@@ -12,7 +12,6 @@ import euclid.lyc_spring.service.posting.PostingQueryService;
 import euclid.lyc_spring.service.s3.S3ImageService;
 import euclid.lyc_spring.service.social.WeatherService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Tag(name = "Posting", description = "게시글 관련 API")

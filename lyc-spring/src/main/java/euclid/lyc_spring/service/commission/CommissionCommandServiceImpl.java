@@ -350,12 +350,6 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
 
-    private void AuthorizationVoid(){
-        String loginId = SecurityUtils.getAuthorizedLoginId();
-        memberRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-    }
-
     //=== update ===//
     private void updateCommissionOther(Commission commission, InfoRequestDTO.OtherMattersDTO otherMattersDTO) {
         CommissionOther commissionOther = commissionOtherRepository.findByCommission(commission)

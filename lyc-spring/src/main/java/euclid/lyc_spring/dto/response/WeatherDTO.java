@@ -4,8 +4,8 @@ import lombok.Getter;
 
 @Getter
 public class WeatherDTO {
-    private Double temp_min;
-    private Double temp_max;
+    private final Double temp_min;
+    private final Double temp_max;
 
     public WeatherDTO(Double tempMin, Double tempMax) {
         this.temp_min = tempMin;
