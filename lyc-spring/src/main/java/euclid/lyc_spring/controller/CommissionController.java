@@ -49,7 +49,8 @@ public class CommissionController {
             """)
     // 이거도 굳이 내 의뢰함만 보면 되니까 directerId 필요 없을 듯
     // 근데 의뢰함 기능 확인을 위해 아직 살려둠 나중에 수정하겠음~
-    @GetMapping("/chats/commissions/{directorId}")
+    // 의뢰서 확인이랑 url이 겹쳐서 일단 all을 넣었는데 나중에 directerId 지우면서 지우겠음
+    @GetMapping("/chats/commissions/all/{directorId}")
     public ApiResponse<List<CommissionDTO.CommissionViewDTO>> getAllCommissions(
             @PathVariable("directorId") Long directorId,
             @RequestParam @Min(1) Integer pageSize,
