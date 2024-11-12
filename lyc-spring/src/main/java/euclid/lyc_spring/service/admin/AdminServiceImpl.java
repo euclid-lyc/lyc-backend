@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -154,7 +153,7 @@ public class AdminServiceImpl implements AdminService {
         commissionStyleStyleRepository.deleteAllByCommissionStyle(commissionStyle);
     }
 
-    /*-------------------------------------------------- 관리자 인증 --------------------------------------------------*/
+/*-------------------------------------------------- 관리자 인증 --------------------------------------------------*/
 
     private void checkAdmin() {
         String loginId = SecurityUtils.getAuthorizedLoginId();
