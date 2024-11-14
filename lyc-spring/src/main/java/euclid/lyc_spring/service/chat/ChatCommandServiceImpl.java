@@ -10,6 +10,7 @@ import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.chat.Chat;
 import euclid.lyc_spring.domain.chat.Message;
 import euclid.lyc_spring.domain.chat.Schedule;
+import euclid.lyc_spring.domain.enums.ChatCategory;
 import euclid.lyc_spring.domain.mapping.MemberChat;
 import euclid.lyc_spring.dto.request.ChatRequestDTO;
 import euclid.lyc_spring.dto.response.ChatResponseDTO;
@@ -110,6 +111,7 @@ public class ChatCommandServiceImpl implements ChatCommandService {
                 .content(messageDTO.getContent())
                 .isText(messageDTO.getIsText())
                 .isChecked(Boolean.FALSE)
+                .category(ChatCategory.COMMON)
                 .memberChat(memberChat)
                 .build();
 

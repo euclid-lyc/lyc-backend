@@ -8,11 +8,13 @@ import euclid.lyc_spring.auth.SecurityUtils;
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.chat.Chat;
 import euclid.lyc_spring.domain.chat.CommissionClothes;
+import euclid.lyc_spring.domain.chat.Message;
 import euclid.lyc_spring.domain.chat.Schedule;
 import euclid.lyc_spring.domain.chat.commission.Commission;
 import euclid.lyc_spring.domain.chat.commission.CommissionOther;
 import euclid.lyc_spring.domain.chat.commission.commission_style.*;
 import euclid.lyc_spring.domain.chat.commission.commission_info.*;
+import euclid.lyc_spring.domain.enums.ChatCategory;
 import euclid.lyc_spring.domain.mapping.MemberChat;
 import euclid.lyc_spring.dto.request.CommissionRequestDTO;
 import euclid.lyc_spring.dto.request.InfoRequestDTO;
@@ -38,6 +40,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
     private final CommissionRepository commissionRepository;
     private final ChatRepository chatRepository;
     private final ScheduleRepository scheduleRepository;
+    private final MessageRepository messageRepository;
 
     private final MemberChatRepository memberChatRepository;
 
@@ -209,7 +212,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
 
             MemberChat memberChat2 = MemberChat.builder()
                     .chat(chat)
-                    .member(commission.getDirector())
+                    .member(commission.getMember())
                     .build();
             memberChat2 = memberChatRepository.save(memberChat2);
 
@@ -219,6 +222,18 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                     .chat(chat)
                     .build();
             schedule = scheduleRepository.save(schedule);
+
+            // 기본 메시지 삽입
+            Message message = Message.builder()
+                    .content("의뢰가 수락되었습니다.")
+                    .isText(true)
+                    .isChecked(Boolean.FALSE)
+                    .category(ChatCategory.SYSTEM)
+                    .memberChat(memberChat1)
+                    .build();
+
+            memberChat1.addMessage(message);
+            memberChat2.addMessage(message);
 
             chat.addSchedule(schedule);
             chat.addMemberChat(memberChat1);
@@ -282,19 +297,46 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
         Commission commission = commissionRepository.findByChat(chat)
                 .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
+        MemberChat memberChat1;
+        MemberChat memberChat2;
 
-        if(commission.getMember().getId().equals(member.getId())
-                || commission.getDirector().getId().equals(member.getId())){
-            if (!commission.getStatus().equals(APPROVED))
+        if(commission.getMember().getId().equals(member.getId())){
+            if(!commission.getStatus().equals(APPROVED))
                 throw new CommissionHandler(ErrorStatus.COMMISSION_STATUS_NOT_APPROVED);
 
-            commission.reloadStatus(WAIT_FOR_TERMINATION);
-            commissionRepository.save(commission);
+            memberChat1 = memberChatRepository.findByMemberIdAndChatId(member.getId(), chatId)
+                    .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
+            memberChat2 = memberChatRepository.findByMemberIdAndChatId(commission.getDirector().getId(), chatId)
+                    .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
+        } else if(commission.getDirector().getId().equals(member.getId())){
+            if(!commission.getStatus().equals(APPROVED))
+                throw new CommissionHandler(ErrorStatus.COMMISSION_STATUS_NOT_APPROVED);
 
-            return CommissionDTO.CommissionViewDTO.toDTO(commission);
+            memberChat1 = memberChatRepository.findByMemberIdAndChatId(member.getId(), chatId)
+                    .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
+            memberChat2 = memberChatRepository.findByMemberIdAndChatId(commission.getMember().getId(), chatId)
+                    .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
+        } else {
+            throw new CommissionHandler(ErrorStatus.BAD_REQUEST);
         }
 
-        throw new CommissionHandler(ErrorStatus.BAD_REQUEST);
+        commission.reloadStatus(WAIT_FOR_TERMINATION);
+        commissionRepository.save(commission);
+
+        // 기본 메시지 삽입
+        Message message = Message.builder()
+                .content("의뢰 종료가 요청되었습니다.")
+                .isText(true)
+                .isChecked(Boolean.FALSE)
+                .category(ChatCategory.SYSTEM)
+                .memberChat(memberChat1)
+                .build();
+
+        memberChat1.addMessage(message);
+        memberChat2.addMessage(message);
+
+        return CommissionDTO.CommissionViewDTO.toDTO(commission);
+
     }
 
     @Override
