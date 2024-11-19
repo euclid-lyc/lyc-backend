@@ -40,7 +40,6 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
     private final CommissionRepository commissionRepository;
     private final ChatRepository chatRepository;
     private final ScheduleRepository scheduleRepository;
-    private final MessageRepository messageRepository;
 
     private final MemberChatRepository memberChatRepository;
 

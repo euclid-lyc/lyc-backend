@@ -4,7 +4,6 @@ import euclid.lyc_spring.dto.response.ChatResponseDTO;
 import org.springframework.data.domain.PageRequest;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public interface ChatQueryService {
 

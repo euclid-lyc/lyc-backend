@@ -12,13 +12,10 @@ import euclid.lyc_spring.dto.response.SearchResponseDTO;
 import euclid.lyc_spring.repository.ChatRepository;
 import euclid.lyc_spring.repository.MemberRepository;
 import euclid.lyc_spring.repository.PostingRepository;
-import euclid.lyc_spring.service.chat.ChatCommandServiceImpl;
-import euclid.lyc_spring.service.chat.ChatQueryServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

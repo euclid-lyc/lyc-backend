@@ -7,5 +7,5 @@ import java.util.List;
 public interface ChatRepositoryCustom {
 
 
-    public List<ChatResponseDTO.ChatPreviewDTO> searchChats(String keyword, Long loginId);
+    List<ChatResponseDTO.ChatPreviewDTO> searchChats(String keyword, Long loginId);
 }

@@ -1,6 +1,5 @@
 package euclid.lyc_spring.dto.response;
 
-import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.posting.Posting;
 import euclid.lyc_spring.dto.response.MemberDTO.*;
 import euclid.lyc_spring.dto.response.ImageDTO.*;

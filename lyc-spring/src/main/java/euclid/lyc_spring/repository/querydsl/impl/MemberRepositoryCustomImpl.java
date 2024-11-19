@@ -1,7 +1,5 @@
 package euclid.lyc_spring.repository.querydsl.impl;
 
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import euclid.lyc_spring.apiPayload.code.status.ErrorStatus;
 import euclid.lyc_spring.apiPayload.exception.handler.SearchHandler;
