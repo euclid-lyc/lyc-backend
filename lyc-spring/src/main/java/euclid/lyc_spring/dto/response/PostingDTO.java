@@ -1,5 +1,6 @@
 package euclid.lyc_spring.dto.response;
 
+import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.posting.Posting;
 import euclid.lyc_spring.dto.response.MemberDTO.*;
 import euclid.lyc_spring.dto.response.ImageDTO.*;
@@ -15,15 +16,13 @@ import java.util.List;
 public class PostingDTO {
 
     @Getter
+    @Builder(access = AccessLevel.PRIVATE)
     public static class PostingImageListDTO {
 
-        private final Long memberId;
         private final List<PostingImageDTO> imageList;
 
-        @Builder
-        public PostingImageListDTO(Long memberId, List<PostingImageDTO> imageList) {
-            this.memberId = memberId;
-            this.imageList = imageList;
+        public static PostingImageListDTO toDTO(List<PostingImageDTO> imageList) {
+            return PostingImageListDTO.builder().imageList(imageList).build();
         }
     }
 

@@ -14,7 +14,7 @@ import euclid.lyc_spring.domain.chat.commission.Commission;
 import euclid.lyc_spring.domain.chat.commission.CommissionOther;
 import euclid.lyc_spring.domain.chat.commission.commission_style.*;
 import euclid.lyc_spring.domain.chat.commission.commission_info.*;
-import euclid.lyc_spring.domain.enums.ChatCategory;
+import euclid.lyc_spring.domain.enums.MessageCategory;
 import euclid.lyc_spring.domain.mapping.MemberChat;
 import euclid.lyc_spring.dto.request.CommissionRequestDTO;
 import euclid.lyc_spring.dto.request.InfoRequestDTO;
@@ -228,7 +228,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                     .content("의뢰가 수락되었습니다.")
                     .isText(true)
                     .isChecked(Boolean.FALSE)
-                    .category(ChatCategory.SYSTEM)
+                    .category(MessageCategory.SYSTEM)
                     .memberChat(memberChat1)
                     .build();
 
@@ -328,7 +328,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 .content("의뢰 종료가 요청되었습니다.")
                 .isText(true)
                 .isChecked(Boolean.FALSE)
-                .category(ChatCategory.SYSTEM)
+                .category(MessageCategory.SYSTEM)
                 .memberChat(memberChat1)
                 .build();
 

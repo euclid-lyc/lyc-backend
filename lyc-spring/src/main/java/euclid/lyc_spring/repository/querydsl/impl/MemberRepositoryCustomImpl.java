@@ -26,11 +26,11 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
     @Override
     public List<SearchResponseDTO.MemberPreviewDTO> searchDirectorByGenMode(String term) {
 
-        QMember user = QMember.member;
+        QMember member = QMember.member;
 
-        return queryFactory.selectFrom(user)
-                .where(user.loginId.eq(term)
-                        .or(user.nickname.eq(term)))
+        return queryFactory.selectFrom(member)
+                .where(member.loginId.eq(term)
+                        .or(member.nickname.eq(term)))
                 .fetch().stream().map(SearchResponseDTO.MemberPreviewDTO::toDTO)
                 .toList();
     }

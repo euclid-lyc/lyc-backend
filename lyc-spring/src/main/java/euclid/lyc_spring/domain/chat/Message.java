@@ -1,6 +1,6 @@
 package euclid.lyc_spring.domain.chat;
 
-import euclid.lyc_spring.domain.enums.ChatCategory;
+import euclid.lyc_spring.domain.enums.MessageCategory;
 import euclid.lyc_spring.domain.mapping.MemberChat;
 import jakarta.persistence.*;
 import lombok.*;
@@ -40,14 +40,14 @@ public class Message {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ChatCategory category;
+    private MessageCategory category;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_chat_id", nullable = false)
     private MemberChat memberChat;
 
     @Builder
-    public Message(String content, Boolean isText, Boolean isChecked, ChatCategory category, MemberChat memberChat) {
+    public Message(String content, Boolean isText, Boolean isChecked, MessageCategory category, MemberChat memberChat) {
         this.content = content;
         this.isText = isText;
         this.isChecked = isChecked;

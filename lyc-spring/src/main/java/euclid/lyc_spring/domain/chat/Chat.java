@@ -1,5 +1,6 @@
 package euclid.lyc_spring.domain.chat;
 
+import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.chat.commission.Commission;
 import euclid.lyc_spring.domain.mapping.MemberChat;
 import jakarta.persistence.*;
