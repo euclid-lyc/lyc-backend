@@ -2,10 +2,9 @@ package euclid.lyc_spring.controller;
 
 import euclid.lyc_spring.apiPayload.ApiResponse;
 import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
-import euclid.lyc_spring.domain.enums.Style;
+import euclid.lyc_spring.dto.response.ChatResponseDTO;
 import euclid.lyc_spring.dto.response.PostingDTO;
 import euclid.lyc_spring.dto.response.SearchResponseDTO;
-import euclid.lyc_spring.service.posting.PostingQueryServiceImpl;
 import euclid.lyc_spring.service.search.SearchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,15 +23,17 @@ import java.util.List;
 public class SearchController {
     
     private final SearchService searchService;
-    private final PostingQueryServiceImpl postingQueryServiceImpl;
 
     /*-------------------------------------------------- 채팅 --------------------------------------------------*/
 
-    @Operation(summary = "[구현중] 채팅을 주고받은 회원 검색하기", description = """
+    @Operation(summary = "[구현완료] 채팅을 주고받은 회원 검색하기", description = """
             검색어와 연관된(회원 이름이나 아이디와 일치) 채팅방 목록을 반환합니다.
             """)
     @GetMapping("/chats")
-    public void searchChatMember(@RequestParam String keyword) {}
+    public ApiResponse<ChatResponseDTO.ChatPreviewListDTO> searchChatMember(@RequestParam String keyword) {
+        ChatResponseDTO.ChatPreviewListDTO chatPreviewListDTO = searchService.searchChat(keyword);
+        return ApiResponse.onSuccess(SuccessStatus._OK, chatPreviewListDTO);
+    }
 
 
 /*-------------------------------------------------- 피드 --------------------------------------------------*/

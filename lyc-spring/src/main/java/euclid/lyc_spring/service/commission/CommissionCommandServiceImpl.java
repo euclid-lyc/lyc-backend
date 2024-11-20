@@ -8,11 +8,13 @@ import euclid.lyc_spring.auth.SecurityUtils;
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.chat.Chat;
 import euclid.lyc_spring.domain.chat.CommissionClothes;
+import euclid.lyc_spring.domain.chat.Message;
 import euclid.lyc_spring.domain.chat.Schedule;
 import euclid.lyc_spring.domain.chat.commission.Commission;
 import euclid.lyc_spring.domain.chat.commission.CommissionOther;
 import euclid.lyc_spring.domain.chat.commission.commission_style.*;
 import euclid.lyc_spring.domain.chat.commission.commission_info.*;
+import euclid.lyc_spring.domain.enums.MessageCategory;
 import euclid.lyc_spring.domain.mapping.MemberChat;
 import euclid.lyc_spring.dto.request.CommissionRequestDTO;
 import euclid.lyc_spring.dto.request.InfoRequestDTO;
@@ -24,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static euclid.lyc_spring.domain.enums.CommissionStatus.*;
@@ -59,10 +62,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
     @Transactional
     public CommissionDTO.CommissionViewDTO writeCommission(CommissionRequestDTO.CommissionDTO commissionRequestDTO) {
 
-        // Authorization
-        String loginId = SecurityUtils.getAuthorizedLoginId();
-        Member member = memberRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = Authorization();
         Member director = memberRepository.findByLoginId(commissionRequestDTO.getDirectorId())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
@@ -98,13 +98,14 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
     @Override
     public CommissionDTO.ClothesViewDTO saveCommissionedClothes(Long chatId, CommissionRequestDTO.ClothesDTO clothesRequestDTO) {
 
-        // Authorization
-        String loginId = SecurityUtils.getAuthorizedLoginId();
-        Member member = memberRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
+        Member member = Authorization();
         Chat chat = chatRepository.findById(chatId).
                 orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
+        Commission commission = commissionRepository.findByChat(chat).
+                orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
+
+        if(!commission.getDirector().getId().equals(member.getId()))
+            throw new CommissionHandler(ErrorStatus.DIRECTOR_NOT_EQUAL_MEMBER);
 
         if(chat.getSavedClothesCount()==9)
             throw new CommissionHandler(ErrorStatus.COMMISSION_CLOTHES_NOT_SAVED);
@@ -124,16 +125,16 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
     @Override
     public CommissionDTO.ClothesViewDTO deleteCommissionedClothes(Long chatId, Long clothesId) {
 
-        // Authorization
-        String loginId = SecurityUtils.getAuthorizedLoginId();
-        Member member = memberRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
+        Member member = Authorization();
         Chat chat = chatRepository.findById(chatId)
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
-
+        Commission commission = commissionRepository.findByChat(chat)
+                .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
         CommissionClothes clothes = clotheRepository.findCommissionClothesByIdAndChat(clothesId,chat)
                 .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_CLOTHES_NOT_FOUND));
+
+        if(!commission.getDirector().getId().equals(member.getId()))
+            throw new CommissionHandler(ErrorStatus.DIRECTOR_NOT_EQUAL_MEMBER);
 
         clotheRepository.delete(clothes);
         chat.reloadSavedClothesCount(chat.getSavedClothesCount()-1);
@@ -144,114 +145,140 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
     @Override
     public ChatResponseDTO.ShareClothesListDTO changeCommissionedClothesPublic(Long chatId) {
 
-        // Authorization
-        String loginId = SecurityUtils.getAuthorizedLoginId();
-        Member member = memberRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
+        Member member = Authorization();
         Chat chat = chatRepository.findById(chatId)
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
+        Commission commission = commissionRepository.findByChat(chat)
+                .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
 
-        if(chat.isShareClothesList())
-            throw new CommissionHandler(ErrorStatus.BAD_REQUEST);
-        else
-            chat.reloadShareClothesList(true);
+        if(commission.getDirector().getId().equals(member.getId())) {
+            if(chat.isShareClothesList())
+                throw new CommissionHandler(ErrorStatus.COMMISSION_CLOTHES_LIST_IS_PUBLIC);
+            else
+                chat.reloadShareClothesList(true);
 
-        return ChatResponseDTO.ShareClothesListDTO.toDTO(chat);
+            return ChatResponseDTO.ShareClothesListDTO.toDTO(chat);
+        }
+
+        throw new CommissionHandler(ErrorStatus.DIRECTOR_NOT_EQUAL_MEMBER);
     }
 
     @Override
     public ChatResponseDTO.ShareClothesListDTO changeCommissionedClothesPrivate(Long chatId) {
 
-        // Authorization
-        String loginId = SecurityUtils.getAuthorizedLoginId();
-        Member member = memberRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-
+        Member member = Authorization();
         Chat chat = chatRepository.findById(chatId)
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
+        Commission commission = commissionRepository.findByChat(chat)
+                .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
 
-        if(chat.isShareClothesList())
-            chat.reloadShareClothesList(false);
-        else
-            throw new CommissionHandler(ErrorStatus.BAD_REQUEST);
+        if(commission.getDirector().getId().equals(member.getId())){
+            if(chat.isShareClothesList())
+                chat.reloadShareClothesList(false);
+            else
+                throw new CommissionHandler(ErrorStatus.COMMISSION_CLOTHES_LIST_IS_PRIVATE);
 
-        return ChatResponseDTO.ShareClothesListDTO.toDTO(chat);
+            return ChatResponseDTO.ShareClothesListDTO.toDTO(chat);
+        }
+
+        throw new CommissionHandler(ErrorStatus.DIRECTOR_NOT_EQUAL_MEMBER);
     }
 
     @Override
     public CommissionDTO.CommissionViewDTO acceptCommission(Long commissionId) {
 
-        // Authorization
-        String loginId = SecurityUtils.getAuthorizedLoginId();
-        Member member = memberRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = Authorization();
         Commission commission = commissionRepository.findById(commissionId)
                 .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
 
-        commission.reloadStatus(APPROVED);
-        commissionRepository.save(commission);
+        if(commission.getStatus().equals(REQUIRED) && commission.getDirector().getId().equals(member.getId())){
+            commission.reloadStatus(APPROVED);
+            commissionRepository.save(commission);
 
-        Chat chat = Chat.builder()
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .commission(commission)
-                .build();
-        chat = chatRepository.save(chat);
+            Chat chat = Chat.builder()
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
+                    .commission(commission)
+                    .build();
+            chat = chatRepository.save(chat);
 
-        MemberChat memberChat1 = MemberChat.builder()
-                .chat(chat)
-                .member(member)
-                .build();
+            MemberChat memberChat1 = MemberChat.builder()
+                    .chat(chat)
+                    .member(member)
+                    .build();
 
-        memberChat1 = memberChatRepository.save(memberChat1);
+            memberChat1 = memberChatRepository.save(memberChat1);
 
-        MemberChat memberChat2 = MemberChat.builder()
-                .chat(chat)
-                .member(commission.getDirector())
-                .build();
-        memberChat2 = memberChatRepository.save(memberChat2);
+            MemberChat memberChat2 = MemberChat.builder()
+                    .chat(chat)
+                    .member(commission.getMember())
+                    .build();
+            memberChat2 = memberChatRepository.save(memberChat2);
 
-        Schedule schedule = Schedule.builder()
-                .date(commission.getCommissionOther().getDesiredDate())
-                .memo("수령 희망 날짜")
-                .chat(chat)
-                .build();
-        schedule = scheduleRepository.save(schedule);
+            Schedule schedule = Schedule.builder()
+                    .date(commission.getCommissionOther().getDesiredDate())
+                    .memo("수령 희망 날짜")
+                    .chat(chat)
+                    .build();
+            schedule = scheduleRepository.save(schedule);
 
-        chat.addSchedule(schedule);
-        chat.addMemberChat(memberChat1);
-        chat.addMemberChat(memberChat2);
+            // 기본 메시지 삽입
+            Message message = Message.builder()
+                    .content("의뢰가 수락되었습니다.")
+                    .isText(true)
+                    .isChecked(Boolean.FALSE)
+                    .category(MessageCategory.SYSTEM)
+                    .memberChat(memberChat1)
+                    .build();
 
-        return CommissionDTO.CommissionViewDTO.toDTO(commission);
+            memberChat1.addMessage(message);
+            memberChat2.addMessage(message);
+
+            chat.addSchedule(schedule);
+            chat.addMemberChat(memberChat1);
+            chat.addMemberChat(memberChat2);
+
+            return CommissionDTO.CommissionViewDTO.toDTO(commission);
+        }
+
+        throw new CommissionHandler(ErrorStatus.DIRECTOR_NOT_EQUAL_MEMBER);
     }
 
     @Override
     public CommissionDTO.CommissionViewDTO declineCommission(Long commissionId) {
 
-        // Authorization
-        String loginId = SecurityUtils.getAuthorizedLoginId();
-        Member member = memberRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member member = Authorization();
         Commission commission = commissionRepository.findById(commissionId)
                 .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
 
-        commission.reloadStatus(TERMINATED);
-        commission.reloadFinishedAt(LocalDateTime.now());
-        commissionRepository.save(commission);
+        if(commission.getStatus().equals(REQUIRED) && commission.getDirector().getId().equals(member.getId())){
+            commission.reloadStatus(TERMINATED);
+            commission.reloadFinishedAt(LocalDateTime.now());
+            commissionRepository.save(commission);
 
-        return CommissionDTO.CommissionViewDTO.toDTO(commission);
+            return CommissionDTO.CommissionViewDTO.toDTO(commission);
+        }
+
+        throw new CommissionHandler(ErrorStatus.DIRECTOR_NOT_EQUAL_MEMBER);
     }
 
     @Override
     public CommissionDTO.CommissionViewDTO updateCommission(Long commissionId, CommissionRequestDTO.CommissionDTO commissionRequestDTO) {
 
+        Member member = Authorization();
         Commission commission = commissionRepository.findById(commissionId)
                 .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
+
+        if(!member.getId().equals(commission.getMember().getId()))
+            throw new CommissionHandler(ErrorStatus.CLIENT_NOT_EQUAL_MEMBER);
 
         InfoRequestDTO.BasicInfoDTO basicInfoDTO = commissionRequestDTO.getBasicInfo();
         StyleRequestDTO.StyleDTO styleDTO = commissionRequestDTO.getStyle();
         InfoRequestDTO.OtherMattersDTO otherMattersDTO = commissionRequestDTO.getOtherMatters();
+
+        if(otherMattersDTO.getDesiredDate().isBefore(LocalDate.now()) || otherMattersDTO.getDateToUse().isBefore(LocalDate.now())){
+            throw new CommissionHandler(ErrorStatus.COMMISSION_INVALID_DATE);
+        }
 
         updateCommissionInfo(commission, basicInfoDTO);
         updateCommissionOther(commission, otherMattersDTO);
@@ -263,53 +290,118 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
 
     @Override
     public CommissionDTO.CommissionViewDTO requestCommissionTermination(Long chatId) {
+
+        Member member = Authorization();
         Chat chat = chatRepository.findById(chatId)
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
         Commission commission = commissionRepository.findByChat(chat)
                 .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
+        MemberChat memberChat1;
+        MemberChat memberChat2;
+
+        if(commission.getMember().getId().equals(member.getId())){
+            if(!commission.getStatus().equals(APPROVED))
+                throw new CommissionHandler(ErrorStatus.COMMISSION_STATUS_NOT_APPROVED);
+
+            memberChat1 = memberChatRepository.findByMemberIdAndChatId(member.getId(), chatId)
+                    .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
+            memberChat2 = memberChatRepository.findByMemberIdAndChatId(commission.getDirector().getId(), chatId)
+                    .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
+        } else if(commission.getDirector().getId().equals(member.getId())){
+            if(!commission.getStatus().equals(APPROVED))
+                throw new CommissionHandler(ErrorStatus.COMMISSION_STATUS_NOT_APPROVED);
+
+            memberChat1 = memberChatRepository.findByMemberIdAndChatId(member.getId(), chatId)
+                    .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
+            memberChat2 = memberChatRepository.findByMemberIdAndChatId(commission.getMember().getId(), chatId)
+                    .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
+        } else {
+            throw new CommissionHandler(ErrorStatus.BAD_REQUEST);
+        }
 
         commission.reloadStatus(WAIT_FOR_TERMINATION);
         commissionRepository.save(commission);
 
+        // 기본 메시지 삽입
+        Message message = Message.builder()
+                .content("의뢰 종료가 요청되었습니다.")
+                .isText(true)
+                .isChecked(Boolean.FALSE)
+                .category(MessageCategory.SYSTEM)
+                .memberChat(memberChat1)
+                .build();
+
+        memberChat1.addMessage(message);
+        memberChat2.addMessage(message);
+
         return CommissionDTO.CommissionViewDTO.toDTO(commission);
+
     }
 
     @Override
     public CommissionDTO.CommissionViewDTO declineCommissionTermination(Long chatId) {
+
+        Member member = Authorization();
         Chat chat = chatRepository.findById(chatId)
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
         Commission commission = commissionRepository.findByChat(chat)
                 .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
 
-        commission.reloadStatus(APPROVED);
-        commissionRepository.save(commission);
-        return CommissionDTO.CommissionViewDTO.toDTO(commission);
+        if(commission.getMember().getId().equals(member.getId())
+                || commission.getDirector().getId().equals(member.getId())){
+            if (!commission.getStatus().equals(WAIT_FOR_TERMINATION))
+                throw new CommissionHandler(ErrorStatus.COMMISSION_STATUS_NOT_WAIT_FOR_TERMINATION);
+
+            commission.reloadStatus(APPROVED);
+            commissionRepository.save(commission);
+            return CommissionDTO.CommissionViewDTO.toDTO(commission);
+        }
+
+        throw new CommissionHandler(ErrorStatus.BAD_REQUEST);
     }
 
     @Override
     public CommissionDTO.CommissionViewDTO terminateCommission(Long chatId) {
+
+        Member member = Authorization();
         Chat chat = chatRepository.findById(chatId)
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
         Commission commission = commissionRepository.findByChat(chat)
                 .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
 
-        commission.reloadStatus(TERMINATED);
-        commission.reloadFinishedAt(LocalDateTime.now());
-        commissionRepository.save(commission);
+        if(commission.getMember().getId().equals(member.getId())
+                || commission.getDirector().getId().equals(member.getId())){
+            if (!commission.getStatus().equals(WAIT_FOR_TERMINATION))
+                throw new CommissionHandler(ErrorStatus.COMMISSION_STATUS_NOT_WAIT_FOR_TERMINATION);
 
-        return CommissionDTO.CommissionViewDTO.toDTO(commission);
+            commission.reloadStatus(TERMINATED);
+            commission.reloadFinishedAt(LocalDateTime.now());
+            commissionRepository.save(commission);
+
+            return CommissionDTO.CommissionViewDTO.toDTO(commission);
+        }
+
+        throw new CommissionHandler(ErrorStatus.BAD_REQUEST);
     }
 
+    //== Authorization ==//
+    private Member Authorization(){
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        return memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    }
 
     //=== update ===//
     private void updateCommissionOther(Commission commission, InfoRequestDTO.OtherMattersDTO otherMattersDTO) {
         CommissionOther commissionOther = commissionOtherRepository.findByCommission(commission)
                 .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_OTHER_NOT_FOUND));
+
         commissionOther.reloadDateToUse(otherMattersDTO.getDateToUse());
         commissionOther.reloadDesiredDate(otherMattersDTO.getDesiredDate());
         commissionOther.reloadMaxPrice(otherMattersDTO.getMaxPrice());
         commissionOther.reloadMinPrice(otherMattersDTO.getMinPrice());
         commissionOther.reloadText(otherMattersDTO.getText());
+        commissionOther.reloadIsShareClothesList(otherMattersDTO.getIsShareClothesList());
     }
 
     private void updateCommissionInfo(Commission commission, InfoRequestDTO.BasicInfoDTO basicInfoDTO) {
@@ -362,7 +454,10 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
     //=== createOther ===//
     private void createOther(Commission commission, InfoRequestDTO.OtherMattersDTO otherMattersDTO) {
 
-        // 날짜가 유효한지 확인 필요(추가 예정)
+        // 날짜가 유효한지 확인
+        if(otherMattersDTO.getDesiredDate().isBefore(LocalDate.now()) || otherMattersDTO.getDateToUse().isBefore(LocalDate.now())){
+            throw new CommissionHandler(ErrorStatus.COMMISSION_INVALID_DATE);
+        }
 
         CommissionOther commissionOther = CommissionOther.builder()
                 .dateToUse(otherMattersDTO.getDateToUse())
@@ -370,6 +465,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 .minPrice(otherMattersDTO.getMinPrice())
                 .maxPrice(otherMattersDTO.getMaxPrice())
                 .text(otherMattersDTO.getText())
+                .isShareClothesList(otherMattersDTO.getIsShareClothesList())
                 .build();
 
         commission.setCommissionOther(commissionOther);
@@ -468,7 +564,6 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
         createCommissionInfoBodyType(commissionInfo, basicInfoDTO.getInfoBodyType());
         createCommissionInfoMaterial(commissionInfo, basicInfoDTO.getInfoMaterial());
     }
-
 
     private void createCommissionInfoStyle(CommissionInfo commissionInfo, InfoRequestDTO.InfoStyleListDTO infoStyleListDTO){
         if (infoStyleListDTO == null || infoStyleListDTO.getPreferredStyleList() == null) {return;}
