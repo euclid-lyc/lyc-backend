@@ -4,6 +4,7 @@ import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.chat.Chat;
 import euclid.lyc_spring.domain.chat.Message;
 import euclid.lyc_spring.domain.chat.Schedule;
+import euclid.lyc_spring.domain.enums.MessageCategory;
 import euclid.lyc_spring.domain.mapping.MemberChat;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -40,6 +41,7 @@ public class ChatResponseDTO {
         private final Boolean isText;
         private final String content;
         private final LocalDateTime createdAt;
+
     }
 
     @Getter
@@ -199,6 +201,7 @@ public class ChatResponseDTO {
         public static ChatDTO toDTO(List<Message> messages) {
             return ChatDTO.builder()
                     .messages(messages.stream()
+                            .filter(message -> message.getCategory().equals(MessageCategory.COMMON)) // 채팅방 불러올 때 COMMON 메시지만 불러오게 함
                             .map(MessageInfoDTO::toDTO)
                             .toList())
                     .build();

@@ -1,6 +1,5 @@
 package euclid.lyc_spring.domain.chat.commission;
 
-import euclid.lyc_spring.dto.request.InfoRequestDTO;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,6 +35,9 @@ public class CommissionOther {
     @Column(columnDefinition = "text")
     private String text;
 
+    @Column
+    private Boolean isShareClothesList;
+
     @Setter
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "commission_id", nullable = false)
@@ -44,12 +46,13 @@ public class CommissionOther {
     protected CommissionOther() {}
 
     @Builder
-    public CommissionOther(LocalDate dateToUse, LocalDate desiredDate, Integer minPrice, Integer maxPrice, String text) {
+    public CommissionOther(LocalDate dateToUse, LocalDate desiredDate, Integer minPrice, Integer maxPrice, String text, Boolean isShareClothesList) {
         this.dateToUse = dateToUse;
         this.desiredDate = desiredDate;
         this.minPrice = minPrice;
         this.maxPrice = maxPrice;
         this.text = text;
+        this.isShareClothesList = isShareClothesList;
     }
 
     // Method
@@ -74,4 +77,5 @@ public class CommissionOther {
         this.text = text;
     }
 
+    public void reloadIsShareClothesList(Boolean isShareClothesList){this.isShareClothesList = isShareClothesList;}
 }

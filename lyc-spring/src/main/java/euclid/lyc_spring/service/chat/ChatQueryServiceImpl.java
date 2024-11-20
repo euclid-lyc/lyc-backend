@@ -28,7 +28,6 @@ public class ChatQueryServiceImpl implements ChatQueryService {
     private final MemberRepository memberRepository;
     private final ChatRepository chatRepository;
     private final MessageRepository messageRepository;
-    private final CommissionRepository commissionRepository;
 
     private final MemberChatRepository memberChatRepository;
 
@@ -85,7 +84,6 @@ public class ChatQueryServiceImpl implements ChatQueryService {
 
         return ChatResponseDTO.ChatMemberListDTO.toDTO(chat, member);
     }
-
 
     /*-------------------------------------------------- 메시지 --------------------------------------------------*/
     /*-------------------------------------------------- 일정 --------------------------------------------------*/

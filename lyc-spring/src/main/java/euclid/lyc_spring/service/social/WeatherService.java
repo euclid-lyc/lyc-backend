@@ -39,9 +39,10 @@ public class WeatherService {
         String apiKey = "Fugvw/AixcbCyPLZXK3jYerFtWGdWPfBP0Qk0m7Hju2z1S9wWdBdMEg4qeQ4QSBDfesnYLjCbati2fP2gVpnmg==";
         String url = String.format(
                 "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=%s&numOfRows=500&dataType=JSON&base_date=%s&base_time=%s&nx=%d&ny=%d",
-                apiKey, LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd")),
-                "0500", nx, ny
+                apiKey, LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")),
+                "0200", nx, ny
         );
+        System.out.println(url);
 
         // HTTP 헤더 설정
         HttpHeaders headers = new HttpHeaders();
@@ -62,7 +63,7 @@ public class WeatherService {
             JSONArray itemsArray = body.getJSONObject("items").getJSONArray("item");
 
             double maxTemp = 0; // 기본값을 NaN으로 설정
-            double minTemp = 100.0; // 기본값을 NaN으로 설정
+            double minTemp = 100; // 기본값을 NaN으로 설정
 
             // itemsArray를 순회하며 TMX와 TMN 카테고리 값을 찾음
             for (int i = 0; i < itemsArray.length(); i++) {

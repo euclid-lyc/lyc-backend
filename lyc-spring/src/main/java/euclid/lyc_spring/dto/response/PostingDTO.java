@@ -15,15 +15,13 @@ import java.util.List;
 public class PostingDTO {
 
     @Getter
+    @Builder(access = AccessLevel.PRIVATE)
     public static class PostingImageListDTO {
 
-        private final Long memberId;
         private final List<PostingImageDTO> imageList;
 
-        @Builder
-        public PostingImageListDTO(Long memberId, List<PostingImageDTO> imageList) {
-            this.memberId = memberId;
-            this.imageList = imageList;
+        public static PostingImageListDTO toDTO(List<PostingImageDTO> imageList) {
+            return PostingImageListDTO.builder().imageList(imageList).build();
         }
     }
 

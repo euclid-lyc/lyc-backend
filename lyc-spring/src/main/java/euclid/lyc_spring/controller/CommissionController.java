@@ -47,15 +47,11 @@ public class CommissionController {
             
             2024-09-30T13:30:00.000000
             """)
-    // 이거도 굳이 내 의뢰함만 보면 되니까 directerId 필요 없을 듯
-    // 근데 의뢰함 기능 확인을 위해 아직 살려둠 나중에 수정하겠음~
-    // 의뢰서 확인이랑 url이 겹쳐서 일단 all을 넣었는데 나중에 directerId 지우면서 지우겠음
-    @GetMapping("/chats/commissions/all/{directorId}")
+    @GetMapping("/chats/commissions")
     public ApiResponse<List<CommissionDTO.CommissionViewDTO>> getAllCommissions(
-            @PathVariable("directorId") Long directorId,
             @RequestParam @Min(1) Integer pageSize,
             @RequestParam LocalDateTime cursorDateTime) {
-        List<CommissionDTO.CommissionViewDTO> responseDTO = commissionQueryService.getAllCommissionList(directorId, pageSize, cursorDateTime);
+        List<CommissionDTO.CommissionViewDTO> responseDTO = commissionQueryService.getAllCommissionList(pageSize, cursorDateTime);
         return ApiResponse.onSuccess(SuccessStatus._COMMISSION_LIST_FETCHED, responseDTO);
     }
 

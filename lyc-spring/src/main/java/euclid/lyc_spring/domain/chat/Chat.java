@@ -73,7 +73,7 @@ public class Chat {
         this.memberChatList = new ArrayList<>();
         this.commissionClothesList = new ArrayList<>();
         this.savedClothesCount = 0;
-        this.shareClothesList = true;
+        this.shareClothesList = commission.getCommissionOther().getIsShareClothesList();
     }
 
     public void addSchedule(Schedule schedule){

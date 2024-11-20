@@ -1,8 +1,6 @@
 package euclid.lyc_spring.dto.request;
 
 import euclid.lyc_spring.domain.enums.*;
-import euclid.lyc_spring.domain.info.*;
-import euclid.lyc_spring.dto.response.InfoResponseDTO;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -89,5 +87,6 @@ public class InfoRequestDTO {
         private LocalDate dateToUse;
         private LocalDate desiredDate;
         private String text;
+        private Boolean isShareClothesList;
     }
 }
