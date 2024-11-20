@@ -2,9 +2,7 @@ package euclid.lyc_spring.controller;
 
 import euclid.lyc_spring.apiPayload.ApiResponse;
 import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
-import euclid.lyc_spring.repository.MemberRepository;
 import euclid.lyc_spring.service.admin.AdminService;
-import euclid.lyc_spring.service.member.MemberCommandServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

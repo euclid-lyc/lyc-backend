@@ -14,6 +14,7 @@ import java.time.LocalDate;
 @DynamicUpdate
 @DynamicInsert
 @EntityListeners(AuditingEntityListener.class)
+@Table(name = "schedule")
 public class Schedule {
 
     @Id
