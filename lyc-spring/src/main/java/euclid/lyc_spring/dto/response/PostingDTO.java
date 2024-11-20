@@ -15,7 +15,7 @@ import java.util.List;
 public class PostingDTO {
 
     @Getter
-    @Builder(access = AccessLevel.PRIVATE)
+    @Builder
     public static class PostingImageListDTO {
 
         private final List<PostingImageDTO> imageList;
