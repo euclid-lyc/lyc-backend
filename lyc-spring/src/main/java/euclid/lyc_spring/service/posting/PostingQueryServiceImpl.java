@@ -127,7 +127,6 @@ public class PostingQueryServiceImpl implements PostingQueryService {
                 .collect(Collectors.toList());
 
         return PostingDTO.PostingImageListDTO.builder()
-                .memberId(memberId)
                 .imageList(savedPostingList)
                 .build();
     }
@@ -178,7 +177,6 @@ public class PostingQueryServiceImpl implements PostingQueryService {
                 .toList();
 
         return PostingDTO.PostingImageListDTO.builder()
-                .memberId(member.getId())
                 .imageList(postingImageDTOList)
                 .build();
     }
@@ -199,7 +197,6 @@ public class PostingQueryServiceImpl implements PostingQueryService {
                 .toList();
         
         return PostingDTO.PostingImageListDTO.builder()
-                .memberId(memberId)
                 .imageList(postingImageDTOList)
                 .build();
     }
