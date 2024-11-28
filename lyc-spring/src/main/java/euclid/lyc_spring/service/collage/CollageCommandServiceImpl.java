@@ -59,8 +59,8 @@ public class CollageCommandServiceImpl implements CollageCommandService {
                                     HttpEntity entity = response.getEntity();
                                     try {
                                         InputStream inputStream = entity.getContent();
-                                        String filename = UUID.randomUUID().toString();
-                                        return s3ImageService.upload(inputStream, "png", filename);
+                                        String path = "bgrm/" + UUID.randomUUID().toString();
+                                        return s3ImageService.upload(inputStream, "png", path);
                                     } catch (IOException e) {
                                         throw new GeneralException(ErrorStatus._IO_EXCEPTION);
                                     }
@@ -80,7 +80,8 @@ public class CollageCommandServiceImpl implements CollageCommandService {
 
         // Authorization
         SecurityUtils.checkTempAuthorization();
+        String path = "collage/";
 
-        return s3ImageService.upload(multipartFile);
+        return s3ImageService.upload(multipartFile, path);
     }
 }

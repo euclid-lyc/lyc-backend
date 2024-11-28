@@ -9,6 +9,7 @@ import java.util.List;
 public interface S3ImageService {
 
     String upload(MultipartFile image);
+    String upload(MultipartFile image, String filename);
     String upload(InputStream inputStream, String extension, String filename);
     void deleteImageFromS3(String imageAddress);
 

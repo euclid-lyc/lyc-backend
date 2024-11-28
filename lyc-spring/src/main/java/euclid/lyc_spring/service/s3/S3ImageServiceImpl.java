@@ -44,6 +44,15 @@ public class S3ImageServiceImpl implements S3ImageService {
     }
 
     @Override
+    public String upload(MultipartFile image, String dir) {
+        // image가 비어있으면 오류
+        if (image.isEmpty() || Objects.isNull(image.getOriginalFilename())) {
+            throw new S3Handler(ErrorStatus._FILE_IS_NULL);
+        }
+        return this.uploadImageWithPath(image, dir);
+    }
+
+    @Override
     public String upload(InputStream inputStream, String extension, String filename) {
         if (Objects.isNull(inputStream)) {
             throw new S3Handler(ErrorStatus._FILE_IS_NULL);
@@ -67,16 +76,42 @@ public class S3ImageServiceImpl implements S3ImageService {
         }
     }
 
+    private String uploadImageWithPath(MultipartFile image, String dir) {
+
+        // image가 비어있으면 오류
+        if (image.isEmpty() || Objects.isNull(image.getOriginalFilename())) {
+            throw new S3Handler(ErrorStatus._FILE_IS_NULL);
+        }
+
+        String originalFilename = image.getOriginalFilename(); //원본 파일 명
+        this.validateImageFileExtention(originalFilename);
+
+        String extension = "";
+        if (!originalFilename.isEmpty()) {
+            extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1); //확장자 명
+        }
+
+        try {
+            String s3FileName = dir + UUID.randomUUID().toString().substring(0, 10) + originalFilename; //변경된 파일 명
+            InputStream is = image.getInputStream();
+
+            uploadImageToS3ByStream(is, extension, s3FileName);
+            return amazonS3.getUrl(bucketName, s3FileName).toString();
+        } catch (IOException e) {
+            throw new S3Handler(ErrorStatus._IO_EXCEPTION);
+        }
+    }
+
     private void validateImageFileExtention(String filename) {
         int lastDotIndex = filename.lastIndexOf(".");
         if (lastDotIndex == -1) {
             throw new S3Handler(ErrorStatus._BAD_FILE_EXTENSION);
         }
 
-        String extention = filename.substring(lastDotIndex + 1).toLowerCase();
+        String extension = filename.substring(lastDotIndex + 1).toLowerCase();
         List<String> allowedExtentionList = Arrays.asList("jpg", "jpeg", "png", "gif");
 
-        if (!allowedExtentionList.contains(extention)) {
+        if (!allowedExtentionList.contains(extension)) {
             throw new S3Handler(ErrorStatus._BAD_FILE_EXTENSION);
         }
     }
