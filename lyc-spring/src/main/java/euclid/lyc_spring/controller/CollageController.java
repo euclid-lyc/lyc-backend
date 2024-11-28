@@ -35,9 +35,13 @@ public class CollageController {
         return ApiResponse.onSuccess(SuccessStatus._COLLAGE_IMAGE_BG_REMOVED, bgRemovalImageDTOS);
     }
 
-    @Operation(summary = "[구현중] 콜라주 생성하기", description = """
+    @Operation(summary = "[구현완료] 콜라주 생성하기", description = """
+            ### 완성된 콜라주를 입력받아 S3에 업로드합니다.
             """)
-    @PostMapping("/")
-    public void createCollage() {}
+    @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<String> createCollage(@RequestPart MultipartFile multipartFile) {
+        String collageUrl = collageCommandService.createCollage(multipartFile);
+        return ApiResponse.onSuccess(SuccessStatus._COLLAGE_CREATED, collageUrl);
+    }
 
 }

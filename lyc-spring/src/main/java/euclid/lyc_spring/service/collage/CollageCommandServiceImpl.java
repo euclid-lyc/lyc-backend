@@ -74,4 +74,13 @@ public class CollageCommandServiceImpl implements CollageCommandService {
                     })
                 .toList();
     }
+
+    @Override
+    public String createCollage(MultipartFile multipartFile) {
+
+        // Authorization
+        SecurityUtils.checkTempAuthorization();
+
+        return s3ImageService.upload(multipartFile);
+    }
 }

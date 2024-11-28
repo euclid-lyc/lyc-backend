@@ -7,4 +7,6 @@ import java.util.List;
 public interface CollageCommandService {
 
     List<String> createBGRemovalImages(List<MultipartFile> multipartFiles);
+
+    String createCollage(MultipartFile multipartFile);
 }
