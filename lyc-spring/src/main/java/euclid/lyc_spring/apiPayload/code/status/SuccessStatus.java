@@ -111,6 +111,7 @@ public enum SuccessStatus implements BaseCode {
 
     // COLLAGE
     _COLLAGE_IMAGE_BG_REMOVED(HttpStatus.CREATED, "CLG2001", "콜라주용 이미지 배경 제거 완료"),
+    _COLLAGE_CREATED(HttpStatus.CREATED, "CLG2002", "콜라주 생성 완료"),
 
     ;
 
