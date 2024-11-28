@@ -76,7 +76,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.webjars:sockjs-client:1.1.2'
 	implementation 'org.webjars:stomp-websocket:2.3.3-1'
-
+	// Apache Http Client
+	implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+	implementation 'org.apache.httpcomponents:httpcore:4.4.13'
+	implementation 'org.apache.httpcomponents:httpmime:4.5.13'
 }
 
 tasks.named('test') {
