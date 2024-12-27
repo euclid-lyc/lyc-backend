@@ -113,6 +113,11 @@ public class SocialQueryServiceImpl implements SocialQueryService {
             throw new MemberHandler(ErrorStatus.MEMBER_STYLE_INFO_IS_PRIVATE);
         }
 
+        // member가 차단된 회원인지 확인
+        if (blockMemberRepository.existsByMemberIdAndBlockMemberId(loginMember.getId(), member.getId())) {
+            throw new MemberHandler(ErrorStatus.BLOCKED_MEMBER);
+        }
+
         return InfoResponseDTO.AllInfoDTO.toDTO(info);
     }
 
