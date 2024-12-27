@@ -109,6 +109,10 @@ public enum SuccessStatus implements BaseCode {
     _CHAT_IMAGE_UPLOADED(HttpStatus.CREATED, "CHAT2009", "채팅방 이미지 업로드 완료"),
     _CHAT_MESSAGES_FOUND(HttpStatus.OK, "CHAT2010", "채팅방 대화 내역 조회 완료"),
 
+    // COLLAGE
+    _COLLAGE_IMAGE_BG_REMOVED(HttpStatus.CREATED, "CLG2001", "콜라주용 이미지 배경 제거 완료"),
+    _COLLAGE_CREATED(HttpStatus.CREATED, "CLG2002", "콜라주 생성 완료"),
+
     ;
 
     private final HttpStatus httpStatus;
