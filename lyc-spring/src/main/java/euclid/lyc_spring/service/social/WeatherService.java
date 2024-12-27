@@ -10,6 +10,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -17,12 +18,6 @@ import java.util.Collections;
 
 @Service
 public class WeatherService {
-
-    @Value("${weather.api.url}")
-    private String apiUrl;
-
-    @Value("${weather.api.key}")
-    private String apiKey;
 
     private final RestTemplate restTemplate;
 
@@ -36,13 +31,13 @@ public class WeatherService {
         int nx = (int) grid.x;
         int ny = (int) grid.y;
 
-        String apiKey = "Fugvw/AixcbCyPLZXK3jYerFtWGdWPfBP0Qk0m7Hju2z1S9wWdBdMEg4qeQ4QSBDfesnYLjCbati2fP2gVpnmg==";
+        String apiKey = "GCq%2FoobAm3T6cfwrkrRQV7i35Ga0F9Uzl4ooJrKV0RCJP5ctbVeRXdmPcjh3FY1cjHswuTLUcjMLCureu8rM3Q%3D%3D";
+
         String url = String.format(
                 "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=%s&numOfRows=500&dataType=JSON&base_date=%s&base_time=%s&nx=%d&ny=%d",
-                apiKey, LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")),
-                "0200", nx, ny
-        );
-        System.out.println(url);
+                apiKey, LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")), "0200", nx, ny);
+        URI uri  = URI.create(url);
+        System.out.println("url: "+url);
 
         // HTTP 헤더 설정
         HttpHeaders headers = new HttpHeaders();
@@ -50,20 +45,33 @@ public class WeatherService {
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         // API 호출
-        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(uri , String.class);
         String response = responseEntity.getBody();
         System.out.println(response);
 
+        if (responseEntity.getStatusCode() != HttpStatus.OK) {
+            throw new RuntimeException("API 호출 실패: " + responseEntity.getStatusCode());
+        }
+
         // JSON 응답 처리
-        JSONObject jsonResponse = new JSONObject(response);
+        JSONObject jsonResponse;
+        try {
+            jsonResponse = new JSONObject(response);
+        } catch (JSONException e) {
+            throw new RuntimeException("JSON 파싱 실패: " + e.getMessage() + "\n응답 본문: " + response);
+        }
+
         JSONObject body = jsonResponse.getJSONObject("response").optJSONObject("body");
+        if (body == null) {
+            throw new RuntimeException("API 응답에서 'body'를 찾을 수 없습니다.");
+        }
 
         if (body != null) {
             // 'items'에서 'item' 배열 가져오기
             JSONArray itemsArray = body.getJSONObject("items").getJSONArray("item");
 
-            double maxTemp = 0; // 기본값을 NaN으로 설정
-            double minTemp = 100; // 기본값을 NaN으로 설정
+            double maxTemp = Double.MIN_VALUE;
+            double minTemp = Double.MAX_VALUE;
 
             // itemsArray를 순회하며 TMX와 TMN 카테고리 값을 찾음
             for (int i = 0; i < itemsArray.length(); i++) {
