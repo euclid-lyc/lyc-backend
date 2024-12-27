@@ -24,13 +24,13 @@ public class BlockMember {
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "block_member_id", nullable = false)
-    private Member blockMember;
+    @JoinColumn(name = "blocked_member_id", nullable = false)
+    private Member blockedMember;
 
     protected BlockMember() {}
 
-    public BlockMember(Member member, Member blockMember) {
+    public BlockMember(Member member, Member blockedMember) {
         this.member = member;
-        this.blockMember = blockMember;
+        this.blockedMember = blockedMember;
     }
 }

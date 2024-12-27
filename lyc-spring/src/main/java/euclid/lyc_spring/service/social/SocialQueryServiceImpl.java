@@ -114,7 +114,7 @@ public class SocialQueryServiceImpl implements SocialQueryService {
         }
 
         // member가 차단된 회원인지 확인
-        if (blockMemberRepository.existsByMemberIdAndBlockMemberId(loginMember.getId(), member.getId())) {
+        if (blockMemberRepository.existsByMemberIdAndBlockedMemberId(loginMember.getId(), member.getId())) {
             throw new MemberHandler(ErrorStatus.BLOCKED_MEMBER);
         }
 

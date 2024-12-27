@@ -131,7 +131,7 @@ public class Member {
     @OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
     private List<Follow> followingList;
 
-    @OneToMany(mappedBy = "blockMember", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "blockedMember", cascade = CascadeType.ALL)
     private List<BlockMember> blockMemberList;
 
     @OneToMany(mappedBy = "director", cascade = CascadeType.ALL)
@@ -252,7 +252,7 @@ public class Member {
 
     public void addBlockMember(BlockMember blockMember) {
         blockMemberList.add(blockMember);
-        blockMember.setBlockMember(this);
+        blockMember.setBlockedMember(this);
     }
 
     public void addCommission(Commission commission) {
