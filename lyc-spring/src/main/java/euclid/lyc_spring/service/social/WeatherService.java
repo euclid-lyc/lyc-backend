@@ -12,12 +12,13 @@ import org.springframework.web.client.RestTemplate;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 
 
 @Service
 public class WeatherService {
 
+    private final String apiKey = "GCq%2FoobAm3T6cfwrkrRQV7i35Ga0F9Uzl4ooJrKV0RCJP5ctbVeRXdmPcjh3FY1cjHswuTLUcjMLCureu8rM3Q%3D%3D";
+    private final String baseUrl = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=%s&numOfRows=500&dataType=JSON&base_date=%s&base_time=%s&nx=%d&ny=%d";
     private final RestTemplate restTemplate;
 
     public WeatherService() {
@@ -30,11 +31,8 @@ public class WeatherService {
         int nx = (int) grid.x;
         int ny = (int) grid.y;
 
-        String apiKey = "GCq%2FoobAm3T6cfwrkrRQV7i35Ga0F9Uzl4ooJrKV0RCJP5ctbVeRXdmPcjh3FY1cjHswuTLUcjMLCureu8rM3Q%3D%3D";
-
         String url = String.format(
-                "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=%s&numOfRows=500&dataType=JSON&base_date=%s&base_time=%s&nx=%d&ny=%d",
-                apiKey, LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")), "0200", nx, ny);
+                baseUrl, apiKey, LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")), "0200", nx, ny);
         URI uri  = URI.create(url);
         System.out.println("url: "+url);
 
