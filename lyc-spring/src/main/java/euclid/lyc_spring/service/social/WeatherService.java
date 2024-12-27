@@ -5,7 +5,6 @@ import euclid.lyc_spring.dto.response.WeatherDTO;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -39,11 +38,6 @@ public class WeatherService {
         URI uri  = URI.create(url);
         System.out.println("url: "+url);
 
-        // HTTP 헤더 설정
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
         // API 호출
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(uri , String.class);
         String response = responseEntity.getBody();
@@ -62,9 +56,6 @@ public class WeatherService {
         }
 
         JSONObject body = jsonResponse.getJSONObject("response").optJSONObject("body");
-        if (body == null) {
-            throw new RuntimeException("API 응답에서 'body'를 찾을 수 없습니다.");
-        }
 
         if (body != null) {
             // 'items'에서 'item' 배열 가져오기
