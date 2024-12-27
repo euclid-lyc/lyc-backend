@@ -100,7 +100,7 @@ public class SocialController {
     @Operation(summary = "[구현완료] 스타일 정보 불러오기", description = """
     회원의 스타일 정보를 불러옵니다.
     
-    비공개된 스타일 정보는 다른 회원이 열람할 수 없습니다.
+    비공개된 스타일 정보는 다른 회원이 열람할 수 없습니다. 차단 회원의 스타일 정보 또한 열람할 수 없습니다.
     """)
     @GetMapping("/members/{memberId}/styles")
     public ApiResponse<InfoResponseDTO.AllInfoDTO> getStyleInfo(@PathVariable("memberId") Long memberId) {
