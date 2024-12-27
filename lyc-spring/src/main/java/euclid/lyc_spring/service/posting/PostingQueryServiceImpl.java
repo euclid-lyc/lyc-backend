@@ -40,11 +40,13 @@ public class PostingQueryServiceImpl implements PostingQueryService {
 
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
-        memberRepository.findByLoginId(loginId)
+        Member loginMember = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         List<PostingDTO.PostingImageDTO> postingImageDTOList = postingRepository.findAll().stream()
                 .sorted(Comparator.comparing(Posting::getCreatedAt).reversed())
+                .filter(posting ->
+                        !blockMemberRepository.existsByMemberIdAndBlockMemberId(loginMember.getId(), posting.getWriter().getId()))
                 .map(PostingDTO.PostingImageDTO::toDTO)
                 .limit(10)
                 .toList();
