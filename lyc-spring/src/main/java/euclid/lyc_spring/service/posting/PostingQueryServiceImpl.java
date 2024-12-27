@@ -46,7 +46,7 @@ public class PostingQueryServiceImpl implements PostingQueryService {
         List<PostingDTO.PostingImageDTO> postingImageDTOList = postingRepository.findAll().stream()
                 .sorted(Comparator.comparing(Posting::getCreatedAt).reversed())
                 .filter(posting ->
-                        !blockMemberRepository.existsByMemberIdAndBlockMemberId(loginMember.getId(), posting.getWriter().getId()))
+                        !blockMemberRepository.existsByMemberIdAndBlockedMemberId(loginMember.getId(), posting.getWriter().getId()))
                 .map(PostingDTO.PostingImageDTO::toDTO)
                 .limit(10)
                 .toList();
@@ -125,7 +125,7 @@ public class PostingQueryServiceImpl implements PostingQueryService {
         }
 
         // writer가 차단된 회원인지 확인
-        if (blockMemberRepository.existsByMemberIdAndBlockMemberId(member.getId(), writer.getId())) {
+        if (blockMemberRepository.existsByMemberIdAndBlockedMemberId(member.getId(), writer.getId())) {
             throw new MemberHandler(ErrorStatus.BLOCKED_MEMBER);
         }
 
@@ -184,7 +184,7 @@ public class PostingQueryServiceImpl implements PostingQueryService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         // writer가 차단된 회원인지 확인
-        if (blockMemberRepository.existsByMemberIdAndBlockMemberId(member.getId(), writer.getId())) {
+        if (blockMemberRepository.existsByMemberIdAndBlockedMemberId(member.getId(), writer.getId())) {
             throw new MemberHandler(ErrorStatus.BLOCKED_MEMBER);
         }
 
@@ -211,7 +211,7 @@ public class PostingQueryServiceImpl implements PostingQueryService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         // writer가 차단된 회원인지 확인
-        if (blockMemberRepository.existsByMemberIdAndBlockMemberId(member.getId(), writer.getId())) {
+        if (blockMemberRepository.existsByMemberIdAndBlockedMemberId(member.getId(), writer.getId())) {
             throw new MemberHandler(ErrorStatus.BLOCKED_MEMBER);
         }
 
