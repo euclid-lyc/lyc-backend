@@ -174,11 +174,20 @@ public class PostingQueryServiceImpl implements PostingQueryService {
     @Override
     public PostingDTO.PostingImageListDTO getAllMemberCoordies(Long memberId, Integer pageSize, LocalDateTime cursorDateTime) {
 
-        Member member = memberRepository.findById(memberId)
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member writer = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
+        // writer가 차단된 회원인지 확인
+        if (blockMemberRepository.existsByMemberIdAndBlockMemberId(member.getId(), writer.getId())) {
+            throw new MemberHandler(ErrorStatus.BLOCKED_MEMBER);
+        }
+
         List<PostingDTO.PostingImageDTO> postingImageDTOList = postingRepository
-                .findCoordiesByFromMemberId(member.getId(), pageSize, cursorDateTime).stream()
+                .findCoordiesByFromMemberId(writer.getId(), pageSize, cursorDateTime).stream()
                 .map(PostingDTO.PostingImageDTO::toDTO)
                 .toList();
 
