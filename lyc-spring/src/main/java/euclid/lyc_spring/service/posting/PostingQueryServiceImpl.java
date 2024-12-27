@@ -205,6 +205,13 @@ public class PostingQueryServiceImpl implements PostingQueryService {
         String loginId = SecurityUtils.getAuthorizedLoginId();
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member writer = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // writer가 차단된 회원인지 확인
+        if (blockMemberRepository.existsByMemberIdAndBlockMemberId(member.getId(), writer.getId())) {
+            throw new MemberHandler(ErrorStatus.BLOCKED_MEMBER);
+        }
 
         List<PostingDTO.PostingImageDTO> postingImageDTOList = postingRepository
                 .findReviewsByToMemberId(memberId, pageSize, cursorDateTime).stream()
