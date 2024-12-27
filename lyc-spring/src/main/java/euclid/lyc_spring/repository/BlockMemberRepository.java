@@ -1,6 +1,7 @@
 package euclid.lyc_spring.repository;
 
 import euclid.lyc_spring.domain.BlockMember;
+import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.repository.querydsl.BlockMemberRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -21,4 +22,6 @@ public interface BlockMemberRepository extends JpaRepository<BlockMember, Long>,
 
     // 차단 관계 삭제
     void deleteByMemberIdAndBlockMemberId(Long memberId, Long blockId);
+
+    boolean existsByMemberIdAndBlockMemberId(Long memberId, Long blockMemberId);
 }

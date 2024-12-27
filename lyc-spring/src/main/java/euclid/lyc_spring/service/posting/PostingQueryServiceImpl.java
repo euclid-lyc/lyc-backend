@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 public class PostingQueryServiceImpl implements PostingQueryService {
 
     private final MemberRepository memberRepository;
+    private final BlockMemberRepository blockMemberRepository;
     private final PostingRepository postingRepository;
     private final SavedPostingRepository savedPostingRepository;
     private final LikedPostingRepository likedPostingRepository;
@@ -119,6 +120,11 @@ public class PostingQueryServiceImpl implements PostingQueryService {
         // member와 writer가 같지 않고 저장한 코디가 비공개라면 오류 반환
         if (!member.equals(writer) && !writer.getIsPublic()) {
             throw new PostingHandler(ErrorStatus.SAVED_POSTING_CANNOT_ACCESS);
+        }
+
+        // writer가 차단된 회원인지 확인
+        if (blockMemberRepository.existsByMemberIdAndBlockMemberId(member.getId(), writer.getId())) {
+            throw new MemberHandler(ErrorStatus.BLOCKED_MEMBER);
         }
 
         List<PostingDTO.PostingImageDTO> savedPostingList = savedPostingRepository
