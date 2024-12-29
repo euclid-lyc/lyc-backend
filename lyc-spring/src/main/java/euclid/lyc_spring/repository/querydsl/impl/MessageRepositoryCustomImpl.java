@@ -1,5 +1,6 @@
 package euclid.lyc_spring.repository.querydsl.impl;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import euclid.lyc_spring.domain.chat.Message;
 import euclid.lyc_spring.domain.chat.QMessage;
@@ -21,12 +22,18 @@ public class MessageRepositoryCustomImpl implements MessageRepositoryCustom {
         QMemberChat memberChat = QMemberChat.memberChat;
         QMessage message = QMessage.message;
 
+        BooleanBuilder whereClause = new BooleanBuilder()
+                .and(memberChat.chat.id.eq(chatId));
+
+        if (cursorDateTime != null) {
+            whereClause.and(message.createdAt.before(cursorDateTime));
+        }
+
         return queryFactory
                 .selectFrom(message)
                 .join(memberChat).on(message.memberChat.id.eq(memberChat.id))
-                .where(memberChat.chat.id.eq(chatId)
-                        .and(message.createdAt.before(cursorDateTime)))
-                .orderBy(message.createdAt.asc(), message.id.asc())
+                .where(whereClause)
+                .orderBy(message.createdAt.desc(), message.id.asc())
                 .limit(pageSize)
                 .fetch();
     }
