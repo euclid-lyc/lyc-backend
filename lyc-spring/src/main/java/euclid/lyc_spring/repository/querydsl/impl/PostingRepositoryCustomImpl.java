@@ -197,6 +197,35 @@ public class PostingRepositoryCustomImpl implements PostingRepositoryCustom {
         return whereClause;
     }
 
+    @Override
+    public List<Posting> findPostingsByWeather(Double minTemp, Double maxTemp, Long memberId) {
+
+        QPosting posting = QPosting.posting;
+        QBlockMember blockMember = QBlockMember.blockMember;
+
+        JPAQuery<Posting> query = queryFactory.selectFrom(posting);
+
+        BooleanBuilder whereClause = new BooleanBuilder()
+                .and(posting.minTemp.lt(minTemp+5))
+                .and(posting.minTemp.gt(minTemp-5))
+                .and(posting.maxTemp.lt(maxTemp+5))
+                .and(posting.maxTemp.gt(maxTemp-5));
+
+        // blockMember가 존재하는 경우에만 join 및 조건 추가
+        if (existsBlockMemberData(blockMember, memberId)) {
+            query.join(blockMember).on(blockMember.member.id.eq(memberId));
+            whereClause.and(blockMember.blockedMember.id.ne(posting.writer.id))
+                    .and(blockMember.blockedMember.id.ne(posting.fromMember.id))
+                    .and(blockMember.blockedMember.id.ne(posting.toMember.id));
+        }
+
+        return queryFactory
+                .selectFrom(posting)
+                .where(whereClause)
+                .orderBy(posting.likes.desc(), posting.createdAt.desc())
+                .fetch();
+    }
+
     private boolean existsBlockMemberData(QBlockMember blockMember, Long memberId) {
         // 데이터가 존재하는 경우 true 반환
         return queryFactory
@@ -204,22 +233,6 @@ public class PostingRepositoryCustomImpl implements PostingRepositoryCustom {
                 .where(blockMember.member.id.eq(memberId))
                 .fetchFirst() != null;
     }
-
-    @Override
-    public List<Posting> findPostingsByWeather(Double minTemp, Double maxTemp) {
-
-        QPosting posting = QPosting.posting;
-
-        return queryFactory
-                .selectFrom(posting)
-                .where((posting.minTemp.lt(minTemp+5)
-                        .and(posting.minTemp.gt(minTemp-5)))
-                        .and(posting.maxTemp.lt(maxTemp+5)
-                        .and(posting.maxTemp.gt(maxTemp-5))))
-                .orderBy(posting.likes.desc(), posting.createdAt.desc())
-                .fetch();
-    }
-
 
 
 }

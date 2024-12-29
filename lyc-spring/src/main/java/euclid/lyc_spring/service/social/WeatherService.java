@@ -5,6 +5,7 @@ import euclid.lyc_spring.dto.response.WeatherDTO;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -16,6 +17,10 @@ import java.time.format.DateTimeFormatter;
 
 @Service
 public class WeatherService {
+
+
+    @Value("${weather.api.key}")
+    private String API_KEY;
 
     private final String apiKey = "GCq%2FoobAm3T6cfwrkrRQV7i35Ga0F9Uzl4ooJrKV0RCJP5ctbVeRXdmPcjh3FY1cjHswuTLUcjMLCureu8rM3Q%3D%3D";
     private final String baseUrl = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=%s&numOfRows=500&dataType=JSON&base_date=%s&base_time=%s&nx=%d&ny=%d";

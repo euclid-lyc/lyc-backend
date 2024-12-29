@@ -84,7 +84,7 @@ public class PostingQueryServiceImpl implements PostingQueryService {
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        List<PostingDTO.PostingImageDTO> postingImageDTOList = postingRepository.findPostingsByWeather(weatherDTO.getTemp_min(), weatherDTO.getTemp_max())
+        List<PostingDTO.PostingImageDTO> postingImageDTOList = postingRepository.findPostingsByWeather(weatherDTO.getTemp_min(), weatherDTO.getTemp_max(), member.getId())
                 .stream()
                 .map(PostingDTO.PostingImageDTO::toDTO)
                 .toList();
