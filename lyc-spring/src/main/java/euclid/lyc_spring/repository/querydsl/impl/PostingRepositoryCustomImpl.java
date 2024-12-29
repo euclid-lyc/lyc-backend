@@ -4,7 +4,9 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import euclid.lyc_spring.domain.QBlockMember;
 import euclid.lyc_spring.domain.QMember;
 import euclid.lyc_spring.domain.info.QInfo;
 import euclid.lyc_spring.domain.info.QInfoFit;
@@ -115,6 +117,7 @@ public class PostingRepositoryCustomImpl implements PostingRepositoryCustom {
 
         QPosting posting = QPosting.posting;
         QMember toMember = QMember.member;
+        QBlockMember blockMember = QBlockMember.blockMember;
         QInfo info = QInfo.info;
         QInfoStyle infoStyle = QInfoStyle.infoStyle;
         QInfoFit infoFit = QInfoFit.infoFit;
@@ -146,17 +149,27 @@ public class PostingRepositoryCustomImpl implements PostingRepositoryCustom {
 
         BooleanBuilder whereClause = getWhereClause(cursorScore, cursorId, infoFit, infoStyle, totalScore, posting);
 
-        return queryFactory
+        JPAQuery<PostingDTO.PostingScoreDTO> query = queryFactory
                 .select(Projections.constructor(PostingDTO.PostingScoreDTO.class,
                         toMember.id,
                         posting.id,
-                        totalScore//.as("total")
+                        totalScore
                 ))
                 .from(toMember)
                 .join(posting).on(posting.toMember.id.eq(toMember.id))
                 .join(info).on(info.member.id.eq(toMember.id))
                 .join(infoStyle).on(infoStyle.info.id.eq(info.id))
-                .join(infoFit).on(infoFit.info.id.eq(info.id))
+                .join(infoFit).on(infoFit.info.id.eq(info.id));
+
+        // blockMember가 존재하는 경우에만 join 및 조건 추가
+        if (existsBlockMemberData(blockMember, member.getMemberId())) {
+            query.join(blockMember).on(blockMember.member.id.eq(member.getMemberId()));
+            whereClause.and(blockMember.blockedMember.id.ne(posting.writer.id))
+                    .and(blockMember.blockedMember.id.ne(posting.fromMember.id))
+                    .and(blockMember.blockedMember.id.ne(posting.toMember.id));
+        }
+
+        return query
                 .where(whereClause)
                 .groupBy(toMember.id, posting.id)
                 .orderBy(totalScore.desc(), posting.id.desc())
@@ -164,7 +177,14 @@ public class PostingRepositoryCustomImpl implements PostingRepositoryCustom {
                 .fetch();
     }
 
-    private static BooleanBuilder getWhereClause(Long cursorScore, Long cursorId, QInfoFit infoFit, QInfoStyle infoStyle, NumberExpression<Long> totalScore, QPosting posting) {
+    private BooleanBuilder getWhereClause(
+            Long cursorScore,
+            Long cursorId,
+            QInfoFit infoFit,
+            QInfoStyle infoStyle,
+            NumberExpression<Long> totalScore,
+            QPosting posting
+    ) {
         BooleanBuilder whereClause = new BooleanBuilder()
                 .and(infoFit.isPrefer.isTrue())
                 .and(infoStyle.isPrefer.isTrue());
@@ -178,20 +198,40 @@ public class PostingRepositoryCustomImpl implements PostingRepositoryCustom {
     }
 
     @Override
-    public List<Posting> findPostingsByWeather(Double minTemp, Double maxTemp) {
+    public List<Posting> findPostingsByWeather(Double minTemp, Double maxTemp, Long memberId) {
 
         QPosting posting = QPosting.posting;
+        QBlockMember blockMember = QBlockMember.blockMember;
 
-        return queryFactory
-                .selectFrom(posting)
-                .where((posting.minTemp.lt(minTemp+5)
-                        .and(posting.minTemp.gt(minTemp-5)))
-                        .and(posting.maxTemp.lt(maxTemp+5)
-                        .and(posting.maxTemp.gt(maxTemp-5))))
+        JPAQuery<Posting> query = queryFactory.selectFrom(posting);
+
+        BooleanBuilder whereClause = new BooleanBuilder()
+                .and(posting.minTemp.lt(minTemp+5))
+                .and(posting.minTemp.gt(minTemp-5))
+                .and(posting.maxTemp.lt(maxTemp+5))
+                .and(posting.maxTemp.gt(maxTemp-5));
+
+        // blockMember가 존재하는 경우에만 join 및 조건 추가
+        if (existsBlockMemberData(blockMember, memberId)) {
+            query.join(blockMember).on(blockMember.member.id.eq(memberId));
+            whereClause.and(blockMember.blockedMember.id.ne(posting.writer.id))
+                    .and(blockMember.blockedMember.id.ne(posting.fromMember.id))
+                    .and(blockMember.blockedMember.id.ne(posting.toMember.id));
+        }
+
+        return query
+                .where(whereClause)
                 .orderBy(posting.likes.desc(), posting.createdAt.desc())
                 .fetch();
     }
 
+    private boolean existsBlockMemberData(QBlockMember blockMember, Long memberId) {
+        // 데이터가 존재하는 경우 true 반환
+        return queryFactory
+                .selectFrom(blockMember)
+                .where(blockMember.member.id.eq(memberId))
+                .fetchFirst() != null;
+    }
 
 
 }

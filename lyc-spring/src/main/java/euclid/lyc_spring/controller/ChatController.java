@@ -62,7 +62,7 @@ public class ChatController {
     public ApiResponse<ChatResponseDTO.ChatDTO> getChat(
             @PathVariable Long chatId,
             @RequestParam @Min(1) Integer pageSize,
-            @RequestParam LocalDateTime cursorDateTime) {
+            @RequestParam(required = false) LocalDateTime cursorDateTime) {
         ChatResponseDTO.ChatDTO chatDTO = chatQueryService.getChat(chatId, pageSize, cursorDateTime);
         return ApiResponse.onSuccess(SuccessStatus._CHAT_MESSAGES_FOUND, chatDTO);
     }

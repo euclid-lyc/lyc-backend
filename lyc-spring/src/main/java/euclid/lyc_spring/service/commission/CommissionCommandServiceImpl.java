@@ -63,7 +63,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
     public CommissionDTO.CommissionViewDTO writeCommission(CommissionRequestDTO.CommissionDTO commissionRequestDTO) {
 
         Member member = Authorization();
-        Member director = memberRepository.findByLoginId(commissionRequestDTO.getDirectorId())
+        Member director = memberRepository.findByLoginId(commissionRequestDTO.getDirectorLoginId())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
 
