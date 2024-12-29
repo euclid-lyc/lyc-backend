@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -53,9 +52,9 @@ public class SocialCommandServiceImpl implements SocialCommandService {
             throw new MemberHandler(ErrorStatus.FORBIDDEN);
         } else if (followRepository.findByFollowerIdAndFollowingId(loginMember.getId(),memberId).isPresent()) {
             throw new MemberHandler(ErrorStatus.MEMBER_ALREADY_FOLLOWING);
-        } else if (blockMemberRepository.findByMemberIdAndBlockMemberId(loginMember.getId(), memberId).isPresent()) {
+        } else if (blockMemberRepository.findByMemberIdAndBlockedMemberId(loginMember.getId(), memberId).isPresent()) {
             throw new MemberHandler(ErrorStatus.BLOCKING_MEMBER);
-        } else if (blockMemberRepository.findByMemberIdAndBlockMemberId(memberId, loginMember.getId()).isPresent()) {
+        } else if (blockMemberRepository.findByMemberIdAndBlockedMemberId(memberId, loginMember.getId()).isPresent()) {
             throw new MemberHandler(ErrorStatus.BLOCKED_MEMBER);
         }
 
@@ -281,7 +280,7 @@ public class SocialCommandServiceImpl implements SocialCommandService {
 
         if (Objects.equals(memberId, blockMemberId)){
             throw new MemberHandler(ErrorStatus.FORBIDDEN);
-        } else if (blockMemberRepository.findByMemberIdAndBlockMemberId(memberId, blockMemberId).isPresent()) {
+        } else if (blockMemberRepository.findByMemberIdAndBlockedMemberId(memberId, blockMemberId).isPresent()) {
             throw new MemberHandler(ErrorStatus.BLOCKING_MEMBER);
         }
 
@@ -318,14 +317,14 @@ public class SocialCommandServiceImpl implements SocialCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         Long memberId = member.getId();
 
-        if (blockMemberRepository.findByMemberIdAndBlockMemberId(memberId, blockMemberId).isEmpty()) {
+        if (blockMemberRepository.findByMemberIdAndBlockedMemberId(memberId, blockMemberId).isEmpty()) {
             throw new MemberHandler(ErrorStatus.MEMBER_NOT_BLOCKING);
         }
 
         Member blockMember = memberRepository.findById(blockMemberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        BlockMember blockMemberRelation = blockMemberRepository.findByMemberIdAndBlockMemberId(memberId, blockMemberId)
+        BlockMember blockMemberRelation = blockMemberRepository.findByMemberIdAndBlockedMemberId(memberId, blockMemberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_BLOCKING));
 
         blockMemberRepository.delete(blockMemberRelation);

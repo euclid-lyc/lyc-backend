@@ -26,6 +26,7 @@ import java.util.List;
 public class ChatQueryServiceImpl implements ChatQueryService {
 
     private final MemberRepository memberRepository;
+    private final BlockMemberRepository blockMemberRepository;
     private final ChatRepository chatRepository;
     private final MessageRepository messageRepository;
 
@@ -192,7 +193,12 @@ public class ChatQueryServiceImpl implements ChatQueryService {
 
         memberChatRepository.findAllByChatId(chatId).stream()
                 .filter(memberChat -> !memberChat.getMember().equals(member))
-                .flatMap(memberChat -> messageRepository.findAllByMemberChatId(memberChat.getId()).stream())
+                .flatMap(memberChat ->  {
+                    if (blockMemberRepository.existsByMemberIdAndBlockedMemberId(member.getId(), memberChat.getMember().getId())) {
+                        throw new MemberHandler(ErrorStatus.BLOCKED_MEMBER);
+                    }
+                    return messageRepository.findAllByMemberChatId(memberChat.getId()).stream();
+                })
                 .forEach(message -> {
                     message.setIsChecked(true);
                     messageRepository.save(message);

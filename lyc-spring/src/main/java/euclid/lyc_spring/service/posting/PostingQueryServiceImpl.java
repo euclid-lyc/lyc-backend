@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 public class PostingQueryServiceImpl implements PostingQueryService {
 
     private final MemberRepository memberRepository;
+    private final BlockMemberRepository blockMemberRepository;
     private final PostingRepository postingRepository;
     private final SavedPostingRepository savedPostingRepository;
     private final LikedPostingRepository likedPostingRepository;
@@ -39,11 +40,13 @@ public class PostingQueryServiceImpl implements PostingQueryService {
 
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
-        memberRepository.findByLoginId(loginId)
+        Member loginMember = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         List<PostingDTO.PostingImageDTO> postingImageDTOList = postingRepository.findAll().stream()
                 .sorted(Comparator.comparing(Posting::getCreatedAt).reversed())
+                .filter(posting ->
+                        !blockMemberRepository.existsByMemberIdAndBlockedMemberId(loginMember.getId(), posting.getWriter().getId()))
                 .map(PostingDTO.PostingImageDTO::toDTO)
                 .limit(10)
                 .toList();
@@ -81,7 +84,7 @@ public class PostingQueryServiceImpl implements PostingQueryService {
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        List<PostingDTO.PostingImageDTO> postingImageDTOList = postingRepository.findPostingsByWeather(weatherDTO.getTemp_min(), weatherDTO.getTemp_max())
+        List<PostingDTO.PostingImageDTO> postingImageDTOList = postingRepository.findPostingsByWeather(weatherDTO.getTemp_min(), weatherDTO.getTemp_max(), member.getId())
                 .stream()
                 .map(PostingDTO.PostingImageDTO::toDTO)
                 .toList();
@@ -119,6 +122,11 @@ public class PostingQueryServiceImpl implements PostingQueryService {
         // member와 writer가 같지 않고 저장한 코디가 비공개라면 오류 반환
         if (!member.equals(writer) && !writer.getIsPublic()) {
             throw new PostingHandler(ErrorStatus.SAVED_POSTING_CANNOT_ACCESS);
+        }
+
+        // writer가 차단된 회원인지 확인
+        if (blockMemberRepository.existsByMemberIdAndBlockedMemberId(member.getId(), writer.getId())) {
+            throw new MemberHandler(ErrorStatus.BLOCKED_MEMBER);
         }
 
         List<PostingDTO.PostingImageDTO> savedPostingList = savedPostingRepository
@@ -168,11 +176,20 @@ public class PostingQueryServiceImpl implements PostingQueryService {
     @Override
     public PostingDTO.PostingImageListDTO getAllMemberCoordies(Long memberId, Integer pageSize, LocalDateTime cursorDateTime) {
 
-        Member member = memberRepository.findById(memberId)
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member writer = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
+        // writer가 차단된 회원인지 확인
+        if (blockMemberRepository.existsByMemberIdAndBlockedMemberId(member.getId(), writer.getId())) {
+            throw new MemberHandler(ErrorStatus.BLOCKED_MEMBER);
+        }
+
         List<PostingDTO.PostingImageDTO> postingImageDTOList = postingRepository
-                .findCoordiesByFromMemberId(member.getId(), pageSize, cursorDateTime).stream()
+                .findCoordiesByFromMemberId(writer.getId(), pageSize, cursorDateTime).stream()
                 .map(PostingDTO.PostingImageDTO::toDTO)
                 .toList();
 
@@ -190,6 +207,13 @@ public class PostingQueryServiceImpl implements PostingQueryService {
         String loginId = SecurityUtils.getAuthorizedLoginId();
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+        Member writer = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // writer가 차단된 회원인지 확인
+        if (blockMemberRepository.existsByMemberIdAndBlockedMemberId(member.getId(), writer.getId())) {
+            throw new MemberHandler(ErrorStatus.BLOCKED_MEMBER);
+        }
 
         List<PostingDTO.PostingImageDTO> postingImageDTOList = postingRepository
                 .findReviewsByToMemberId(memberId, pageSize, cursorDateTime).stream()
