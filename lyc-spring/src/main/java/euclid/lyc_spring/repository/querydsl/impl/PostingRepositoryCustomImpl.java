@@ -219,8 +219,7 @@ public class PostingRepositoryCustomImpl implements PostingRepositoryCustom {
                     .and(blockMember.blockedMember.id.ne(posting.toMember.id));
         }
 
-        return queryFactory
-                .selectFrom(posting)
+        return query
                 .where(whereClause)
                 .orderBy(posting.likes.desc(), posting.createdAt.desc())
                 .fetch();

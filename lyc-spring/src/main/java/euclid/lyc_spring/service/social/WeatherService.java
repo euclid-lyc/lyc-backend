@@ -18,11 +18,8 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class WeatherService {
 
-
     @Value("${weather.api.key}")
-    private String API_KEY;
-
-    private final String apiKey = "GCq%2FoobAm3T6cfwrkrRQV7i35Ga0F9Uzl4ooJrKV0RCJP5ctbVeRXdmPcjh3FY1cjHswuTLUcjMLCureu8rM3Q%3D%3D";
+    private String apiKey;
     private final String baseUrl = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst?serviceKey=%s&numOfRows=500&dataType=JSON&base_date=%s&base_time=%s&nx=%d&ny=%d";
     private final RestTemplate restTemplate;
 
