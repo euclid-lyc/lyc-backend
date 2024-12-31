@@ -6,8 +6,11 @@ import euclid.lyc_spring.dto.response.PointResDTO;
 import euclid.lyc_spring.service.point.PointService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @Tag(name = "Point", description = "포인트 관련 API")
 @RestController
@@ -59,11 +62,16 @@ public class PointController {
     }
 
     @Operation(summary = "[구현중] 포인트 사용 내역 불러오기", description = """
-            로그인한 회원의 포인트 사용 내역을 조회합니다.
+            로그인한 회원의 포인트 사용 내역을 최신순으로 조회합니다.
+            * pageSize : 요청할 페이지 사이즈
+            * cursorCreatedAt : 이전 응답의 마지막 usedAt
             """)
     @GetMapping("/points/usages")
-    public ApiResponse<PointResDTO.UsageListDTO> getMyPointUsages() {
-        PointResDTO.UsageListDTO usageListDTO = pointService.getMyPointUsages();
+    public ApiResponse<PointResDTO.UsageListDTO> getMyPointUsages(
+            @RequestParam @Min(1) Integer pageSize,
+            @RequestParam(required = false) LocalDateTime cursorUsedAt
+        ) {
+        PointResDTO.UsageListDTO usageListDTO = pointService.getMyPointUsages(pageSize, cursorUsedAt);
         return ApiResponse.onSuccess(SuccessStatus.POINT_USAGES_FOUND, usageListDTO);
     }
 

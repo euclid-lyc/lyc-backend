@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.geo.Point;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,11 +39,11 @@ public class PointResDTO {
         private final String loginId;
         private final List<UsageDTO> usages;
 
-        public static UsageListDTO toDTO (Member member) {
+        public static UsageListDTO toDTO (Member member, List<PointUsage> pointUsages) {
             return UsageListDTO.builder()
                     .nickname(member.getNickname())
                     .loginId(member.getLoginId())
-                    .usages(member.getPointUsageList().stream()
+                    .usages(pointUsages.stream()
                             .map(UsageDTO::toDTO)
                             .toList())
                     .build();
