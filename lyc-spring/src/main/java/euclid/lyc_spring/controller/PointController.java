@@ -1,5 +1,9 @@
 package euclid.lyc_spring.controller;
 
+import euclid.lyc_spring.apiPayload.ApiResponse;
+import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
+import euclid.lyc_spring.dto.response.PointResDTO;
+import euclid.lyc_spring.service.point.PointService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/lyc")
 public class PointController {
+
+    private final PointService pointService;
 
 /*-------------------------------------------------- 출석체크 포인트 --------------------------------------------------*/
 
@@ -43,15 +49,23 @@ public class PointController {
 
 /*-------------------------------------------------- 포인트 거래 --------------------------------------------------*/
 
-    @Operation(summary = "[구현중] 보유 포인트 불러오기", description = """
+    @Operation(summary = "[구현중] 보유 포인트 조회하기", description = """
+            로그인한 회원이 보유중인 포인트를 조회합니다.
             """)
     @GetMapping("/points")
-    public void getPoint() {}
+    public ApiResponse<PointResDTO.MemberPointDTO> getMyPoints() {
+        PointResDTO.MemberPointDTO memberPointDTO = pointService.getMyPoints();
+        return ApiResponse.onSuccess(SuccessStatus.POINT_FOUND, memberPointDTO);
+    }
 
     @Operation(summary = "[구현중] 포인트 사용 내역 불러오기", description = """
+            로그인한 회원의 포인트 사용 내역을 조회합니다.
             """)
     @GetMapping("/points/usages")
-    public void getPointUsages() {}
+    public ApiResponse<PointResDTO.UsageListDTO> getMyPointUsages() {
+        PointResDTO.UsageListDTO usageListDTO = pointService.getMyPointUsages();
+        return ApiResponse.onSuccess(SuccessStatus.POINT_USAGES_FOUND, usageListDTO);
+    }
 
     @Operation(summary = "[구현중] 카카오페이로 포인트 충전하기", description = """
             """)

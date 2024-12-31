@@ -113,6 +113,10 @@ public enum SuccessStatus implements BaseCode {
     _COLLAGE_IMAGE_BG_REMOVED(HttpStatus.CREATED, "CLG2001", "콜라주용 이미지 배경 제거 완료"),
     _COLLAGE_CREATED(HttpStatus.CREATED, "CLG2002", "콜라주 생성 완료"),
 
+    // POINT
+    POINT_FOUND(HttpStatus.OK, "PNT2001", "포인트 조회 완료"),
+    POINT_USAGES_FOUND(HttpStatus.OK, "PNT2002", "포인트 사용 내역 조회 완료"),
+
     ;
 
     private final HttpStatus httpStatus;
