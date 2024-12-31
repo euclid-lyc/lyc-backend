@@ -52,7 +52,7 @@ public class PointController {
 
 /*-------------------------------------------------- 포인트 거래 --------------------------------------------------*/
 
-    @Operation(summary = "[구현중] 보유 포인트 조회하기", description = """
+    @Operation(summary = "[구현완료] 보유 포인트 조회하기", description = """
             로그인한 회원이 보유중인 포인트를 조회합니다.
             """)
     @GetMapping("/points")
@@ -61,7 +61,7 @@ public class PointController {
         return ApiResponse.onSuccess(SuccessStatus.POINT_FOUND, memberPointDTO);
     }
 
-    @Operation(summary = "[구현중] 포인트 사용 내역 불러오기", description = """
+    @Operation(summary = "[구현완료] 포인트 사용 내역 불러오기", description = """
             로그인한 회원의 포인트 사용 내역을 최신순으로 조회합니다.
             * pageSize : 요청할 페이지 사이즈
             * cursorCreatedAt : 이전 응답의 마지막 usedAt
@@ -75,18 +75,18 @@ public class PointController {
         return ApiResponse.onSuccess(SuccessStatus.POINT_USAGES_FOUND, usageListDTO);
     }
 
-    @Operation(summary = "[구현중] 카카오페이로 포인트 충전하기", description = """
+    @Operation(summary = "[구현중] 포인트 충전하기", description = """
             """)
-    @PatchMapping("/points/recharge/kakao")
-    public void rechargePointByKakao() {}
-
-    @Operation(summary = "[구현중] 네이버페이로 포인트 충전하기", description = """
-            """)
-    @PatchMapping("/points/recharge/naver")
-    public void rechargePointByNaver() {}
+    @PatchMapping("/points/recharge")
+    public void rechargePointByKakao(
+            @RequestParam Integer point,
+            @RequestParam String receiptId) {}
 
     @Operation(summary = "[구현중] 내 계좌로 포인트 이체하기", description = """
             """)
     @PatchMapping("/points/transfer")
-    public void transferPointToAccount() {}
+    public void transferPointToAccount(
+            @RequestParam Integer point,
+            @RequestParam String receiptId
+    ) {}
 }
