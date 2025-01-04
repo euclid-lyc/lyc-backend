@@ -105,7 +105,13 @@ public enum ErrorStatus implements BaseErrorCode {
     CATEGORY_NOT_CORRECT(HttpStatus.BAD_REQUEST, "SEARCH4001", "카테고리가 올바르지 않습니다."),
 
     // WEATHER
-    _WEATHER_NOT_FOUND(HttpStatus.NOT_FOUND, "WEATHER4001", "날씨 정보를 찾을 수 없습니다.")
+    _WEATHER_NOT_FOUND(HttpStatus.NOT_FOUND, "WEATHER4001", "날씨 정보를 찾을 수 없습니다."),
+
+    // POINT
+    FAIL_TO_POINT_RECHARGE(HttpStatus.INTERNAL_SERVER_ERROR, "PNT5001", "포인트를 충전할 수 없습니다."),
+    BOOTPAY_TOKEN_ISSUANCE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "PNT5002", "부트페이 토큰 발급 과정에서 오류가 발생했습니다."),
+    BOOTPAY_RETRIEVE_PAYMENT_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "PNT5003", "부트페이 결제 조회 과정에서 오류가 발생했습니다."),
+    BOOT_PAY_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "PNT5004", "부트페이 오류가 발생했습니다."),
 
     ;
 
