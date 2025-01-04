@@ -10,6 +10,7 @@ import org.springframework.data.geo.Point;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 public class PointResDTO {
@@ -65,6 +66,23 @@ public class PointResDTO {
                     .amount(pointUsage.getAmount())
                     .description(pointUsage.getDescription())
                     .usedAt(pointUsage.getCreatedAt())
+                    .build();
+        }
+    }
+
+    @Getter
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    @Builder(access = AccessLevel.PRIVATE)
+    public static class ReceiptDTO {
+        private final String loginId;
+        private final String nickname;
+        private final Map<String, Object> receipt;
+
+        public static ReceiptDTO toDTO (Member member, Map<String, Object> receipt) {
+            return ReceiptDTO.builder()
+                    .loginId(member.getLoginId())
+                    .nickname(member.getNickname())
+                    .receipt(receipt)
                     .build();
         }
     }

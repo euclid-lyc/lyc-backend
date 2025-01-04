@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Tag(name = "Point", description = "포인트 관련 API")
 @RestController
@@ -78,15 +79,13 @@ public class PointController {
     @Operation(summary = "[구현중] 포인트 충전하기", description = """
             """)
     @PatchMapping("/points/recharge")
-    public void rechargePointByKakao(
-            @RequestParam Integer point,
-            @RequestParam String receiptId) {}
+    public ApiResponse<PointResDTO.ReceiptDTO> rechargePoints(@RequestParam String receiptId) {
+        PointResDTO.ReceiptDTO receiptDTO = pointService.rechargePoints(receiptId);
+        return ApiResponse.onSuccess(SuccessStatus.POINT_RECHARGED, receiptDTO);
+    }
 
     @Operation(summary = "[구현중] 내 계좌로 포인트 이체하기", description = """
             """)
     @PatchMapping("/points/transfer")
-    public void transferPointToAccount(
-            @RequestParam Integer point,
-            @RequestParam String receiptId
-    ) {}
+    public void transferPointToAccount(@RequestParam String receiptId) {}
 }

@@ -275,6 +275,12 @@ public class Member {
         posting.setWriter(this);
     }
 
+    public void addPoints(Integer points) {
+        if (points != null) {
+            point += points;
+        }
+    }
+
     public void addReport(Report report) { this.reportList.add(report); }
 
     //=== remove Methods ===//
@@ -314,5 +320,4 @@ public class Member {
     public void changeLoginPw(String password, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.loginPw = bCryptPasswordEncoder.encode(password);
     }
-
 }

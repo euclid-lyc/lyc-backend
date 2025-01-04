@@ -9,4 +9,6 @@ public interface PointService {
     PointResDTO.MemberPointDTO getMyPoints();
 
     PointResDTO.UsageListDTO getMyPointUsages(Integer pageSize, LocalDateTime cursorCreatedAt);
+
+    PointResDTO.ReceiptDTO rechargePoints(String receiptId);
 }
