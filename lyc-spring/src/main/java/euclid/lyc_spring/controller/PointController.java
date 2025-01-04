@@ -77,6 +77,7 @@ public class PointController {
     }
 
     @Operation(summary = "[구현중] 포인트 충전하기", description = """
+            결제 단건을 조회한 후 결제된 금액만큼 포인트를 충전합니다.
             """)
     @PatchMapping("/points/recharge")
     public ApiResponse<PointResDTO.ReceiptDTO> rechargePoints(@RequestParam String receiptId) {
@@ -85,7 +86,11 @@ public class PointController {
     }
 
     @Operation(summary = "[구현중] 내 계좌로 포인트 이체하기", description = """
+            결제 단건을 조회한 후 이체된 금액만큼 포인트를 제거합니다.
             """)
     @PatchMapping("/points/transfer")
-    public void transferPointToAccount(@RequestParam String receiptId) {}
+    public ApiResponse<PointResDTO.ReceiptDTO> transferPointsToAccount(@RequestParam String receiptId) {
+        PointResDTO.ReceiptDTO receiptDTO = pointService.transferPointsToAccount(receiptId);
+        return ApiResponse.onSuccess(SuccessStatus.POINT_TRANSFERED_TO_ACCOUNT, receiptDTO);
+    }
 }

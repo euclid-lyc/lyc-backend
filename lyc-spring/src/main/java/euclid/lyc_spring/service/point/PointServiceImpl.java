@@ -70,6 +70,24 @@ public class PointServiceImpl implements PointService {
         return PointResDTO.ReceiptDTO.toDTO(member, res);
     }
 
+    @Override
+    public PointResDTO.ReceiptDTO transferPointsToAccount(String receiptId) {
+
+        // Authorization
+        String loginId = SecurityUtils.getAuthorizedLoginId();
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        // 결제 단건 조회
+        Map<String, Object> res = getReceipt(receiptId);
+
+        // 포인트 이체
+        Integer points = - ((Integer) res.get("price"));
+        member.addPoints(points);
+
+        return PointResDTO.ReceiptDTO.toDTO(member, res);
+    }
+
     private Map<String, Object> getReceipt(String receiptId) {
         Map<String, Object> res;
         try {

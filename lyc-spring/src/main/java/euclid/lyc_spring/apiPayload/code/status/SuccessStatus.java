@@ -116,7 +116,8 @@ public enum SuccessStatus implements BaseCode {
     // POINT
     POINT_FOUND(HttpStatus.OK, "PNT2001", "포인트 조회 완료"),
     POINT_USAGES_FOUND(HttpStatus.OK, "PNT2002", "포인트 사용 내역 조회 완료"),
-    POINT_RECHARGED(HttpStatus.OK, "PNT2003", "포인트 충전 완료")
+    POINT_RECHARGED(HttpStatus.OK, "PNT2003", "포인트 충전 완료"),
+    POINT_TRANSFERED_TO_ACCOUNT(HttpStatus.OK, "PNT2004", "포인트 이체 완료"),
 
     ;
 

@@ -11,4 +11,6 @@ public interface PointService {
     PointResDTO.UsageListDTO getMyPointUsages(Integer pageSize, LocalDateTime cursorCreatedAt);
 
     PointResDTO.ReceiptDTO rechargePoints(String receiptId);
+
+    PointResDTO.ReceiptDTO transferPointsToAccount(String receiptId);
 }
