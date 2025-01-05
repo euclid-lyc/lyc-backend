@@ -124,7 +124,6 @@ public class SocialCommandServiceImpl implements SocialCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_INFO_NOT_FOUND));
 
         info = updateInfo(info, styleInfoDTO);
-        member.setInfo(info);
 
         return InfoResponseDTO.AllInfoDTO.toDTO(info);
     }
