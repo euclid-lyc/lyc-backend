@@ -2,16 +2,15 @@ package euclid.lyc_spring.domain.info;
 
 import euclid.lyc_spring.domain.enums.Fit;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 @Getter
 @Entity
-@DynamicUpdate
-@DynamicInsert
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class InfoFit {
 
     @Id
@@ -26,17 +25,8 @@ public class InfoFit {
     @Column(nullable = false)
     private Boolean isPrefer;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "info_id", nullable = false)
+    @JoinColumn(name = "info_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Info info;
 
-    protected InfoFit() {}
-
-    @Builder
-    public InfoFit(Info info, Fit fit, Boolean isPrefer) {
-        this.info = info;
-        this.fit = fit;
-        this.isPrefer = isPrefer;
-    }
 }

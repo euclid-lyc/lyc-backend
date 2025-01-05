@@ -91,7 +91,6 @@ public class Info {
 
     public void addInfoFit(InfoFit infoFit) {
         infoFitList.add(infoFit);
-        infoFit.setInfo(this);
     }
 
     public void addInfoBodyType(InfoBodyType infoBodyType) {
