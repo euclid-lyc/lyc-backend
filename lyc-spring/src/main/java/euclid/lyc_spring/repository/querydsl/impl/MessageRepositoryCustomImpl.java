@@ -3,7 +3,9 @@ package euclid.lyc_spring.repository.querydsl.impl;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import euclid.lyc_spring.domain.chat.Message;
+import euclid.lyc_spring.domain.chat.QChat;
 import euclid.lyc_spring.domain.chat.QMessage;
+import euclid.lyc_spring.domain.enums.MessageCategory;
 import euclid.lyc_spring.domain.mapping.QMemberChat;
 import euclid.lyc_spring.repository.querydsl.MessageRepositoryCustom;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,8 @@ public class MessageRepositoryCustomImpl implements MessageRepositoryCustom {
         QMessage message = QMessage.message;
 
         BooleanBuilder whereClause = new BooleanBuilder()
-                .and(memberChat.chat.id.eq(chatId));
+                .and(memberChat.chat.id.eq(chatId))
+                .and(message.category.eq(MessageCategory.COMMON));
 
         if (cursorDateTime != null) {
             whereClause.and(message.createdAt.before(cursorDateTime));

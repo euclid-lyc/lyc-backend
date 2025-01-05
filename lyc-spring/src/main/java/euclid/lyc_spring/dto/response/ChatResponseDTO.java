@@ -201,7 +201,6 @@ public class ChatResponseDTO {
         public static ChatDTO toDTO(List<Message> messages) {
             return ChatDTO.builder()
                     .messages(messages.stream()
-                            .filter(message -> message.getCategory().equals(MessageCategory.COMMON)) // 채팅방 불러올 때 COMMON 메시지만 불러오게 함
                             .map(MessageInfoDTO::toDTO)
                             .toList())
                     .build();
