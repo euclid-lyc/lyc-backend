@@ -221,7 +221,11 @@ public class PostingCommandServiceImpl implements PostingCommandService {
 
         if (getIsClickedLike(member.getId(), postingId))
             throw new PostingHandler(ErrorStatus.POSTING_ALREADY_LIKED);
-        LikedPosting likedPosting = new LikedPosting(member, posting);
+
+        LikedPosting likedPosting = LikedPosting.builder()
+                .member(member)
+                .posting(posting)
+                .build();
 
         // 인기도 증가
         Member uploader = posting.getFromMember();
