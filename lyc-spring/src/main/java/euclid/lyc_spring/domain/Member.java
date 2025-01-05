@@ -180,7 +180,6 @@ public class Member {
 
     public void addClothes(Clothes clothes) {
         clothesList.add(clothes);
-        clothes.setMember(this);
     }
 
     public void addFollower(Follow follower) {
