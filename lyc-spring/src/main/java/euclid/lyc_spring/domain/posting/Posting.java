@@ -89,7 +89,6 @@ public class Posting {
 
     public void addSavedPosting(SavedPosting savedPosting) {
         savedPostingList.add(savedPosting);
-        savedPosting.setPosting(this);
     }
 
     public void removeSavedPosting(SavedPosting savedPosting) {

@@ -180,7 +180,11 @@ public class PostingCommandServiceImpl implements PostingCommandService {
             throw new PostingHandler(ErrorStatus.POSTING_CANNOT_SAVED_BY_WRITER);
         }
 
-        SavedPosting savedPosting = new SavedPosting(member, posting);
+        SavedPosting savedPosting = SavedPosting.builder()
+                .member(member)
+                .posting(posting)
+                .build();
+
         savedPostingRepository.save(savedPosting);
 
         return PostingDTO.PostingViewDTO.toDTO(posting);

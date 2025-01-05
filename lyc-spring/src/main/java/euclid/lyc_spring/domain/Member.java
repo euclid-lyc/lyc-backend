@@ -176,7 +176,6 @@ public class Member {
 
     public void addSavedPosting(SavedPosting savedPosting) {
         savedPostingList.add(savedPosting);
-        savedPosting.setMember(this);
     }
 
     public void addClothes(Clothes clothes) {
