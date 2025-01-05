@@ -28,11 +28,10 @@ public class Image {
     private List<ImageUrl> imageUrlList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "posting_id", nullable = false)
+    @JoinColumn(name = "posting_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Posting posting;
 
     public void addImageUrl(ImageUrl imageUrl) {
         imageUrlList.add(imageUrl);
-        imageUrl.setImage(this);
     }
 }
