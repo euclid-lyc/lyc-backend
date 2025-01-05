@@ -243,8 +243,6 @@ public class Member {
 
     public void reloadPopularity(Long popularity) {this.popularity = popularity;}
 
-    //=== change Methods ===//
-
     public void changeLoginPw(String password, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.loginPw = bCryptPasswordEncoder.encode(password);
     }
