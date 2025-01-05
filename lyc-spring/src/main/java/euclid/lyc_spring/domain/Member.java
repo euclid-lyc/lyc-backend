@@ -241,12 +241,10 @@ public class Member {
 
     public void addFollower(Follow follower) {
         followerList.add(follower);
-        follower.setFollower(this);
     }
 
     public void addFollowing(Follow following) {
         followingList.add(following);
-        following.setFollower(this);
     }
 
     public void addBlockMember(BlockMember blockMember) {

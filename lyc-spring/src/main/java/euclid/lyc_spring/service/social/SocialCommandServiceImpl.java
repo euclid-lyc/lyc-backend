@@ -60,7 +60,10 @@ public class SocialCommandServiceImpl implements SocialCommandService {
 
         Member follower = memberRepository.findById(loginMember.getId())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        Follow follow = new Follow(follower,following);
+        Follow follow = Follow.builder()
+                .follower(follower)
+                .following(following)
+                .build();
 
         following.reloadFollower(following.getFollower()+1);
         follower.reloadFollowing(follower.getFollowing()+1);
