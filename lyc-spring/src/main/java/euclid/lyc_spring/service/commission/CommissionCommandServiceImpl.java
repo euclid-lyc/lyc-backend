@@ -392,34 +392,36 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
         throw new CommissionHandler(ErrorStatus.BAD_REQUEST);
     }
 
-    //== Authorization ==//
+/*-------------------------------------------------- Authorization --------------------------------------------------*/
+
     private Member Authorization(){
         String loginId = SecurityUtils.getAuthorizedLoginId();
         return memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
 
-    //=== update ===//
+/*-------------------------------------------------- Update Methods --------------------------------------------------*/
+
     private void updateCommissionInfo(Commission commission, InfoRequestDTO.BasicInfoDTO basicInfoDTO) {
 
         commission.updateCommissionInfo(basicInfoDTO);
 
-        // update CommissionInfoStyle
+        // update CommissionStyle
         commissionStyleRepository.deleteAllByCommission(commission);
         commission.deleteAllStyles();
         createCommissionStyle(commission, basicInfoDTO.getInfoStyle());
 
-        // update CommissionInfoBodyType
+        // update CommissionBodyType
         commissionBodyTypeRepository.deleteAllByCommission(commission);
         commission.deleteAllBodyTypes();
         createCommissionBodyType(commission, basicInfoDTO.getInfoBodyType());
 
-        // update CommissionInfoFit
+        // update CommissionFit
         commissionFitRepository.deleteAllByCommission(commission);
         commission.deleteAllFits();
         createCommissionFit(commission, basicInfoDTO.getInfoFit());
 
-        // update CommissionInfoMaterial
+        // update CommissionMaterial
         commissionMaterialRepository.deleteAllByCommission(commission);
         commission.deleteAllMaterials();
         createCommissionMaterial(commission, basicInfoDTO.getInfoMaterial());
@@ -428,23 +430,29 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
 
     private void updateCommissionStyle(Commission commission, StyleRequestDTO.StyleDTO styleDTO){
 
-        // update CommissionStyleStyle
+        // update CommissionHopeStyle
         commissionHopeStyleRepository.deleteAllByCommission(commission);
+        commission.deleteAllHopeStyles();
         createCommissionHopeStyle(commission, styleDTO.getStyleList());
 
-        // update CommissionStyleFit
+        // update CommissionHopeFit
         commissionHopeFitRepository.deleteAllByCommission(commission);
+        commission.deleteAllHopeFits();
         createCommissionHopeFit(commission, styleDTO.getFitList());
 
-        // update CommissionStyleMaterial
+        // update CommissionHopeMaterial
         commissionHopeMaterialRepository.deleteAllByCommission(commission);
+        commission.deleteAllHopeMaterials();
         createCommissionHopeMaterial(commission, styleDTO.getMaterialList());
 
-        // update CommissionStyleColor
+        // update CommissionHopeColor
         commissionHopeColorRepository.deleteAllByCommission(commission);
+        commission.deleteAllHopeColors();
         createCommissionStyleColor(commission, styleDTO.getColorList());
 
     }
+
+/*-------------------------------------------------- Create Methods --------------------------------------------------*/
 
     private void createCommissionStyleColor(Commission commission, StyleRequestDTO.ColorListDTO colorList) {
         if (colorList == null || colorList.getColorList() == null) {return;}
