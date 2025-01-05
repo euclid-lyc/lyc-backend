@@ -9,9 +9,7 @@ import euclid.lyc_spring.domain.mapping.MemberChat;
 import euclid.lyc_spring.domain.mapping.SavedPosting;
 import euclid.lyc_spring.domain.posting.Posting;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
@@ -24,8 +22,11 @@ import java.util.List;
 
 @Getter
 @Entity
-@DynamicUpdate
+@Builder
 @DynamicInsert
+@DynamicUpdate
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Member {
 
@@ -37,6 +38,7 @@ public class Member {
     @Column(length = 30, nullable = false)
     private String name;
 
+    @Setter
     @Column(length = 30, nullable = false, unique = true)
     private String loginId;
 
@@ -49,12 +51,15 @@ public class Member {
     @Column(length = 30, nullable = false)
     private String phone;
 
+    @Setter
     @Column(length = 10, nullable = false)
     private String nickname;
 
+    @Setter
     @Column(columnDefinition = "text")
     private String introduction;
 
+    @Setter
     @Column(columnDefinition = "text")
     private String profileImage;
 
@@ -100,159 +105,93 @@ public class Member {
     @Setter
     private LocalDateTime lastLoginAt;
 
-    @Setter
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
     private PushSet pushSet;
 
+    @Builder.Default
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<Notification> notificationList;
+    private List<Notification> notificationList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<Attendance> attendanceList;
+    private List<Attendance> attendanceList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<MemberChat> memberChatList;
+    private List<MemberChat> memberChatList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<PointUsage> pointUsageList;
+    private List<PointUsage> pointUsageList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<LikedPosting> likedPostingList;
+    private List<LikedPosting> likedPostingList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<SavedPosting> savedPostingList;
+    private List<SavedPosting> savedPostingList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<Clothes> clothesList;
+    private List<Clothes> clothesList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
-    private List<Follow> followerList;
+    private List<Follow> followerList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "following", cascade = CascadeType.ALL)
-    private List<Follow> followingList;
+    private List<Follow> followingList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "blockedMember", cascade = CascadeType.ALL)
-    private List<BlockMember> blockMemberList;
+    private List<BlockMember> blockMemberList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "director", cascade = CascadeType.ALL)
-    private List<Commission> commissionList;
+    private List<Commission> commissionList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "fromMember", cascade = CascadeType.ALL)
-    private List<Posting> fromPostingList;
+    private List<Posting> fromPostingList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "toMember", cascade = CascadeType.ALL)
-    private List<Posting> toPostingList;
+    private List<Posting> toPostingList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
-    private List<Posting> postingList;
+    private List<Posting> postingList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<Report> reportList;
+    private List<Report> reportList = new ArrayList<>();
 
-    protected Member() {}
-
-    // followerMember
-    public Member(Long id){
-        this.id = id;
-    }
-
-    @Builder
-    public Member(String name, String loginId, String loginPw, String email,
-                  String phone, String nickname, String introduction,
-                  String profileImage, Role role) {
-        this.name = name;
-        this.loginId = loginId;
-        this.loginPw = loginPw;
-        this.email = email;
-        this.phone = phone;
-        this.nickname = nickname;
-        this.introduction = introduction;
-        this.profileImage = profileImage;
-        this.stampNo = 0;
-        this.point = 0;
-        this.follower = 0L;
-        this.following = 0L;
-        this.role = role;
-        this.isPublic = true;
-        this.popularity = 0L;
-        this.notificationList = new ArrayList<>();
-        this.attendanceList = new ArrayList<>();
-        this.memberChatList = new ArrayList<>();
-        this.pointUsageList = new ArrayList<>();
-        this.likedPostingList = new ArrayList<>();
-        this.savedPostingList = new ArrayList<>();
-        this.clothesList = new ArrayList<>();
-        this.followerList = new ArrayList<>();
-        this.followingList = new ArrayList<>();
-        this.blockMemberList = new ArrayList<>();
-        this.commissionList = new ArrayList<>();
-        this.fromPostingList = new ArrayList<>();
-        this.toPostingList = new ArrayList<>();
-        this.postingList = new ArrayList<>();
-        this.reportList = new ArrayList<>();
-    }
-
-
-    //=== Add Methods ===//
-
-    public void setInfo(Info info) {
-        this.info = info;
-        info.setMember(this);
-    }
+/*-------------------------------------------------- 연관관계 메서드 --------------------------------------------------*/
 
     public void addPushSet(PushSet pushSet) {
         this.pushSet = pushSet;
-        pushSet.setMember(this);
-    }
-
-    public void addNotification(Notification notification) {
-        notificationList.add(notification);
-        notification.setMember(this);
-    }
-
-    public void addAttendance(Attendance attendance) {
-        attendanceList.add(attendance);
-        attendance.setMember(this);
-    }
-
-    public void addMemberChat(MemberChat memberChat) {
-        memberChatList.add(memberChat);
-        memberChat.setMember(this);
-    }
-
-    public void addPointUsage(PointUsage pointUsage) {
-        pointUsageList.add(pointUsage);
-        pointUsage.setMember(this);
-    }
-
-    public void addLikedPosting(LikedPosting likedPosting) {
-        likedPostingList.add(likedPosting);
-        likedPosting.setMember(this);
     }
 
     public void addSavedPosting(SavedPosting savedPosting) {
         savedPostingList.add(savedPosting);
-        savedPosting.setMember(this);
     }
 
     public void addClothes(Clothes clothes) {
         clothesList.add(clothes);
-        clothes.setMember(this);
     }
 
     public void addFollower(Follow follower) {
         followerList.add(follower);
-        follower.setFollower(this);
     }
 
     public void addFollowing(Follow following) {
         followingList.add(following);
-        following.setFollower(this);
     }
 
     public void addBlockMember(BlockMember blockMember) {
         blockMemberList.add(blockMember);
-        blockMember.setBlockedMember(this);
     }
 
     public void addCommission(Commission commission) {
@@ -262,22 +201,21 @@ public class Member {
 
     public void addFromPosting(Posting posting) {
         fromPostingList.add(posting);
-        posting.setFromMember(this);
     }
 
     public void addToPosting(Posting posting) {
         toPostingList.add(posting);
-        posting.setToMember(this);
     }
 
     public void addPosting(Posting posting) {
         postingList.add(posting);
-        posting.setWriter(this);
     }
 
-    public void addReport(Report report) { this.reportList.add(report); }
-
-    //=== remove Methods ===//
+    public void addPoints(Integer points) {
+        if (points != null) {
+            point += points;
+        }
+    }
 
     public void removePosting(Posting posting) {
         fromPostingList.remove(posting);
@@ -289,8 +227,6 @@ public class Member {
         savedPostingList.remove(savedPosting);
     }
 
-    //=== reload Methods ===//
-
     public void reloadFollowing(Long following) {
         this.following = following;
     }
@@ -299,20 +235,9 @@ public class Member {
         this.follower = follower;
     }
 
-    public void reloadNickname(String nickname) { this.nickname = nickname; }
-
-    public void reloadIntroduction(String introduction) { this.introduction = introduction; }
-
-    public void reloadLoginId(String loginId) { this.loginId = loginId; }
-
-    public void reloadProfileImage(String profileImage) { this.profileImage = profileImage; }
-
     public void reloadPopularity(Long popularity) {this.popularity = popularity;}
-
-    //=== change Methods ===//
 
     public void changeLoginPw(String password, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.loginPw = bCryptPasswordEncoder.encode(password);
     }
-
 }

@@ -9,5 +9,5 @@ public interface CommissionRepositoryCustom {
 
     List<Commission> findCommissionsByDirectorId(Long directorId, Integer pageSize, LocalDateTime cursorDateTime);
 
-    List<Commission> findUnreviewedCommissions(Integer pageSize, LocalDateTime cursorDateTime, Long cursorId);
+    List<Commission> findUnreviewedCommissions(Long memberId, Integer pageSize, LocalDateTime cursorDateTime, Long cursorId);
 }

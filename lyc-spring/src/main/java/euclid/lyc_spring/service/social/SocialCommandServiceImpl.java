@@ -60,7 +60,10 @@ public class SocialCommandServiceImpl implements SocialCommandService {
 
         Member follower = memberRepository.findById(loginMember.getId())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        Follow follow = new Follow(follower,following);
+        Follow follow = Follow.builder()
+                .follower(follower)
+                .following(following)
+                .build();
 
         following.reloadFollower(following.getFollower()+1);
         follower.reloadFollowing(follower.getFollowing()+1);
@@ -121,7 +124,6 @@ public class SocialCommandServiceImpl implements SocialCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_INFO_NOT_FOUND));
 
         info = updateInfo(info, styleInfoDTO);
-        member.setInfo(info);
 
         return InfoResponseDTO.AllInfoDTO.toDTO(info);
     }
@@ -288,7 +290,10 @@ public class SocialCommandServiceImpl implements SocialCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         // 차단 관계 생성
-        BlockMember blockMemberRelation = new BlockMember(member, blockMember);
+        BlockMember blockMemberRelation = BlockMember.builder()
+                .member(member)
+                .blockedMember(blockMember)
+                .build();
         blockMemberRepository.save(blockMemberRelation);
 
         // 팔로우 관계 삭제
@@ -355,7 +360,6 @@ public class SocialCommandServiceImpl implements SocialCommandService {
                 .build();
 
         report = reportRepository.save(report);
-        reportedMember.addReport(report);
 
         return MemberDTO.MemberProfileDTO.toDTO(reportedMember);
     }

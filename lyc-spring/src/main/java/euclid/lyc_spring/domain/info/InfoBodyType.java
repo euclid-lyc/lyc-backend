@@ -2,16 +2,13 @@ package euclid.lyc_spring.domain.info;
 
 import euclid.lyc_spring.domain.enums.BodyType;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.*;
 
 @Getter
 @Entity
-@DynamicUpdate
-@DynamicInsert
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class InfoBodyType {
 
     @Id
@@ -26,17 +23,7 @@ public class InfoBodyType {
     @Column(nullable = false)
     private Boolean isGood;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "info_id", nullable = false)
+    @JoinColumn(name = "info_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Info info;
-
-    protected InfoBodyType() {}
-
-    @Builder
-    public InfoBodyType(Info info, BodyType bodyType, Boolean isGood) {
-        this.info = info;
-        this.bodyType = bodyType;
-        this.isGood = isGood;
-    }
 }

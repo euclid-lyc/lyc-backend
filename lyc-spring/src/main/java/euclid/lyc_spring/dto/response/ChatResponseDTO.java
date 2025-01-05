@@ -70,6 +70,7 @@ public class ChatResponseDTO {
         private final String sender;
         private final String profileImage;
         private final String content;
+        private final MessageCategory msgType;
         private final Boolean isText;
         private final Boolean isChecked;
         private final LocalDateTime createdAt;
@@ -79,6 +80,7 @@ public class ChatResponseDTO {
                     .sender(message.getMemberChat().getMember().getNickname())
                     .profileImage(message.getMemberChat().getMember().getProfileImage())
                     .content(message.getContent())
+                    .msgType(message.getCategory())
                     .isText(message.getIsText())
                     .isChecked(message.getIsChecked())
                     .createdAt(message.getCreatedAt())
@@ -201,7 +203,6 @@ public class ChatResponseDTO {
         public static ChatDTO toDTO(List<Message> messages) {
             return ChatDTO.builder()
                     .messages(messages.stream()
-                            .filter(message -> message.getCategory().equals(MessageCategory.COMMON)) // 채팅방 불러올 때 COMMON 메시지만 불러오게 함
                             .map(MessageInfoDTO::toDTO)
                             .toList())
                     .build();
@@ -213,12 +214,13 @@ public class ChatResponseDTO {
     @Builder(access = AccessLevel.PRIVATE)
     public static class ShareClothesListDTO{
         private final Long chatId;
-        private final boolean share;
+        private final Boolean isShared;
         public static ShareClothesListDTO toDTO(Chat chat) {
             return ShareClothesListDTO.builder()
                     .chatId(chat.getId())
-                    .share(chat.isShareClothesList())
+                    .isShared(chat.getIsShared())
                     .build();
         }
     }
+
 }

@@ -1,15 +1,13 @@
 package euclid.lyc_spring.domain.chat;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.*;
 
 @Getter
 @Entity
-@DynamicUpdate
-@DynamicInsert
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class CommissionClothes {
 
     @Id
@@ -24,15 +22,7 @@ public class CommissionClothes {
     private String url;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chat_id", nullable = false)
+    @JoinColumn(name = "chat_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Chat chat;
 
-    protected CommissionClothes() {}
-
-    @Builder
-    public CommissionClothes(String image, String url, Chat chat) {
-        this.image = image;
-        this.url = url;
-        this.chat = chat;
-    }
 }

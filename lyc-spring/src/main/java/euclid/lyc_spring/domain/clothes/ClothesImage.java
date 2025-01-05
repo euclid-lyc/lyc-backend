@@ -1,16 +1,13 @@
 package euclid.lyc_spring.domain.clothes;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.*;
 
 @Getter
 @Entity
-@DynamicUpdate
-@DynamicInsert
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class ClothesImage {
 
     @Id
@@ -21,15 +18,8 @@ public class ClothesImage {
     @Column(nullable = false)
     private String image;
 
-    @Setter
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "clothes_id", nullable = false)
+    @JoinColumn(name = "clothes_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Clothes clothes;
 
-    protected ClothesImage() {}
-
-    @Builder
-    public ClothesImage(String image) {
-        this.image = image;
-    }
 }

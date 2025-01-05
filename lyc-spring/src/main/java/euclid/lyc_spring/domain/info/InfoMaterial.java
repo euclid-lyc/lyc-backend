@@ -2,16 +2,13 @@ package euclid.lyc_spring.domain.info;
 
 import euclid.lyc_spring.domain.enums.Material;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.*;
 
 @Getter
 @Entity
-@DynamicUpdate
-@DynamicInsert
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class InfoMaterial {
 
     @Id
@@ -26,17 +23,8 @@ public class InfoMaterial {
     @Column(nullable = false)
     private Boolean isPrefer;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "info_id", nullable = false)
+    @JoinColumn(name = "info_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Info info;
 
-    protected InfoMaterial() {}
-
-    @Builder
-    public InfoMaterial(Info info, Material material, Boolean isPrefer) {
-        this.info = info;
-        this.material = material;
-        this.isPrefer = isPrefer;
-    }
 }

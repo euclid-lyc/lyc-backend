@@ -13,9 +13,11 @@ import java.time.LocalDateTime;
 
 @Getter
 @Entity
+@Builder
 @DynamicUpdate
 @DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Message {
 
@@ -43,16 +45,7 @@ public class Message {
     private MessageCategory category;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_chat_id", nullable = false)
+    @JoinColumn(name = "member_chat_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private MemberChat memberChat;
-
-    @Builder
-    public Message(String content, Boolean isText, Boolean isChecked, MessageCategory category, MemberChat memberChat) {
-        this.content = content;
-        this.isText = isText;
-        this.isChecked = isChecked;
-        this.category = category;
-        this.memberChat = memberChat;
-    }
 
 }

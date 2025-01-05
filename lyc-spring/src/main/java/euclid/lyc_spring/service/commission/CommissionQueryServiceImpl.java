@@ -11,7 +11,7 @@ import euclid.lyc_spring.domain.chat.CommissionClothes;
 import euclid.lyc_spring.domain.chat.commission.Commission;
 import euclid.lyc_spring.dto.response.CommissionDTO;
 import euclid.lyc_spring.repository.ChatRepository;
-import euclid.lyc_spring.repository.CommissionRepository;
+import euclid.lyc_spring.repository.commission.CommissionRepository;
 import euclid.lyc_spring.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -71,7 +71,7 @@ public class CommissionQueryServiceImpl implements CommissionQueryService {
                     .map(CommissionDTO.ClothesViewDTO::toDTO)
                     .toList();
         else if (commission.getMember().getId().equals(member.getId())) {
-            if(chat.isShareClothesList()){
+            if(chat.getIsShared()){
                 List<CommissionClothes> clotheList = chat.getCommissionClothesList();
 
                 return clotheList.stream()

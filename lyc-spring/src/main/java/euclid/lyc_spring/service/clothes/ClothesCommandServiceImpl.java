@@ -41,11 +41,17 @@ public class ClothesCommandServiceImpl implements ClothesCommandService {
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        Clothes clothes = new Clothes(member, clothesByImageDTO.getTitle(), clothesByImageDTO.getText(), false);
+        Clothes clothes = Clothes.builder()
+                .member(member)
+                .title(clothesByImageDTO.getTitle())
+                .text(clothesByImageDTO.getText())
+                .isText(false)
+                .build();
 
-        member.addClothes(clothes);
         clothes = clothesRepository.save(clothes);
+
         createClothesImage(clothes, imageUrl);
+        member.addClothes(clothes);
 
         return ClothesDTO.ClothesImageResponseDTO.toDTO(clothes);
     }
@@ -54,9 +60,10 @@ public class ClothesCommandServiceImpl implements ClothesCommandService {
 
         ClothesImage clothesImage = ClothesImage.builder()
                 .image(imageUrl)
+                .clothes(clothes)
                 .build();
 
-        clothes.addClothesImage(clothesImage);
+        clothes.setClothesImage(clothesImage);
         clothesImageRepository.save(clothesImage);
     }
 
@@ -67,11 +74,17 @@ public class ClothesCommandServiceImpl implements ClothesCommandService {
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        Clothes clothes = new Clothes(member, clothesByTextDTO.getTitle(), clothesByTextDTO.getText(), true);
+        Clothes clothes = Clothes.builder()
+                .member(member)
+                .title(clothesByTextDTO.getTitle())
+                .text(clothesByTextDTO.getText())
+                .isText(true)
+                .build();
 
-        member.addClothes(clothes);
-        clothesRepository.save(clothes);
+        clothes = clothesRepository.save(clothes);
+
         createClothesByText(clothes, clothesByTextDTO);
+        member.addClothes(clothes);
 
         return ClothesDTO.ClothesTextResponseDTO.toDTO(clothes);
     }
@@ -81,9 +94,10 @@ public class ClothesCommandServiceImpl implements ClothesCommandService {
         ClothesText clothesText = ClothesText.builder()
                 .material(clothesByTextDTO.getMaterial())
                 .fit(clothesByTextDTO.getFit())
+                .clothes(clothes)
                 .build();
 
-        clothes.addClothesText(clothesText);
+        clothes.setClothesText(clothesText);
         clothesTextRepository.save(clothesText);
     }
 
