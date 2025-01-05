@@ -203,17 +203,14 @@ public class Member {
 
     public void addFromPosting(Posting posting) {
         fromPostingList.add(posting);
-        posting.setFromMember(this);
     }
 
     public void addToPosting(Posting posting) {
         toPostingList.add(posting);
-        posting.setToMember(this);
     }
 
     public void addPosting(Posting posting) {
         postingList.add(posting);
-        posting.setWriter(this);
     }
 
     public void addPoints(Integer points) {
