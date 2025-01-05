@@ -2,8 +2,6 @@ package euclid.lyc_spring.domain.chat;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 
 @Getter
 @Entity
