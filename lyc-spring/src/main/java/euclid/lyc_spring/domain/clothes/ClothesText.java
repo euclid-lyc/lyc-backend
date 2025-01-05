@@ -3,16 +3,13 @@ package euclid.lyc_spring.domain.clothes;
 import euclid.lyc_spring.domain.enums.Fit;
 import euclid.lyc_spring.domain.enums.Material;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.*;
 
 @Getter
 @Entity
-@DynamicUpdate
-@DynamicInsert
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class ClothesText {
 
     @Id
@@ -28,16 +25,8 @@ public class ClothesText {
     @Column(nullable = false)
     private Fit fit;
 
-    @Setter
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "clothes_id", nullable = false)
+    @JoinColumn(name = "clothes_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Clothes clothes;
-
-    protected ClothesText() {}
-
-    @Builder
-    public ClothesText(Material material, Fit fit) {
-        this.material = material;
-        this.fit = fit;
-    }
+    
 }
