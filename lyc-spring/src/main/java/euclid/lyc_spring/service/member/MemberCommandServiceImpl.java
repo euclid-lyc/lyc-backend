@@ -68,7 +68,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         Info info = loginMember.getInfo();
 
-        info.reloadAdrress(addressReqDTO);
+        info.updateAddress(addressReqDTO);
         infoRepository.save(info);
         return MemberDTO.AddressDTO.toDTO(loginMember);
     }

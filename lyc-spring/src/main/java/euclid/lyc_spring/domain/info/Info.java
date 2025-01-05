@@ -81,12 +81,10 @@ public class Info {
 
     public void addInfoStyle(InfoStyle infoStyle) {
         infoStyleList.add(infoStyle);
-        infoStyle.setInfo(this);
     }
 
     public void addInfoMaterial(InfoMaterial infoMaterial) {
         infoMaterialList.add(infoMaterial);
-        infoMaterial.setInfo(this);
     }
 
     public void addInfoFit(InfoFit infoFit) {
@@ -97,7 +95,7 @@ public class Info {
         infoBodyTypeList.add(infoBodyType);
     }
 
-    public void reloadAdrress(MemberRequestDTO.AddressReqDTO addressReqDTO) {
+    public void updateAddress(MemberRequestDTO.AddressReqDTO addressReqDTO) {
         this.postalCode = addressReqDTO.getPostalCode();
         this.address = addressReqDTO.getAddress();
         this.detailAddress = addressReqDTO.getDetailAddress();
