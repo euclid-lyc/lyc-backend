@@ -96,7 +96,6 @@ public class Info {
 
     public void addInfoBodyType(InfoBodyType infoBodyType) {
         infoBodyTypeList.add(infoBodyType);
-        infoBodyType.setInfo(this);
     }
 
     public void reloadAdrress(MemberRequestDTO.AddressReqDTO addressReqDTO) {
