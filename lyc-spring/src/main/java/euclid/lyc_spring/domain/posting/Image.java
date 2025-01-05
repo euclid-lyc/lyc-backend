@@ -1,9 +1,7 @@
 package euclid.lyc_spring.domain.posting;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -12,8 +10,9 @@ import java.util.List;
 
 @Getter
 @Entity
-@DynamicUpdate
-@DynamicInsert
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Image {
 
     @Id
@@ -24,25 +23,14 @@ public class Image {
     @Column(nullable = false)
     private String image;
 
+    @Builder.Default
     @OneToMany(mappedBy = "image", cascade = CascadeType.ALL)
-    private List<ImageUrl> imageUrlList;
+    private List<ImageUrl> imageUrlList = new ArrayList<>();
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "posting_id", nullable = false)
     private Posting posting;
 
-    protected Image() {}
-
-    @Builder
-    public Image(String image, Posting posting) {
-        this.image = image;
-        this.posting = posting;
-        this.imageUrlList = new ArrayList<>();
-    }
-
-
-    //=== Methods ===//
     public void addImageUrl(ImageUrl imageUrl) {
         imageUrlList.add(imageUrl);
         imageUrl.setImage(this);

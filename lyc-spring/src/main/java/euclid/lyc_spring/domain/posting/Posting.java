@@ -85,7 +85,6 @@ public class Posting {
 
     public void addImage(Image image) {
         imageList.add(image);
-        image.setPosting(this);
     }
 
     public void addSavedPosting(SavedPosting savedPosting) {
