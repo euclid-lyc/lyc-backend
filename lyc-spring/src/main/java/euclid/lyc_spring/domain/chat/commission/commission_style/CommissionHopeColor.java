@@ -26,7 +26,7 @@ public class CommissionHopeColor {
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "commission_id", nullable = false)
+    @JoinColumn(name = "commission_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Commission commission;
 
 }

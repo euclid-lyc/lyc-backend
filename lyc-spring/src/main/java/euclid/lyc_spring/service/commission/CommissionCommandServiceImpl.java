@@ -462,6 +462,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                     CommissionHopeColor styleColor = CommissionHopeColor.builder()
                             .color(color)
                             .isPrefer(true)
+                            .commission(commission)
                             .build();
                     styleColor = commissionHopeColorRepository.save(styleColor);
                     commission.addHopeColor(styleColor);
@@ -476,6 +477,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                     CommissionHopeMaterial styleMaterial = CommissionHopeMaterial.builder()
                             .material(material)
                             .isPrefer(true)
+                            .commission(commission)
                             .build();
                     styleMaterial = commissionHopeMaterialRepository.save(styleMaterial);
                     commission.addHopeMaterial(styleMaterial);
@@ -490,6 +492,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                     CommissionHopeFit hopeFit = CommissionHopeFit.builder()
                             .fit(fit)
                             .isPrefer(true)
+                            .commission(commission)
                             .build();
                     hopeFit = commissionHopeFitRepository.save(hopeFit);
                     commission.addHopeFit(hopeFit);
@@ -504,6 +507,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                     CommissionHopeStyle hopeStyle = CommissionHopeStyle.builder()
                             .style(style)
                             .isPrefer(true)
+                            .commission(commission)
                             .build();
                     hopeStyle = commissionHopeStyleRepository.save(hopeStyle);
                     commission.addHopeStyle(hopeStyle);
@@ -518,6 +522,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                     CommissionStyle infoStyle = CommissionStyle.builder()
                             .style(style)
                             .isPrefer(true)
+                            .commission(commission)
                             .build();
                     infoStyle = commissionStyleRepository.save(infoStyle);
                     commission.addStyle(infoStyle);
@@ -528,6 +533,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                     CommissionStyle infoStyle = CommissionStyle.builder()
                             .style(style)
                             .isPrefer(false)
+                            .commission(commission)
                             .build();
                     infoStyle = commissionStyleRepository.save(infoStyle);
                     commission.addStyle(infoStyle);
@@ -541,6 +547,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                     CommissionFit infoFit = CommissionFit.builder()
                             .fit(fit)
                             .isPrefer(true)
+                            .commission(commission)
                             .build();
                     infoFit = commissionFitRepository.save(infoFit);
                     commission.addFit(infoFit);
@@ -551,6 +558,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                     CommissionFit infoFit = CommissionFit.builder()
                             .fit(fit)
                             .isPrefer(false)
+                            .commission(commission)
                             .build();
                     infoFit = commissionFitRepository.save(infoFit);
                     commission.addFit(infoFit);
@@ -565,6 +573,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                     CommissionBodyType infoBodyType = CommissionBodyType.builder()
                             .bodyType(bodyType)
                             .isGood(true)
+                            .commission(commission)
                             .build();
                     infoBodyType = commissionBodyTypeRepository.save(infoBodyType);
                     commission.addBodyType(infoBodyType);
@@ -575,6 +584,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                     CommissionBodyType infoBodyType = CommissionBodyType.builder()
                             .bodyType(bodyType)
                             .isGood(false)
+                            .commission(commission)
                             .build();
                     infoBodyType = commissionBodyTypeRepository.save(infoBodyType);
                     commission.addBodyType(infoBodyType);
@@ -589,6 +599,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                     CommissionMaterial infoMaterial = CommissionMaterial.builder()
                             .material(material)
                             .isPrefer(true)
+                            .commission(commission)
                             .build();
                     infoMaterial = commissionMaterialRepository.save(infoMaterial);
                     commission.addMaterial(infoMaterial);
@@ -599,9 +610,10 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                     CommissionMaterial infoMaterial = CommissionMaterial.builder()
                             .material(material)
                             .isPrefer(false)
+                            .commission(commission)
                             .build();
                     infoMaterial = commissionMaterialRepository.save(infoMaterial);
-                    commissionMaterialRepository.save(infoMaterial);
+                    commission.addMaterial(infoMaterial);
                 });
     }
 }
