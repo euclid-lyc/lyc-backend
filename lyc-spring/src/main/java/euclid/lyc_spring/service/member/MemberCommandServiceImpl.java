@@ -19,6 +19,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -43,7 +45,10 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         // 아이디 중복 확인
-        if (memberRepository.existsByLoginId(infoDTO.getLoginId())) {
+        List<Member> duplicatedIdMembers = memberRepository.findByLoginId(infoDTO.getLoginId()).stream()
+                .filter(member -> !member.getLoginId().equals(loginId))
+                .toList();
+        if (!duplicatedIdMembers.isEmpty()) {
             throw new MemberHandler(ErrorStatus.MEMBER_DUPLICATED_LOGIN_ID);
         }
 
