@@ -213,12 +213,13 @@ public class ChatResponseDTO {
     @Builder(access = AccessLevel.PRIVATE)
     public static class ShareClothesListDTO{
         private final Long chatId;
-        private final boolean share;
+        private final Boolean isShared;
         public static ShareClothesListDTO toDTO(Chat chat) {
             return ShareClothesListDTO.builder()
                     .chatId(chat.getId())
-                    .share(chat.isShareClothesList())
+                    .isShared(chat.getIsShared())
                     .build();
         }
     }
+
 }

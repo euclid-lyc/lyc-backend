@@ -12,6 +12,7 @@ import euclid.lyc_spring.dto.response.InfoResponseDTO;
 import euclid.lyc_spring.dto.response.PostingDTO;
 import euclid.lyc_spring.dto.response.WeatherDTO;
 import euclid.lyc_spring.repository.*;
+import euclid.lyc_spring.repository.commission.CommissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

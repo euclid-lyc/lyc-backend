@@ -1,6 +1,6 @@
-package euclid.lyc_spring.domain.clothes;
+package euclid.lyc_spring.domain.chat.commission.commission_info;
 
-import euclid.lyc_spring.domain.enums.Fit;
+import euclid.lyc_spring.domain.chat.commission.Commission;
 import euclid.lyc_spring.domain.enums.Material;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,7 +10,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ClothesText {
+public class CommissionMaterial {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,12 +21,11 @@ public class ClothesText {
     @Column(nullable = false)
     private Material material;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Fit fit;
+    private Boolean isPrefer;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "clothes_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private Clothes clothes;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "commission_id", nullable = false)
+    private Commission commission;
 
 }

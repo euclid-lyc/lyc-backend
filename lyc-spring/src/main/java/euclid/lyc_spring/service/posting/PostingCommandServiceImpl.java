@@ -16,6 +16,7 @@ import euclid.lyc_spring.domain.posting.Posting;
 import euclid.lyc_spring.dto.request.PostingRequestDTO;
 import euclid.lyc_spring.dto.response.PostingDTO;
 import euclid.lyc_spring.repository.*;
+import euclid.lyc_spring.repository.commission.CommissionRepository;
 import euclid.lyc_spring.service.s3.S3ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -87,6 +87,6 @@ public class InfoRequestDTO {
         private LocalDate dateToUse;
         private LocalDate desiredDate;
         private String text;
-        private Boolean isShareClothesList;
+        private Boolean isShared;
     }
 }

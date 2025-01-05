@@ -3,11 +3,7 @@ package euclid.lyc_spring.domain.chat;
 import euclid.lyc_spring.domain.chat.commission.Commission;
 import euclid.lyc_spring.domain.mapping.MemberChat;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -18,8 +14,9 @@ import java.util.List;
 
 @Getter
 @Entity
-@DynamicUpdate
-@DynamicInsert
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Chat {
 
@@ -41,49 +38,33 @@ public class Chat {
     private LocalDateTime inactive;
 
     @Setter
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "commission_id", nullable = false)
-    private Commission commission;
-
-    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
-    private List<Schedule> scheduleList;
-
-    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
-    private List<MemberChat> memberChatList;
-
-    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
-    private List<CommissionClothes> commissionClothesList;
-
-    @Setter
     @Column
     private Integer savedClothesCount;
 
     @Setter
     @Column
-    private boolean shareClothesList;
+    private Boolean isShared;
 
-    protected Chat(){}
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "commission_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Commission commission;
 
-    @Builder
-    public Chat(LocalDateTime createdAt, LocalDateTime updatedAt, Commission commission) {
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.commission = commission;
-        this.scheduleList = new ArrayList<>();
-        this.memberChatList = new ArrayList<>();
-        this.commissionClothesList = new ArrayList<>();
-        this.savedClothesCount = 0;
-        this.shareClothesList = commission.getCommissionOther().getIsShareClothesList();
-    }
+    @Builder.Default
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
+    private List<Schedule> scheduleList = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
+    private List<MemberChat> memberChatList = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL)
+    private List<CommissionClothes> commissionClothesList = new ArrayList<>();
 
     public void addSchedule(Schedule schedule){
         scheduleList.add(schedule);
     }
 
-    public void reloadSavedClothesCount(int count){ this.savedClothesCount = count; }
-
-    public void reloadShareClothesList(boolean share) { this.shareClothesList = share; }
-  
     public void addMemberChat(MemberChat chat){ memberChatList.add(chat); }
 
   
