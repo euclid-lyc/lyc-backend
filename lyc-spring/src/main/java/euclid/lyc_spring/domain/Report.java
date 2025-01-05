@@ -7,9 +7,11 @@ import org.hibernate.annotations.DynamicUpdate;
 
 @Getter
 @Entity
+@Builder
 @DynamicUpdate
 @DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Report {
 
     @Id
@@ -39,20 +41,6 @@ public class Report {
     private Boolean isProcessed; // 신고 처리 여부
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Member member;
-
-    @Builder
-    public Report(Boolean abuse, Boolean obsceneContent, Boolean privacy,
-                  Boolean spam, Boolean infringement, String description,
-                  Member member) {
-        this.abuse = abuse;
-        this.obsceneContent = obsceneContent;
-        this.privacy = privacy;
-        this.spam = spam;
-        this.infringement = infringement;
-        this.description = description;
-        this.isProcessed = false;
-        this.member = member;
-    }
 }

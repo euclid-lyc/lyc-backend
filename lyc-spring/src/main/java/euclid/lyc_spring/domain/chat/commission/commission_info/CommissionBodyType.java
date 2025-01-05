@@ -1,5 +1,6 @@
-package euclid.lyc_spring.domain.info;
+package euclid.lyc_spring.domain.chat.commission.commission_info;
 
+import euclid.lyc_spring.domain.chat.commission.Commission;
 import euclid.lyc_spring.domain.enums.BodyType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,7 +10,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class InfoBodyType {
+public class CommissionBodyType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +25,7 @@ public class InfoBodyType {
     private Boolean isGood;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "info_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private Info info;
+    @JoinColumn(name = "commission_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Commission commission;
+
 }

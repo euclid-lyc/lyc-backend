@@ -12,6 +12,7 @@ import euclid.lyc_spring.dto.response.InfoResponseDTO;
 import euclid.lyc_spring.dto.response.PostingDTO;
 import euclid.lyc_spring.dto.response.WeatherDTO;
 import euclid.lyc_spring.repository.*;
+import euclid.lyc_spring.repository.commission.CommissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -233,7 +234,7 @@ public class PostingQueryServiceImpl implements PostingQueryService {
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        List<Commission> commissions = commissionRepository.findUnreviewedCommissions(pageSize, cursorDateTime, cursorId);
+        List<Commission> commissions = commissionRepository.findUnreviewedCommissions(member.getId(), pageSize, cursorDateTime, cursorId);
         return CommissionDTO.TerminatedCommissionListDTO.toDTO(commissions);
     }
 }

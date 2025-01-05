@@ -1,6 +1,7 @@
-package euclid.lyc_spring.domain.info;
+package euclid.lyc_spring.domain.chat.commission.commission_style;
 
-import euclid.lyc_spring.domain.enums.Style;
+import euclid.lyc_spring.domain.chat.commission.Commission;
+import euclid.lyc_spring.domain.enums.Color;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,7 +10,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class InfoStyle {
+public class CommissionHopeColor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,13 +19,14 @@ public class InfoStyle {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Style style;
+    private Color color;
 
     @Column(nullable = false)
     private Boolean isPrefer;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "info_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private Info info;
+    @JoinColumn(name = "commission_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Commission commission;
 
 }

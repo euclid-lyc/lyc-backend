@@ -2,15 +2,17 @@ package euclid.lyc_spring.domain;
 
 import euclid.lyc_spring.domain.enums.CommissionStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @Entity
-@DynamicUpdate
-@DynamicInsert
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Notification {
 
     @Id
@@ -25,8 +27,7 @@ public class Notification {
     @Column(columnDefinition = "text")
     private String text;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Member member;
 }

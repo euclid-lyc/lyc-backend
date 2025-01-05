@@ -3,7 +3,6 @@ package euclid.lyc_spring.dto.response;
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.chat.CommissionClothes;
 import euclid.lyc_spring.domain.chat.commission.Commission;
-import euclid.lyc_spring.domain.chat.commission.CommissionOther;
 import euclid.lyc_spring.domain.chat.commission.commission_info.*;
 import euclid.lyc_spring.domain.chat.commission.commission_style.*;
 import euclid.lyc_spring.domain.enums.*;
@@ -128,9 +127,9 @@ public class CommissionDTO {
                     .commissionId(commission.getId())
                     .createdDate(commission.getCreatedAt())
                     .status(commission.getStatus())
-                    .commissionInfo(CommissionInfoDetailDTO.toDTO(commission.getCommissionInfo()))
-                    .commissionStyle(CommissionStyleDTO.toDTO(commission.getCommissionStyle()))
-                    .commissionOther(CommissionOtherDTO.toDTO(commission.getCommissionOther()))
+                    .commissionInfo(CommissionInfoDetailDTO.toDTO(commission))
+                    .commissionStyle(CommissionStyleDTO.toDTO(commission))
+                    .commissionOther(CommissionOtherDTO.toDTO(commission))
                     .build();
         }
     }
@@ -152,13 +151,13 @@ public class CommissionDTO {
             this.text = text;
         }
 
-        public static CommissionOtherDTO toDTO(CommissionOther commissionOther) {
+        public static CommissionOtherDTO toDTO(Commission commission) {
             return CommissionOtherDTO.builder()
-                    .dateToUse(commissionOther.getDateToUse())
-                    .desiredDate(commissionOther.getDesiredDate())
-                    .maxPrice(commissionOther.getMaxPrice())
-                    .minPrice(commissionOther.getMinPrice())
-                    .text(commissionOther.getText())
+                    .dateToUse(commission.getDateToUse())
+                    .desiredDate(commission.getDesiredDate())
+                    .maxPrice(commission.getMaxPrice())
+                    .minPrice(commission.getMinPrice())
+                    .text(commission.getText())
                     .build();
         }
     }
@@ -189,20 +188,20 @@ public class CommissionDTO {
             this.commissionInfoMaterialList = commissionInfoMaterialList;
         }
 
-        public static CommissionInfoDetailDTO toDTO(CommissionInfo commissionInfo) {
+        public static CommissionInfoDetailDTO toDTO(Commission commission) {
             return CommissionInfoDetailDTO.builder()
-                    .height(commissionInfo.getHeight())
-                    .weight(commissionInfo.getWeight())
-                    .topSize(commissionInfo.getTopSize())
-                    .bottomSize(commissionInfo.getBottomSize())
-                    .text(commissionInfo.getText())
-                    .commissionInfoStyleList(commissionInfo.getCommissionInfoStyleList()
+                    .height(commission.getHeight())
+                    .weight(commission.getWeight())
+                    .topSize(commission.getTopSize())
+                    .bottomSize(commission.getBottomSize())
+                    .text(commission.getText())
+                    .commissionInfoStyleList(commission.getStyles()
                             .stream().map(StyleDTO::toDTO).toList())
-                    .commissionInfoBodyTypeList(commissionInfo.getCommissionInfoBodyTypeList()
+                    .commissionInfoBodyTypeList(commission.getBodyTypes()
                             .stream().map(BodyTypeDTO::toDTO).toList())
-                    .commissionInfoMaterialList(commissionInfo.getCommissionInfoMaterialList()
+                    .commissionInfoMaterialList(commission.getMaterials()
                             .stream().map(MaterialDTO::toDTO).toList())
-                    .commissionInfoFitList(commissionInfo.getCommissionInfoFitList()
+                    .commissionInfoFitList(commission.getFits()
                             .stream().map(FitDTO::toDTO).toList())
                     .build();
         }
@@ -224,12 +223,12 @@ public class CommissionDTO {
             this.color = color;
         }
 
-        public static CommissionStyleDTO toDTO(CommissionStyle commissionStyle) {
+        public static CommissionStyleDTO toDTO(Commission commission) {
             return CommissionStyleDTO.builder()
-                    .style(commissionStyle.getStyle().stream().map(StyleDTO:: toDTO).toList())
-                    .fit(commissionStyle.getFit().stream().map(FitDTO :: toDTO).toList())
-                    .color(commissionStyle.getColor().stream().map(ColorDTO :: toDTO).toList())
-                    .material(commissionStyle.getMaterial().stream().map(MaterialDTO::toDTO).toList())
+                    .style(commission.getHopeStyles().stream().map(StyleDTO:: toDTO).toList())
+                    .fit(commission.getHopeFits().stream().map(FitDTO :: toDTO).toList())
+                    .color(commission.getHopeColors().stream().map(ColorDTO :: toDTO).toList())
+                    .material(commission.getHopeMaterials().stream().map(MaterialDTO::toDTO).toList())
                     .build();
         }
     }
@@ -245,14 +244,14 @@ public class CommissionDTO {
             this.isPrefer = isPrefer;
         }
 
-        public static StyleDTO toDTO(CommissionStyleStyle style) {
+        public static StyleDTO toDTO(CommissionHopeStyle style) {
             return StyleDTO.builder()
                     .style(style.getStyle())
                     .isPrefer(style.getIsPrefer())
                     .build();
         }
 
-        public static StyleDTO toDTO(CommissionInfoStyle style){
+        public static StyleDTO toDTO(CommissionStyle style){
             return StyleDTO.builder()
                     .style(style.getStyle())
                     .isPrefer(style.getIsPrefer())
@@ -271,14 +270,14 @@ public class CommissionDTO {
             this.isPrefer = isPrefer;
         }
 
-        public static MaterialDTO toDTO(CommissionStyleMaterial material) {
+        public static MaterialDTO toDTO(CommissionHopeMaterial material) {
             return MaterialDTO.builder()
                     .material(material.getMaterial())
                     .isPrefer(material.getIsPrefer())
                     .build();
         }
 
-        public static MaterialDTO toDTO(CommissionInfoMaterial material){
+        public static MaterialDTO toDTO(CommissionMaterial material){
             return MaterialDTO.builder()
                     .material(material.getMaterial())
                     .isPrefer(material.getIsPrefer())
@@ -297,14 +296,14 @@ public class CommissionDTO {
             this.isPrefer = isPrefer;
         }
 
-        public static FitDTO toDTO(CommissionStyleFit fit) {
+        public static FitDTO toDTO(CommissionHopeFit fit) {
             return FitDTO.builder()
                     .fit(fit.getFit())
                     .isPrefer(fit.getIsPrefer())
                     .build();
         }
 
-        public static FitDTO toDTO(CommissionInfoFit fit) {
+        public static FitDTO toDTO(CommissionFit fit) {
             return FitDTO.builder()
                     .fit(fit.getFit())
                     .isPrefer(fit.getIsPrefer())
@@ -324,7 +323,7 @@ public class CommissionDTO {
             this.isPrefer = isPrefer;
         }
 
-        public static ColorDTO toDTO(CommissionStyleColor color) {
+        public static ColorDTO toDTO(CommissionHopeColor color) {
             return ColorDTO.builder()
                     .color(color.getColor())
                     .isPrefer(color.getIsPrefer())
@@ -344,7 +343,7 @@ public class CommissionDTO {
             this.isGood = isGood;
         }
 
-        public static BodyTypeDTO toDTO(CommissionInfoBodyType bodyType) {
+        public static BodyTypeDTO toDTO(CommissionBodyType bodyType) {
             return BodyTypeDTO.builder()
                     .bodyType(bodyType.getBodyType())
                     .isGood(bodyType.getIsGood())

@@ -1,4 +1,4 @@
-package euclid.lyc_spring.repository;
+package euclid.lyc_spring.repository.commission;
 
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.chat.Chat;

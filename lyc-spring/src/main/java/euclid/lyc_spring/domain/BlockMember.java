@@ -1,15 +1,15 @@
 package euclid.lyc_spring.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 @Getter
 @Entity
-@DynamicUpdate
-@DynamicInsert
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class BlockMember {
 
     @Id
@@ -17,20 +17,12 @@ public class BlockMember {
     @Column(nullable = false, unique = true)
     private Long id;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Member member;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "blocked_member_id", nullable = false)
+    @JoinColumn(name = "blocked_member_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Member blockedMember;
 
-    protected BlockMember() {}
-
-    public BlockMember(Member member, Member blockedMember) {
-        this.member = member;
-        this.blockedMember = blockedMember;
-    }
 }

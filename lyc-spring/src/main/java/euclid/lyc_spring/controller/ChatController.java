@@ -115,8 +115,6 @@ public class ChatController {
     @Tag(name = "Chat - Message", description = "채팅방 메시지 관련 API")
     @Operation(summary = "[구현완료] 메시지 전송하기 (이미지) - 이미지 업로드", description = """
             채팅방에 전송할 이미지를 S3에 업로드합니다.
-            
-            ** 구현은 다 되어있지만... 추후 chatId 확인 로직 추가 예정 **
             """)
     @PostMapping(value = "/chats/{chatId}/messages/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<String> uploadImageMessage(

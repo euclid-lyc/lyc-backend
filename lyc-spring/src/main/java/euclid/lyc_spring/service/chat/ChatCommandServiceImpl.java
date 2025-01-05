@@ -15,6 +15,7 @@ import euclid.lyc_spring.domain.mapping.MemberChat;
 import euclid.lyc_spring.dto.request.ChatRequestDTO;
 import euclid.lyc_spring.dto.response.ChatResponseDTO;
 import euclid.lyc_spring.repository.*;
+import euclid.lyc_spring.repository.commission.CommissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;

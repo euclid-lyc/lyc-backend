@@ -32,10 +32,10 @@ public class CommissionRepositoryCustomImpl implements CommissionRepositoryCusto
     }
 
     @Override
-    public List<Commission> findUnreviewedCommissions(Integer pageSize, LocalDateTime cursorDateTime, Long cursorId) {
+    public List<Commission> findUnreviewedCommissions(Long memberId, Integer pageSize, LocalDateTime cursorDateTime, Long cursorId) {
 
         QCommission commission = QCommission.commission;
-        BooleanBuilder whereClause = getWhereClause(cursorDateTime, cursorId, commission);
+        BooleanBuilder whereClause = getWhereClause(memberId, cursorDateTime, cursorId, commission);
 
         return queryFactory
                 .selectFrom(commission)
@@ -45,10 +45,11 @@ public class CommissionRepositoryCustomImpl implements CommissionRepositoryCusto
                 .fetch();
     }
 
-    private static BooleanBuilder getWhereClause(LocalDateTime cursorDateTime, Long cursorId, QCommission commission) {
+    private static BooleanBuilder getWhereClause(Long memberId, LocalDateTime cursorDateTime, Long cursorId, QCommission commission) {
 
         LocalDateTime stdDateTime = LocalDateTime.now().minusDays(30);
         BooleanBuilder whereClause = new BooleanBuilder()
+                .and(commission.member.id.eq(memberId))                     // 로그인한 회원이 코디를 받은 의뢰
                 .and(commission.review.isNull())                            // review가 아직 작성되지 않은 의뢰
                 .and(commission.finishedAt.after(stdDateTime));             // 최근 30일 이내에 종료된 의뢰
 

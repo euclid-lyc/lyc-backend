@@ -16,6 +16,7 @@ import euclid.lyc_spring.domain.posting.Posting;
 import euclid.lyc_spring.dto.request.PostingRequestDTO;
 import euclid.lyc_spring.dto.response.PostingDTO;
 import euclid.lyc_spring.repository.*;
+import euclid.lyc_spring.repository.commission.CommissionRepository;
 import euclid.lyc_spring.service.s3.S3ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,11 @@ public class PostingCommandServiceImpl implements PostingCommandService {
         Member toMember = memberRepository.findById(postingSaveDTO.getToMemberId())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
+        // writer가 toMember도 fromMember도 아니면 오류
+        if (!writer.getId().equals(toMember.getId()) && !writer.getId().equals(fromMember.getId())) {
+            throw new PostingHandler(ErrorStatus.POSTING_CANNOT_SAVED_BY_WRITER);
+        }
+
         Posting posting = Posting.builder()
                 .minTemp(postingSaveDTO.getMinTemp())
                 .maxTemp(postingSaveDTO.getMaxTemp())
@@ -70,7 +76,7 @@ public class PostingCommandServiceImpl implements PostingCommandService {
         posting = postingRepository.save(posting);
 
         // 리뷰의 경우 연동 필요
-        if (commissionId != null) {
+        if (commissionId != null && writer.getId().equals(toMember.getId())) {
             Commission commission = commissionRepository.findById(commissionId)
                     .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
 
@@ -180,7 +186,11 @@ public class PostingCommandServiceImpl implements PostingCommandService {
             throw new PostingHandler(ErrorStatus.POSTING_CANNOT_SAVED_BY_WRITER);
         }
 
-        SavedPosting savedPosting = new SavedPosting(member, posting);
+        SavedPosting savedPosting = SavedPosting.builder()
+                .member(member)
+                .posting(posting)
+                .build();
+
         savedPostingRepository.save(savedPosting);
 
         return PostingDTO.PostingViewDTO.toDTO(posting);
@@ -221,7 +231,11 @@ public class PostingCommandServiceImpl implements PostingCommandService {
 
         if (getIsClickedLike(member.getId(), postingId))
             throw new PostingHandler(ErrorStatus.POSTING_ALREADY_LIKED);
-        LikedPosting likedPosting = new LikedPosting(member, posting);
+
+        LikedPosting likedPosting = LikedPosting.builder()
+                .member(member)
+                .posting(posting)
+                .build();
 
         // 인기도 증가
         Member uploader = posting.getFromMember();

@@ -13,9 +13,9 @@ import java.util.List;
 
 @Getter
 @Entity
-@DynamicUpdate
-@DynamicInsert
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class MemberChat {
 
     @Id
@@ -23,26 +23,17 @@ public class MemberChat {
     @Column(nullable = false, unique = true)
     private Long id;
 
+    @Builder.Default
     @OneToMany(mappedBy = "memberChat", cascade = CascadeType.ALL)
-    private List<Message> messageList;
+    private List<Message> messageList = new ArrayList<>();
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Member member;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chat_id", nullable = false)
+    @JoinColumn(name = "chat_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Chat chat;
-
-
-    @Builder
-    public MemberChat(Member member, Chat chat) {
-        this.messageList = new ArrayList<>();
-        this.member = member;
-        this.chat = chat;
-    }
 
     public void addMessage(Message message) {
         this.messageList.add(message);

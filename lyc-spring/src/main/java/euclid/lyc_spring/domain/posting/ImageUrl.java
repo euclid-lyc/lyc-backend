@@ -1,16 +1,15 @@
 package euclid.lyc_spring.domain.posting;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 @Getter
 @Entity
-@DynamicUpdate
-@DynamicInsert
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class ImageUrl {
 
     @Id
@@ -21,16 +20,8 @@ public class ImageUrl {
     @Column(nullable = false)
     private String link;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "image_id", nullable = false)
+    @JoinColumn(name = "image_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Image image;
 
-    protected ImageUrl() {}
-
-    @Builder
-    public ImageUrl(String link, Image image) {
-        this.link = link;
-        this.image = image;
-    }
 }

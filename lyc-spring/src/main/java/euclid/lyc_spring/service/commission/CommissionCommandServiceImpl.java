@@ -11,7 +11,6 @@ import euclid.lyc_spring.domain.chat.CommissionClothes;
 import euclid.lyc_spring.domain.chat.Message;
 import euclid.lyc_spring.domain.chat.Schedule;
 import euclid.lyc_spring.domain.chat.commission.Commission;
-import euclid.lyc_spring.domain.chat.commission.CommissionOther;
 import euclid.lyc_spring.domain.chat.commission.commission_style.*;
 import euclid.lyc_spring.domain.chat.commission.commission_info.*;
 import euclid.lyc_spring.domain.enums.MessageCategory;
@@ -22,6 +21,7 @@ import euclid.lyc_spring.dto.request.StyleRequestDTO;
 import euclid.lyc_spring.dto.response.ChatResponseDTO;
 import euclid.lyc_spring.dto.response.CommissionDTO;
 import euclid.lyc_spring.repository.*;
+import euclid.lyc_spring.repository.commission.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,21 +43,17 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
 
     private final MemberChatRepository memberChatRepository;
 
-    private final CommissionClotheRepository clotheRepository;
+    private final CommissionClothesRepository commissionClothesRepository;
 
-    private final CommissionInfoRepository commissionInfoRepository;
-    private final CommissionInfoStyleRepository commissionInfoStyleRepository;
-    private final CommissionInfoFitRepository commissionInfoFitRepository;
-    private final CommissionInfoBodyTypeRepository commissionInfoBodyTypeRepository;
-    private final CommissionInfoMaterialRepository commissionInfoMaterialRepository;
-
+    private final CommissionBodyTypeRepository commissionBodyTypeRepository;
+    private final CommissionFitRepository commissionFitRepository;
+    private final CommissionMaterialRepository commissionMaterialRepository;
     private final CommissionStyleRepository commissionStyleRepository;
-    private final CommissionStyleStyleRepository commissionStyleStyleRepository;
-    private final CommissionStyleFitRepository commissionStyleFitRepository;
-    private final CommissionStyleMaterialRepository commissionStyleMaterialRepository;
-    private final CommissionStyleColorRepository commissionStyleColorRepository;
 
-    private final CommissionOtherRepository commissionOtherRepository;
+    private final CommissionHopeColorRepository commissionHopeColorRepository;
+    private final CommissionHopeFitRepository commissionHopeFitRepository;
+    private final CommissionHopeMaterialRepository commissionHopeMaterialRepository;
+    private final CommissionHopeStyleRepository commissionHopeStyleRepository;
 
     @Transactional
     public CommissionDTO.CommissionViewDTO writeCommission(CommissionRequestDTO.CommissionDTO commissionRequestDTO) {
@@ -66,14 +62,10 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
         Member director = memberRepository.findByLoginId(commissionRequestDTO.getDirectorLoginId())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-
         // 셀프 의뢰 금지
         if(member.equals(director)) {
             throw new CommissionHandler(ErrorStatus.DIRECTOR_EQUAL_MEMBER);
         }
-
-        // 의뢰 가능한 디렉터인지 확인해야됨 (추가 예정)
-        // if(){}
 
         InfoRequestDTO.BasicInfoDTO basicInfoDTO = commissionRequestDTO.getBasicInfo();
         StyleRequestDTO.StyleDTO styleDTO = commissionRequestDTO.getStyle();
@@ -84,13 +76,30 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 .createdAt(LocalDateTime.now())
                 .member(member)
                 .director(director)
+                .height(basicInfoDTO.getHeight())
+                .weight(basicInfoDTO.getWeight())
+                .topSize(basicInfoDTO.getTopSize())
+                .bottomSize(basicInfoDTO.getBottomSize())
+                .text(basicInfoDTO.getText())
+                .dateToUse(otherMattersDTO.getDateToUse())
+                .desiredDate(otherMattersDTO.getDesiredDate())
+                .minPrice(otherMattersDTO.getMinPrice())
+                .maxPrice(otherMattersDTO.getMaxPrice())
+                .freeText(otherMattersDTO.getText())
+                .isShared(otherMattersDTO.getIsShared())
                 .build();
 
         commission = commissionRepository.save(commission);
 
-        createInfo(commission, basicInfoDTO);
-        createStyle(commission, styleDTO);
-        createOther(commission, otherMattersDTO);
+        createCommissionHopeStyle(commission, styleDTO.getStyleList());
+        createCommissionHopeFit(commission, styleDTO.getFitList());
+        createCommissionHopeMaterial(commission, styleDTO.getMaterialList());
+        createCommissionStyleColor(commission, styleDTO.getColorList());
+
+        createCommissionStyle(commission, basicInfoDTO.getInfoStyle());
+        createCommissionFit(commission, basicInfoDTO.getInfoFit());
+        createCommissionMaterial(commission, basicInfoDTO.getInfoMaterial());
+        createCommissionBodyType(commission, basicInfoDTO.getInfoBodyType());
 
         return CommissionDTO.CommissionViewDTO.toDTO(commission);
     }
@@ -116,8 +125,8 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 .url(clothesRequestDTO.getUrl())
                 .build();
 
-        clotheRepository.save(commissionClothes);
-        chat.reloadSavedClothesCount(chat.getSavedClothesCount()+1);
+        commissionClothesRepository.save(commissionClothes);
+        chat.setSavedClothesCount(chat.getSavedClothesCount()+1);
 
         return CommissionDTO.ClothesViewDTO.toDTO(commissionClothes);
     }
@@ -130,14 +139,14 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
         Commission commission = commissionRepository.findByChat(chat)
                 .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
-        CommissionClothes clothes = clotheRepository.findCommissionClothesByIdAndChat(clothesId,chat)
+        CommissionClothes clothes = commissionClothesRepository.findCommissionClothesByIdAndChat(clothesId,chat)
                 .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_CLOTHES_NOT_FOUND));
 
         if(!commission.getDirector().getId().equals(member.getId()))
             throw new CommissionHandler(ErrorStatus.DIRECTOR_NOT_EQUAL_MEMBER);
 
-        clotheRepository.delete(clothes);
-        chat.reloadSavedClothesCount(chat.getSavedClothesCount()-1);
+        commissionClothesRepository.delete(clothes);
+        chat.setSavedClothesCount(chat.getSavedClothesCount()-1);
 
         return CommissionDTO.ClothesViewDTO.toDTO(clothes);
     }
@@ -152,10 +161,10 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
 
         if(commission.getDirector().getId().equals(member.getId())) {
-            if(chat.isShareClothesList())
+            if(chat.getIsShared())
                 throw new CommissionHandler(ErrorStatus.COMMISSION_CLOTHES_LIST_IS_PUBLIC);
             else
-                chat.reloadShareClothesList(true);
+                chat.setIsShared(true);
 
             return ChatResponseDTO.ShareClothesListDTO.toDTO(chat);
         }
@@ -173,8 +182,8 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
 
         if(commission.getDirector().getId().equals(member.getId())){
-            if(chat.isShareClothesList())
-                chat.reloadShareClothesList(false);
+            if(chat.getIsShared())
+                chat.setIsShared(false);
             else
                 throw new CommissionHandler(ErrorStatus.COMMISSION_CLOTHES_LIST_IS_PRIVATE);
 
@@ -192,7 +201,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
 
         if(commission.getStatus().equals(REQUIRED) && commission.getDirector().getId().equals(member.getId())){
-            commission.reloadStatus(APPROVED);
+            commission.setStatus(APPROVED);
             commissionRepository.save(commission);
 
             Chat chat = Chat.builder()
@@ -216,7 +225,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
             memberChat2 = memberChatRepository.save(memberChat2);
 
             Schedule schedule = Schedule.builder()
-                    .date(commission.getCommissionOther().getDesiredDate())
+                    .date(commission.getDesiredDate())
                     .memo("수령 희망 날짜")
                     .chat(chat)
                     .build();
@@ -252,8 +261,8 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
 
         if(commission.getStatus().equals(REQUIRED) && commission.getDirector().getId().equals(member.getId())){
-            commission.reloadStatus(TERMINATED);
-            commission.reloadFinishedAt(LocalDateTime.now());
+            commission.setStatus(TERMINATED);
+            commission.setFinishedAt(LocalDateTime.now());
             commissionRepository.save(commission);
 
             return CommissionDTO.CommissionViewDTO.toDTO(commission);
@@ -281,9 +290,8 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
         }
 
         updateCommissionInfo(commission, basicInfoDTO);
-        updateCommissionOther(commission, otherMattersDTO);
         updateCommissionStyle(commission, styleDTO);
-        commission.reloadCreatedAt(LocalDateTime.now());
+        commission.updateCommissionOther(otherMattersDTO);
 
         return CommissionDTO.CommissionViewDTO.toDTO(commission);
     }
@@ -296,43 +304,34 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
         Commission commission = commissionRepository.findByChat(chat)
                 .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
-        MemberChat memberChat1;
-        MemberChat memberChat2;
 
         if(commission.getMember().getId().equals(member.getId())){
             if(!commission.getStatus().equals(APPROVED))
                 throw new CommissionHandler(ErrorStatus.COMMISSION_STATUS_NOT_APPROVED);
 
-            memberChat1 = memberChatRepository.findByMemberIdAndChatId(member.getId(), chatId)
-                    .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
-            memberChat2 = memberChatRepository.findByMemberIdAndChatId(commission.getDirector().getId(), chatId)
-                    .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
         } else if(commission.getDirector().getId().equals(member.getId())){
             if(!commission.getStatus().equals(APPROVED))
                 throw new CommissionHandler(ErrorStatus.COMMISSION_STATUS_NOT_APPROVED);
-
-            memberChat1 = memberChatRepository.findByMemberIdAndChatId(member.getId(), chatId)
-                    .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
-            memberChat2 = memberChatRepository.findByMemberIdAndChatId(commission.getMember().getId(), chatId)
-                    .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
         } else {
             throw new CommissionHandler(ErrorStatus.BAD_REQUEST);
         }
 
-        commission.reloadStatus(WAIT_FOR_TERMINATION);
+        commission.setStatus(WAIT_FOR_TERMINATION);
         commissionRepository.save(commission);
 
         // 기본 메시지 삽입
-        Message message = Message.builder()
-                .content("의뢰 종료가 요청되었습니다.")
-                .isText(true)
-                .isChecked(Boolean.FALSE)
-                .category(MessageCategory.SYSTEM)
-                .memberChat(memberChat1)
-                .build();
-
-        memberChat1.addMessage(message);
-        memberChat2.addMessage(message);
+        chat.getMemberChatList().stream()
+                .filter(memberChat -> memberChat.getMember().equals(member))
+                .forEach(memberChat -> {
+                    Message message = Message.builder()
+                            .content("의뢰 종료가 요청되었습니다.")
+                            .isText(true)
+                            .isChecked(Boolean.FALSE)
+                            .category(MessageCategory.SYSTEM)
+                            .memberChat(memberChat)
+                            .build();
+                    memberChat.addMessage(message);
+                });
 
         return CommissionDTO.CommissionViewDTO.toDTO(commission);
 
@@ -347,13 +346,29 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
         Commission commission = commissionRepository.findByChat(chat)
                 .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
 
+        // 의뢰 당사자인 경우
         if(commission.getMember().getId().equals(member.getId())
                 || commission.getDirector().getId().equals(member.getId())){
             if (!commission.getStatus().equals(WAIT_FOR_TERMINATION))
                 throw new CommissionHandler(ErrorStatus.COMMISSION_STATUS_NOT_WAIT_FOR_TERMINATION);
 
-            commission.reloadStatus(APPROVED);
+            commission.setStatus(APPROVED);
             commissionRepository.save(commission);
+
+            // 기본 메시지 삽입
+            chat.getMemberChatList().stream()
+                    .filter(memberChat -> memberChat.getMember().equals(member))
+                    .forEach(memberChat -> {
+                        Message message = Message.builder()
+                                .content("의뢰 종료 요청이 거절되었습니다.")
+                                .isText(true)
+                                .isChecked(Boolean.FALSE)
+                                .category(MessageCategory.SYSTEM)
+                                .memberChat(memberChat)
+                                .build();
+                        memberChat.addMessage(message);
+                    });
+
             return CommissionDTO.CommissionViewDTO.toDTO(commission);
         }
 
@@ -374,9 +389,23 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
             if (!commission.getStatus().equals(WAIT_FOR_TERMINATION))
                 throw new CommissionHandler(ErrorStatus.COMMISSION_STATUS_NOT_WAIT_FOR_TERMINATION);
 
-            commission.reloadStatus(TERMINATED);
-            commission.reloadFinishedAt(LocalDateTime.now());
+            commission.setStatus(TERMINATED);
+            commission.setFinishedAt(LocalDateTime.now());
             commissionRepository.save(commission);
+
+            // 기본 메시지 삽입
+            chat.getMemberChatList().stream()
+                    .filter(memberChat -> memberChat.getMember().equals(member))
+                    .forEach(memberChat -> {
+                        Message message = Message.builder()
+                                .content("의뢰가 종료되었습니다.")
+                                .isText(true)
+                                .isChecked(Boolean.FALSE)
+                                .category(MessageCategory.SYSTEM)
+                                .memberChat(memberChat)
+                                .build();
+                        memberChat.addMessage(message);
+                    });
 
             return CommissionDTO.CommissionViewDTO.toDTO(commission);
         }
@@ -384,279 +413,228 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
         throw new CommissionHandler(ErrorStatus.BAD_REQUEST);
     }
 
-    //== Authorization ==//
+/*-------------------------------------------------- Authorization --------------------------------------------------*/
+
     private Member Authorization(){
         String loginId = SecurityUtils.getAuthorizedLoginId();
         return memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
     }
 
-    //=== update ===//
-    private void updateCommissionOther(Commission commission, InfoRequestDTO.OtherMattersDTO otherMattersDTO) {
-        CommissionOther commissionOther = commissionOtherRepository.findByCommission(commission)
-                .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_OTHER_NOT_FOUND));
-
-        commissionOther.reloadDateToUse(otherMattersDTO.getDateToUse());
-        commissionOther.reloadDesiredDate(otherMattersDTO.getDesiredDate());
-        commissionOther.reloadMaxPrice(otherMattersDTO.getMaxPrice());
-        commissionOther.reloadMinPrice(otherMattersDTO.getMinPrice());
-        commissionOther.reloadText(otherMattersDTO.getText());
-        commissionOther.reloadIsShareClothesList(otherMattersDTO.getIsShareClothesList());
-    }
+/*-------------------------------------------------- Update Methods --------------------------------------------------*/
 
     private void updateCommissionInfo(Commission commission, InfoRequestDTO.BasicInfoDTO basicInfoDTO) {
-        CommissionInfo commissionInfo = commissionInfoRepository.findByCommission(commission)
-                .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_INFO_NOT_FOUND));
 
-        //update CommissionBasicInfo
-        commissionInfo.reloadInfo(basicInfoDTO);
+        commission.updateCommissionInfo(basicInfoDTO);
 
-        // update CommissionInfoStyle
-        commissionInfoStyleRepository.deleteAllByCommissionInfo(commissionInfo);
-        createCommissionInfoStyle(commissionInfo, basicInfoDTO.getInfoStyle());
+        // update CommissionStyle
+        commissionStyleRepository.deleteAllByCommission(commission);
+        commission.deleteAllStyles();
+        createCommissionStyle(commission, basicInfoDTO.getInfoStyle());
 
-        // update CommissionInfoBodyType
-        commissionInfoBodyTypeRepository.deleteAllByCommissionInfo(commissionInfo);
-        createCommissionInfoBodyType(commissionInfo, basicInfoDTO.getInfoBodyType());
+        // update CommissionBodyType
+        commissionBodyTypeRepository.deleteAllByCommission(commission);
+        commission.deleteAllBodyTypes();
+        createCommissionBodyType(commission, basicInfoDTO.getInfoBodyType());
 
-        // update CommissionInfoFit
-        commissionInfoFitRepository.deleteAllByCommissionInfo(commissionInfo);
-        createCommissionInfoFit(commissionInfo, basicInfoDTO.getInfoFit());
+        // update CommissionFit
+        commissionFitRepository.deleteAllByCommission(commission);
+        commission.deleteAllFits();
+        createCommissionFit(commission, basicInfoDTO.getInfoFit());
 
-        // update CommissionInfoMaterial
-        commissionInfoMaterialRepository.deleteAllByCommissionInfo(commissionInfo);
-        createCommissionInfoMaterial(commissionInfo, basicInfoDTO.getInfoMaterial());
+        // update CommissionMaterial
+        commissionMaterialRepository.deleteAllByCommission(commission);
+        commission.deleteAllMaterials();
+        createCommissionMaterial(commission, basicInfoDTO.getInfoMaterial());
 
     }
 
     private void updateCommissionStyle(Commission commission, StyleRequestDTO.StyleDTO styleDTO){
-        CommissionStyle commissionStyle = commissionStyleRepository.findByCommission(commission)
-                .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_STYLE_NOT_FOUND));
-        commissionStyle.clear();
 
-        // update CommissionStyleStyle
-        commissionStyleStyleRepository.deleteAllByCommissionStyle(commissionStyle);
-        createCommissionStyleStyle(commissionStyle, styleDTO.getStyleList());
+        // update CommissionHopeStyle
+        commissionHopeStyleRepository.deleteAllByCommission(commission);
+        commission.deleteAllHopeStyles();
+        createCommissionHopeStyle(commission, styleDTO.getStyleList());
 
-        // update CommissionStyleFit
-        commissionStyleFitRepository.deleteAllByCommissionStyle(commissionStyle);
-        createCommissionStyleFit(commissionStyle, styleDTO.getFitList());
+        // update CommissionHopeFit
+        commissionHopeFitRepository.deleteAllByCommission(commission);
+        commission.deleteAllHopeFits();
+        createCommissionHopeFit(commission, styleDTO.getFitList());
 
-        // update CommissionStyleMaterial
-        commissionStyleMaterialRepository.deleteAllByCommissionStyle(commissionStyle);
-        createCommissionStyleMaterial(commissionStyle, styleDTO.getMaterialList());
+        // update CommissionHopeMaterial
+        commissionHopeMaterialRepository.deleteAllByCommission(commission);
+        commission.deleteAllHopeMaterials();
+        createCommissionHopeMaterial(commission, styleDTO.getMaterialList());
 
-        // update CommissionStyleColor
-        commissionStyleColorRepository.deleteAllByCommissionStyle(commissionStyle);
-        createCommissionStyleColor(commissionStyle, styleDTO.getColorList());
+        // update CommissionHopeColor
+        commissionHopeColorRepository.deleteAllByCommission(commission);
+        commission.deleteAllHopeColors();
+        createCommissionStyleColor(commission, styleDTO.getColorList());
+
     }
 
-    //=== createOther ===//
-    private void createOther(Commission commission, InfoRequestDTO.OtherMattersDTO otherMattersDTO) {
+/*-------------------------------------------------- Create Methods --------------------------------------------------*/
 
-        // 날짜가 유효한지 확인
-        if(otherMattersDTO.getDesiredDate().isBefore(LocalDate.now()) || otherMattersDTO.getDateToUse().isBefore(LocalDate.now())){
-            throw new CommissionHandler(ErrorStatus.COMMISSION_INVALID_DATE);
-        }
-
-        CommissionOther commissionOther = CommissionOther.builder()
-                .dateToUse(otherMattersDTO.getDateToUse())
-                .desiredDate(otherMattersDTO.getDesiredDate())
-                .minPrice(otherMattersDTO.getMinPrice())
-                .maxPrice(otherMattersDTO.getMaxPrice())
-                .text(otherMattersDTO.getText())
-                .isShareClothesList(otherMattersDTO.getIsShareClothesList())
-                .build();
-
-        commission.setCommissionOther(commissionOther);
-        commissionOtherRepository.save(commissionOther);
-    }
-
-
-    //=== createStyle ===//
-    private void createStyle(Commission commission, StyleRequestDTO.StyleDTO styleDTO){
-        CommissionStyle commissionStyle = CommissionStyle.builder().build();
-
-        commission.setCommissionStyle(commissionStyle);
-        commissionStyle = commissionStyleRepository.save(commissionStyle);
-        
-        createCommissionStyleStyle(commissionStyle, styleDTO.getStyleList());
-        createCommissionStyleFit(commissionStyle, styleDTO.getFitList());
-        createCommissionStyleMaterial(commissionStyle, styleDTO.getMaterialList());
-        createCommissionStyleColor(commissionStyle, styleDTO.getColorList());
-
-        commissionStyleRepository.save(commissionStyle);
-    }
-
-    private void createCommissionStyleColor(CommissionStyle commissionStyle, StyleRequestDTO.ColorListDTO colorList) {
+    private void createCommissionStyleColor(Commission commission, StyleRequestDTO.ColorListDTO colorList) {
         if (colorList == null || colorList.getColorList() == null) {return;}
 
         colorList.getColorList()
                 .forEach(color -> {
-                    CommissionStyleColor styleColor = CommissionStyleColor.builder()
+                    CommissionHopeColor styleColor = CommissionHopeColor.builder()
                             .color(color)
                             .isPrefer(true)
+                            .commission(commission)
                             .build();
-                    commissionStyle.addCommissionStyleColor(styleColor);
-                    commissionStyleColorRepository.save(styleColor);
+                    styleColor = commissionHopeColorRepository.save(styleColor);
+                    commission.addHopeColor(styleColor);
                 });
     }
 
-    private void createCommissionStyleMaterial(CommissionStyle commissionStyle, StyleRequestDTO.MaterialListDTO materialList) {
+    private void createCommissionHopeMaterial(Commission commission, StyleRequestDTO.MaterialListDTO materialList) {
         if (materialList == null || materialList.getMaterialList() == null) {return;}
 
         materialList.getMaterialList()
                 .forEach(material -> {
-                    CommissionStyleMaterial styleMaterial = CommissionStyleMaterial.builder()
+                    CommissionHopeMaterial styleMaterial = CommissionHopeMaterial.builder()
                             .material(material)
                             .isPrefer(true)
+                            .commission(commission)
                             .build();
-                    commissionStyle.addCommissionStyleMaterial(styleMaterial);
-                    commissionStyleMaterialRepository.save(styleMaterial);
+                    styleMaterial = commissionHopeMaterialRepository.save(styleMaterial);
+                    commission.addHopeMaterial(styleMaterial);
                 });
     }
 
-    private void createCommissionStyleFit(CommissionStyle commissionStyle, StyleRequestDTO.FitListDTO fitList) {
+    private void createCommissionHopeFit(Commission commission, StyleRequestDTO.FitListDTO fitList) {
         if (fitList == null || fitList.getFitList() == null) {return;}
 
         fitList.getFitList()
                 .forEach(fit -> {
-                    CommissionStyleFit styleFit = CommissionStyleFit.builder()
+                    CommissionHopeFit hopeFit = CommissionHopeFit.builder()
                             .fit(fit)
                             .isPrefer(true)
+                            .commission(commission)
                             .build();
-                    commissionStyle.addCommissionStyleFit(styleFit);
-                    commissionStyleFitRepository.save(styleFit);
+                    hopeFit = commissionHopeFitRepository.save(hopeFit);
+                    commission.addHopeFit(hopeFit);
                 });
     }
 
-    private void createCommissionStyleStyle(CommissionStyle commissionStyle, StyleRequestDTO.StyleListDTO styleList) {
+    private void createCommissionHopeStyle(Commission commission, StyleRequestDTO.StyleListDTO styleList) {
         if (styleList == null || styleList.getStyleList() == null) {return;}
 
         styleList.getStyleList()
                 .forEach(style -> {
-                    CommissionStyleStyle infoStyle = CommissionStyleStyle.builder()
+                    CommissionHopeStyle hopeStyle = CommissionHopeStyle.builder()
                             .style(style)
                             .isPrefer(true)
+                            .commission(commission)
                             .build();
-                    commissionStyle.addCommissionStyleStyle(infoStyle);
-                    commissionStyleStyleRepository.save(infoStyle);
+                    hopeStyle = commissionHopeStyleRepository.save(hopeStyle);
+                    commission.addHopeStyle(hopeStyle);
                 });
     }
 
-
-
-    //=== createInfo ===///
-    private void createInfo(Commission commission, InfoRequestDTO.BasicInfoDTO basicInfoDTO) {
-        CommissionInfo commissionInfo = CommissionInfo.builder()
-                .height(basicInfoDTO.getHeight())
-                .weight(basicInfoDTO.getWeight())
-                .topSize(basicInfoDTO.getTopSize())
-                .bottomSize(basicInfoDTO.getBottomSize())
-                .text(basicInfoDTO.getText())
-                .build();
-
-        commission.setCommissionInfo(commissionInfo);
-        commissionInfo = commissionInfoRepository.save(commissionInfo);
-
-        createCommissionInfoStyle(commissionInfo, basicInfoDTO.getInfoStyle());
-        createCommissionInfoFit(commissionInfo, basicInfoDTO.getInfoFit());
-        createCommissionInfoBodyType(commissionInfo, basicInfoDTO.getInfoBodyType());
-        createCommissionInfoMaterial(commissionInfo, basicInfoDTO.getInfoMaterial());
-    }
-
-    private void createCommissionInfoStyle(CommissionInfo commissionInfo, InfoRequestDTO.InfoStyleListDTO infoStyleListDTO){
+    private void createCommissionStyle(Commission commission, InfoRequestDTO.InfoStyleListDTO infoStyleListDTO){
         if (infoStyleListDTO == null || infoStyleListDTO.getPreferredStyleList() == null) {return;}
 
         infoStyleListDTO.getPreferredStyleList()
                 .forEach(style -> {
-                    CommissionInfoStyle infoStyle = CommissionInfoStyle.builder()
+                    CommissionStyle infoStyle = CommissionStyle.builder()
                             .style(style)
                             .isPrefer(true)
+                            .commission(commission)
                             .build();
-                    commissionInfo.addCommissionInfoStyle(infoStyle);
-                    commissionInfoStyleRepository.save(infoStyle);
+                    infoStyle = commissionStyleRepository.save(infoStyle);
+                    commission.addStyle(infoStyle);
                 });
 
         infoStyleListDTO.getNonPreferredStyleList()
                 .forEach(style -> {
-                    CommissionInfoStyle infoStyle = CommissionInfoStyle.builder()
+                    CommissionStyle infoStyle = CommissionStyle.builder()
                             .style(style)
                             .isPrefer(false)
+                            .commission(commission)
                             .build();
-                    commissionInfo.addCommissionInfoStyle(infoStyle);
-                    commissionInfoStyleRepository.save(infoStyle);
+                    infoStyle = commissionStyleRepository.save(infoStyle);
+                    commission.addStyle(infoStyle);
                 });
     }
 
-    private void createCommissionInfoFit(CommissionInfo commissionInfo, InfoRequestDTO.InfoFitListDTO infoFitListDTO){
+    private void createCommissionFit(Commission commission, InfoRequestDTO.InfoFitListDTO infoFitListDTO){
         if (infoFitListDTO == null || infoFitListDTO.getPreferredFitList() == null) {return;}
         infoFitListDTO.getPreferredFitList()
                 .forEach(fit -> {
-                    CommissionInfoFit infoFit = CommissionInfoFit.builder()
+                    CommissionFit infoFit = CommissionFit.builder()
                             .fit(fit)
                             .isPrefer(true)
+                            .commission(commission)
                             .build();
-                    commissionInfo.addCommissionInfoFit(infoFit);
-                    commissionInfoFitRepository.save(infoFit);
+                    infoFit = commissionFitRepository.save(infoFit);
+                    commission.addFit(infoFit);
                 });
 
         infoFitListDTO.getNonPreferredFitList()
                 .forEach(fit -> {
-                    CommissionInfoFit infoFit = CommissionInfoFit.builder()
+                    CommissionFit infoFit = CommissionFit.builder()
                             .fit(fit)
                             .isPrefer(false)
+                            .commission(commission)
                             .build();
-                    commissionInfo.addCommissionInfoFit(infoFit);
-                    commissionInfoFitRepository.save(infoFit);
+                    infoFit = commissionFitRepository.save(infoFit);
+                    commission.addFit(infoFit);
                 });
     }
 
-    private void createCommissionInfoBodyType(CommissionInfo commissionInfo, InfoRequestDTO.InfoBodyTypeListDTO infoBodyTypeListDTO) {
+    private void createCommissionBodyType(Commission commission, InfoRequestDTO.InfoBodyTypeListDTO infoBodyTypeListDTO) {
         if (infoBodyTypeListDTO == null || infoBodyTypeListDTO.getGoodBodyTypeList() == null) {return;}
 
         infoBodyTypeListDTO.getGoodBodyTypeList()
                 .forEach(bodyType -> {
-                    CommissionInfoBodyType infoBodyType = CommissionInfoBodyType.builder()
+                    CommissionBodyType infoBodyType = CommissionBodyType.builder()
                             .bodyType(bodyType)
                             .isGood(true)
+                            .commission(commission)
                             .build();
-                    commissionInfo.addCommissionInfoBodyType(infoBodyType);
-                    commissionInfoBodyTypeRepository.save(infoBodyType);
+                    infoBodyType = commissionBodyTypeRepository.save(infoBodyType);
+                    commission.addBodyType(infoBodyType);
                 });
 
         infoBodyTypeListDTO.getBadBodyTypeList()
                 .forEach(bodyType -> {
-                    CommissionInfoBodyType infoBodyType = CommissionInfoBodyType.builder()
+                    CommissionBodyType infoBodyType = CommissionBodyType.builder()
                             .bodyType(bodyType)
                             .isGood(false)
+                            .commission(commission)
                             .build();
-                    commissionInfo.addCommissionInfoBodyType(infoBodyType);
-                    commissionInfoBodyTypeRepository.save(infoBodyType);
+                    infoBodyType = commissionBodyTypeRepository.save(infoBodyType);
+                    commission.addBodyType(infoBodyType);
                 });
     }
 
-    private void createCommissionInfoMaterial(CommissionInfo commissionInfo, InfoRequestDTO.InfoMaterialListDTO infoMaterialListDTO) {
+    private void createCommissionMaterial(Commission commission, InfoRequestDTO.InfoMaterialListDTO infoMaterialListDTO) {
         if (infoMaterialListDTO == null || infoMaterialListDTO.getPreferredMaterialList() == null) {return;}
 
         infoMaterialListDTO.getPreferredMaterialList()
                 .forEach(material -> {
-                    CommissionInfoMaterial infoMaterial = CommissionInfoMaterial.builder()
+                    CommissionMaterial infoMaterial = CommissionMaterial.builder()
                             .material(material)
                             .isPrefer(true)
+                            .commission(commission)
                             .build();
-                    commissionInfo.addCommissionInfoMaterial(infoMaterial);
-                    commissionInfoMaterialRepository.save(infoMaterial);
+                    infoMaterial = commissionMaterialRepository.save(infoMaterial);
+                    commission.addMaterial(infoMaterial);
                 });
 
         infoMaterialListDTO.getNonPreferredMaterialList()
                 .forEach(material -> {
-                    CommissionInfoMaterial infoMaterial = CommissionInfoMaterial.builder()
+                    CommissionMaterial infoMaterial = CommissionMaterial.builder()
                             .material(material)
                             .isPrefer(false)
+                            .commission(commission)
                             .build();
-                    commissionInfo.addCommissionInfoMaterial(infoMaterial);
-                    commissionInfoMaterialRepository.save(infoMaterial);
+                    infoMaterial = commissionMaterialRepository.save(infoMaterial);
+                    commission.addMaterial(infoMaterial);
                 });
     }
 }

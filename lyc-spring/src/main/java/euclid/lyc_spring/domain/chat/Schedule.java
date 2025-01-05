@@ -1,20 +1,17 @@
 package euclid.lyc_spring.domain.chat;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 
 @Getter
 @Entity
-@DynamicUpdate
-@DynamicInsert
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "schedule")
 public class Schedule {
 
     @Id
@@ -29,15 +26,6 @@ public class Schedule {
     private String memo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chat_id", nullable = false)
+    @JoinColumn(name = "chat_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Chat chat;
-
-    protected Schedule(){}
-
-    @Builder
-    public Schedule(LocalDate date, String memo, Chat chat) {
-        this.date = date;
-        this.memo = memo;
-        this.chat = chat;
-    }
 }

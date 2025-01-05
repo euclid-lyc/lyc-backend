@@ -160,7 +160,6 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                 .build();
 
         info = infoRepository.save(info);
-        member.setInfo(info);
 
         createInfoStyle(info, infoDto.getInfoStyle());
         createInfoFit(info, infoDto.getInfoFit());

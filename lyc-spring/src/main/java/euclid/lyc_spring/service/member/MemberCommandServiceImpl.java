@@ -19,6 +19,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -42,12 +44,20 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         Member loginMember = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        loginMember.reloadLoginId(infoDTO.getLoginId());
-        loginMember.reloadIntroduction(infoDTO.getIntroduction());
-        loginMember.reloadNickname(infoDTO.getNickname());
+        // 아이디 중복 확인
+        List<Member> duplicatedIdMembers = memberRepository.findByLoginId(infoDTO.getLoginId()).stream()
+                .filter(member -> !member.getLoginId().equals(loginId))
+                .toList();
+        if (!duplicatedIdMembers.isEmpty()) {
+            throw new MemberHandler(ErrorStatus.MEMBER_DUPLICATED_LOGIN_ID);
+        }
+
+        loginMember.setLoginId(infoDTO.getLoginId());
+        loginMember.setIntroduction(infoDTO.getIntroduction());
+        loginMember.setNickname(infoDTO.getNickname());
 
         if (!imageUrl.isEmpty()) {
-            loginMember.reloadProfileImage(imageUrl);
+            loginMember.setProfileImage(imageUrl);
         }
 
         memberRepository.save(loginMember);
@@ -63,7 +73,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
         Info info = loginMember.getInfo();
 
-        info.reloadAdrress(addressReqDTO);
+        info.updateAddress(addressReqDTO);
         infoRepository.save(info);
         return MemberDTO.AddressDTO.toDTO(loginMember);
     }
@@ -105,7 +115,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         PushSet pushSet = loginMember.getPushSet();
-        pushSet.reloadPushSet(pushSetDTO);
+        pushSet.updatePushSet(pushSetDTO);
 
         pushSetRepository.save(pushSet);
         return null;
