@@ -172,7 +172,6 @@ public class Member {
 
     public void addPushSet(PushSet pushSet) {
         this.pushSet = pushSet;
-        pushSet.setMember(this);
     }
 
     public void addSavedPosting(SavedPosting savedPosting) {

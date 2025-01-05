@@ -110,7 +110,7 @@ public class MemberCommandServiceImpl implements MemberCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         PushSet pushSet = loginMember.getPushSet();
-        pushSet.reloadPushSet(pushSetDTO);
+        pushSet.updatePushSet(pushSetDTO);
 
         pushSetRepository.save(pushSet);
         return null;
