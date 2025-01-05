@@ -1,18 +1,13 @@
 package euclid.lyc_spring.domain;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.*;
 
 @Getter
 @Entity
-@DynamicUpdate
-@DynamicInsert
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class RefreshToken {
 
     @Id
@@ -25,12 +20,6 @@ public class RefreshToken {
 
     @Column(nullable = false)
     private String loginId;
-
-    @Builder
-    public RefreshToken(String refreshToken, String loginId) {
-        this.refreshToken = refreshToken;
-        this.loginId = loginId;
-    }
 
     public RefreshToken updateToken(String token) {
         this.refreshToken = token;
