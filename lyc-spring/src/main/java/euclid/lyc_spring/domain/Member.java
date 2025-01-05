@@ -212,7 +212,6 @@ public class Member {
 
     public void addAttendance(Attendance attendance) {
         attendanceList.add(attendance);
-        attendance.setMember(this);
     }
 
     public void addMemberChat(MemberChat memberChat) {
@@ -252,7 +251,6 @@ public class Member {
 
     public void addBlockMember(BlockMember blockMember) {
         blockMemberList.add(blockMember);
-        blockMember.setBlockedMember(this);
     }
 
     public void addCommission(Commission commission) {

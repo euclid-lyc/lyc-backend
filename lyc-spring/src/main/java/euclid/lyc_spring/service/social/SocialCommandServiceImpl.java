@@ -288,7 +288,10 @@ public class SocialCommandServiceImpl implements SocialCommandService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         // 차단 관계 생성
-        BlockMember blockMemberRelation = new BlockMember(member, blockMember);
+        BlockMember blockMemberRelation = BlockMember.builder()
+                .member(member)
+                .blockedMember(blockMember)
+                .build();
         blockMemberRepository.save(blockMemberRelation);
 
         // 팔로우 관계 삭제
