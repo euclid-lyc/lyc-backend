@@ -70,6 +70,7 @@ public class ChatResponseDTO {
         private final String sender;
         private final String profileImage;
         private final String content;
+        private final MessageCategory msgType;
         private final Boolean isText;
         private final Boolean isChecked;
         private final LocalDateTime createdAt;
@@ -79,6 +80,7 @@ public class ChatResponseDTO {
                     .sender(message.getMemberChat().getMember().getNickname())
                     .profileImage(message.getMemberChat().getMember().getProfileImage())
                     .content(message.getContent())
+                    .msgType(message.getCategory())
                     .isText(message.getIsText())
                     .isChecked(message.getIsChecked())
                     .createdAt(message.getCreatedAt())

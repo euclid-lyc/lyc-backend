@@ -53,6 +53,11 @@ public class PostingCommandServiceImpl implements PostingCommandService {
         Member toMember = memberRepository.findById(postingSaveDTO.getToMemberId())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
+        // writer가 toMember도 fromMember도 아니면 오류
+        if (!writer.getId().equals(toMember.getId()) && !writer.getId().equals(fromMember.getId())) {
+            throw new PostingHandler(ErrorStatus.POSTING_CANNOT_SAVED_BY_WRITER);
+        }
+
         Posting posting = Posting.builder()
                 .minTemp(postingSaveDTO.getMinTemp())
                 .maxTemp(postingSaveDTO.getMaxTemp())
@@ -71,7 +76,7 @@ public class PostingCommandServiceImpl implements PostingCommandService {
         posting = postingRepository.save(posting);
 
         // 리뷰의 경우 연동 필요
-        if (commissionId != null) {
+        if (commissionId != null && writer.getId().equals(toMember.getId())) {
             Commission commission = commissionRepository.findById(commissionId)
                     .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
 

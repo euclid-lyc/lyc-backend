@@ -25,8 +25,7 @@ public class MessageRepositoryCustomImpl implements MessageRepositoryCustom {
         QMessage message = QMessage.message;
 
         BooleanBuilder whereClause = new BooleanBuilder()
-                .and(memberChat.chat.id.eq(chatId))
-                .and(message.category.eq(MessageCategory.COMMON));
+                .and(memberChat.chat.id.eq(chatId));
 
         if (cursorDateTime != null) {
             whereClause.and(message.createdAt.before(cursorDateTime));

@@ -304,25 +304,14 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
         Commission commission = commissionRepository.findByChat(chat)
                 .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
-        MemberChat memberChat1;
-        MemberChat memberChat2;
 
         if(commission.getMember().getId().equals(member.getId())){
             if(!commission.getStatus().equals(APPROVED))
                 throw new CommissionHandler(ErrorStatus.COMMISSION_STATUS_NOT_APPROVED);
 
-            memberChat1 = memberChatRepository.findByMemberIdAndChatId(member.getId(), chatId)
-                    .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
-            memberChat2 = memberChatRepository.findByMemberIdAndChatId(commission.getDirector().getId(), chatId)
-                    .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
         } else if(commission.getDirector().getId().equals(member.getId())){
             if(!commission.getStatus().equals(APPROVED))
                 throw new CommissionHandler(ErrorStatus.COMMISSION_STATUS_NOT_APPROVED);
-
-            memberChat1 = memberChatRepository.findByMemberIdAndChatId(member.getId(), chatId)
-                    .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
-            memberChat2 = memberChatRepository.findByMemberIdAndChatId(commission.getMember().getId(), chatId)
-                    .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
         } else {
             throw new CommissionHandler(ErrorStatus.BAD_REQUEST);
         }
@@ -331,16 +320,18 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
         commissionRepository.save(commission);
 
         // 기본 메시지 삽입
-        Message message = Message.builder()
-                .content("의뢰 종료가 요청되었습니다.")
-                .isText(true)
-                .isChecked(Boolean.FALSE)
-                .category(MessageCategory.SYSTEM)
-                .memberChat(memberChat1)
-                .build();
-
-        memberChat1.addMessage(message);
-        memberChat2.addMessage(message);
+        chat.getMemberChatList().stream()
+                .filter(memberChat -> memberChat.getMember().equals(member))
+                .forEach(memberChat -> {
+                    Message message = Message.builder()
+                            .content("의뢰 종료가 요청되었습니다.")
+                            .isText(true)
+                            .isChecked(Boolean.FALSE)
+                            .category(MessageCategory.SYSTEM)
+                            .memberChat(memberChat)
+                            .build();
+                    memberChat.addMessage(message);
+                });
 
         return CommissionDTO.CommissionViewDTO.toDTO(commission);
 
@@ -355,6 +346,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
         Commission commission = commissionRepository.findByChat(chat)
                 .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
 
+        // 의뢰 당사자인 경우
         if(commission.getMember().getId().equals(member.getId())
                 || commission.getDirector().getId().equals(member.getId())){
             if (!commission.getStatus().equals(WAIT_FOR_TERMINATION))
@@ -362,6 +354,21 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
 
             commission.setStatus(APPROVED);
             commissionRepository.save(commission);
+
+            // 기본 메시지 삽입
+            chat.getMemberChatList().stream()
+                    .filter(memberChat -> memberChat.getMember().equals(member))
+                    .forEach(memberChat -> {
+                        Message message = Message.builder()
+                                .content("의뢰 종료 요청이 거절되었습니다.")
+                                .isText(true)
+                                .isChecked(Boolean.FALSE)
+                                .category(MessageCategory.SYSTEM)
+                                .memberChat(memberChat)
+                                .build();
+                        memberChat.addMessage(message);
+                    });
+
             return CommissionDTO.CommissionViewDTO.toDTO(commission);
         }
 
@@ -385,6 +392,20 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
             commission.setStatus(TERMINATED);
             commission.setFinishedAt(LocalDateTime.now());
             commissionRepository.save(commission);
+
+            // 기본 메시지 삽입
+            chat.getMemberChatList().stream()
+                    .filter(memberChat -> memberChat.getMember().equals(member))
+                    .forEach(memberChat -> {
+                        Message message = Message.builder()
+                                .content("의뢰가 종료되었습니다.")
+                                .isText(true)
+                                .isChecked(Boolean.FALSE)
+                                .category(MessageCategory.SYSTEM)
+                                .memberChat(memberChat)
+                                .build();
+                        memberChat.addMessage(message);
+                    });
 
             return CommissionDTO.CommissionViewDTO.toDTO(commission);
         }

@@ -234,7 +234,7 @@ public class PostingQueryServiceImpl implements PostingQueryService {
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        List<Commission> commissions = commissionRepository.findUnreviewedCommissions(pageSize, cursorDateTime, cursorId);
+        List<Commission> commissions = commissionRepository.findUnreviewedCommissions(member.getId(), pageSize, cursorDateTime, cursorId);
         return CommissionDTO.TerminatedCommissionListDTO.toDTO(commissions);
     }
 }
