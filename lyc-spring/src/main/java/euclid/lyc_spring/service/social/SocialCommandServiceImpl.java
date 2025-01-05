@@ -360,7 +360,6 @@ public class SocialCommandServiceImpl implements SocialCommandService {
                 .build();
 
         report = reportRepository.save(report);
-        reportedMember.addReport(report);
 
         return MemberDTO.MemberProfileDTO.toDTO(reportedMember);
     }

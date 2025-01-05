@@ -38,6 +38,7 @@ public class Member {
     @Column(length = 30, nullable = false)
     private String name;
 
+    @Setter
     @Column(length = 30, nullable = false, unique = true)
     private String loginId;
 
@@ -50,12 +51,15 @@ public class Member {
     @Column(length = 30, nullable = false)
     private String phone;
 
+    @Setter
     @Column(length = 10, nullable = false)
     private String nickname;
 
+    @Setter
     @Column(columnDefinition = "text")
     private String introduction;
 
+    @Setter
     @Column(columnDefinition = "text")
     private String profileImage;
 
@@ -171,30 +175,6 @@ public class Member {
         pushSet.setMember(this);
     }
 
-    public void addNotification(Notification notification) {
-        notificationList.add(notification);
-        notification.setMember(this);
-    }
-
-    public void addAttendance(Attendance attendance) {
-        attendanceList.add(attendance);
-    }
-
-    public void addMemberChat(MemberChat memberChat) {
-        memberChatList.add(memberChat);
-        memberChat.setMember(this);
-    }
-
-    public void addPointUsage(PointUsage pointUsage) {
-        pointUsageList.add(pointUsage);
-        pointUsage.setMember(this);
-    }
-
-    public void addLikedPosting(LikedPosting likedPosting) {
-        likedPostingList.add(likedPosting);
-        likedPosting.setMember(this);
-    }
-
     public void addSavedPosting(SavedPosting savedPosting) {
         savedPostingList.add(savedPosting);
         savedPosting.setMember(this);
@@ -243,10 +223,6 @@ public class Member {
         }
     }
 
-    public void addReport(Report report) { this.reportList.add(report); }
-
-    //=== remove Methods ===//
-
     public void removePosting(Posting posting) {
         fromPostingList.remove(posting);
         toPostingList.remove(posting);
@@ -257,8 +233,6 @@ public class Member {
         savedPostingList.remove(savedPosting);
     }
 
-    //=== reload Methods ===//
-
     public void reloadFollowing(Long following) {
         this.following = following;
     }
@@ -266,14 +240,6 @@ public class Member {
     public void reloadFollower(Long follower) {
         this.follower = follower;
     }
-
-    public void reloadNickname(String nickname) { this.nickname = nickname; }
-
-    public void reloadIntroduction(String introduction) { this.introduction = introduction; }
-
-    public void reloadLoginId(String loginId) { this.loginId = loginId; }
-
-    public void reloadProfileImage(String profileImage) { this.profileImage = profileImage; }
 
     public void reloadPopularity(Long popularity) {this.popularity = popularity;}
 
