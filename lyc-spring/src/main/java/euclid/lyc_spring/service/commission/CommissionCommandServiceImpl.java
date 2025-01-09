@@ -13,6 +13,7 @@ import euclid.lyc_spring.domain.chat.Schedule;
 import euclid.lyc_spring.domain.chat.commission.Commission;
 import euclid.lyc_spring.domain.chat.commission.commission_style.*;
 import euclid.lyc_spring.domain.chat.commission.commission_info.*;
+import euclid.lyc_spring.domain.enums.CommissionStatus;
 import euclid.lyc_spring.domain.enums.MessageCategory;
 import euclid.lyc_spring.domain.mapping.MemberChat;
 import euclid.lyc_spring.dto.request.CommissionRequestDTO;
@@ -59,12 +60,22 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
     public CommissionDTO.CommissionViewDTO writeCommission(CommissionRequestDTO.CommissionDTO commissionRequestDTO) {
 
         Member member = Authorization();
-        Member director = memberRepository.findByLoginId(commissionRequestDTO.getDirectorLoginId())
+        Member director = memberRepository.findById(commissionRequestDTO.getDirectorId())
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         // 셀프 의뢰 금지
         if(member.equals(director)) {
             throw new CommissionHandler(ErrorStatus.DIRECTOR_EQUAL_MEMBER);
+        }
+
+        // 진행중인 의뢰가 있을 때에는 새로운 의뢰 불가능
+        if (commissionRepository.findByDirectorIdAndMemberIdAndStatusNot(
+                director.getId(), member.getId(), TERMINATED).isPresent()) {
+            throw new CommissionHandler(ErrorStatus.COMMISSION_ALREADY_EXISTS);
+        }
+        if (commissionRepository.findByDirectorIdAndMemberIdAndStatusNot(
+                member.getId(), director.getId(), TERMINATED).isPresent()) {
+            throw new CommissionHandler(ErrorStatus.COMMISSION_ALREADY_EXISTS);
         }
 
         InfoRequestDTO.BasicInfoDTO basicInfoDTO = commissionRequestDTO.getBasicInfo();
@@ -204,48 +215,56 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
             commission.setStatus(APPROVED);
             commissionRepository.save(commission);
 
-            Chat chat = Chat.builder()
-                    .createdAt(LocalDateTime.now())
-                    .updatedAt(LocalDateTime.now())
-                    .commission(commission)
-                    .build();
-            chat = chatRepository.save(chat);
+            Chat chat = chatRepository.findByChatMembers(commission.getDirector().getId(), commission.getMember().getId())
+                    .orElseGet(() -> {
+                        Chat newChat = Chat.builder()
+                                .createdAt(LocalDateTime.now())
+                                .updatedAt(LocalDateTime.now())
+                                .commission(commission)
+                                .build();
+                        newChat = chatRepository.save(newChat);
 
-            MemberChat memberChat1 = MemberChat.builder()
-                    .chat(chat)
-                    .member(member)
-                    .build();
+                        MemberChat memberChat1 = MemberChat.builder()
+                                .chat(newChat)
+                                .member(member)
+                                .build();
+                        memberChat1 = memberChatRepository.save(memberChat1);
 
-            memberChat1 = memberChatRepository.save(memberChat1);
+                        MemberChat memberChat2 = MemberChat.builder()
+                                .chat(newChat)
+                                .member(commission.getMember())
+                                .build();
+                        memberChat2 = memberChatRepository.save(memberChat2);
 
-            MemberChat memberChat2 = MemberChat.builder()
-                    .chat(chat)
-                    .member(commission.getMember())
-                    .build();
-            memberChat2 = memberChatRepository.save(memberChat2);
+                        newChat.addMemberChat(memberChat1);
+                        newChat.addMemberChat(memberChat2);
+
+                        return newChat;
+                    });
 
             Schedule schedule = Schedule.builder()
-                    .date(commission.getDesiredDate())
-                    .memo("수령 희망 날짜")
-                    .chat(chat)
-                    .build();
+                .date(commission.getDesiredDate())
+                .memo("수령 희망 날짜")
+                .chat(chat)
+                .build();
             schedule = scheduleRepository.save(schedule);
 
-            // 기본 메시지 삽입
-            Message message = Message.builder()
-                    .content("의뢰가 수락되었습니다.")
-                    .isText(true)
-                    .isChecked(Boolean.FALSE)
-                    .category(MessageCategory.SYSTEM)
-                    .memberChat(memberChat1)
-                    .build();
-
-            memberChat1.addMessage(message);
-            memberChat2.addMessage(message);
+            chat.getMemberChatList()
+                .forEach(memberChat -> {
+                    // 기본 메시지 삽입
+                    Message message = Message.builder()
+                            .content("의뢰가 수락되었습니다.")
+                            .isText(true)
+                            .isChecked(Boolean.FALSE)
+                            .category(MessageCategory.SYSTEM)
+                            .memberChat(memberChat)
+                            .build();
+                    memberChat.addMessage(message);
+                });
 
             chat.addSchedule(schedule);
-            chat.addMemberChat(memberChat1);
-            chat.addMemberChat(memberChat2);
+            chat.setCommission(commission);
+            chatRepository.save(chat);
 
             return CommissionDTO.CommissionViewDTO.toDTO(commission);
         }
@@ -278,6 +297,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
         Commission commission = commissionRepository.findById(commissionId)
                 .orElseThrow(() -> new CommissionHandler(ErrorStatus.COMMISSION_NOT_FOUND));
 
+        // 의뢰 요청자만 수정 가능
         if(!member.getId().equals(commission.getMember().getId()))
             throw new CommissionHandler(ErrorStatus.CLIENT_NOT_EQUAL_MEMBER);
 

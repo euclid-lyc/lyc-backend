@@ -85,6 +85,7 @@ public enum ErrorStatus implements BaseErrorCode {
     DIRECTOR_EQUAL_MEMBER(HttpStatus.BAD_REQUEST, "COMMISSION4053", "디렉터와 의뢰자가 동일합니다."),
     COMMISSION_CLOTHES_LIST_IS_PRIVATE(HttpStatus.BAD_REQUEST, "COMMISSION4054", "옷 리스트가 비공개 상태입니다."),
     COMMISSION_CLOTHES_LIST_IS_PUBLIC(HttpStatus.BAD_REQUEST, "COMMISSION4055", "옷 리스트가 공개 상태입니다."),
+    COMMISSION_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "COMMISSION4001", "이미 진행중인 의뢰가 있습니다."),
 
     // clothes
     CLOTHES_NOT_FOUND(HttpStatus.NOT_FOUND, "CLOTHES4041", "옷장 게시글이 존재하지 않습니다."),

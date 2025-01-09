@@ -4,14 +4,17 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import euclid.lyc_spring.domain.QMember;
+import euclid.lyc_spring.domain.chat.Chat;
 import euclid.lyc_spring.domain.chat.QChat;
 import euclid.lyc_spring.domain.chat.QMessage;
+import euclid.lyc_spring.domain.chat.commission.QCommission;
 import euclid.lyc_spring.domain.mapping.QMemberChat;
 import euclid.lyc_spring.dto.response.ChatResponseDTO;
 import euclid.lyc_spring.repository.querydsl.ChatRepositoryCustom;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class ChatRepositoryCustomImpl implements ChatRepositoryCustom {
@@ -54,5 +57,19 @@ public class ChatRepositoryCustomImpl implements ChatRepositoryCustom {
                                 .or(member.loginId.containsIgnoreCase(keyword))
                 )
                 .fetch();
+    }
+
+    @Override
+    public Optional<Chat> findByChatMembers(Long id1, Long id2) {
+        QChat chat = QChat.chat;
+        QCommission commission = QCommission.commission;
+
+        return Optional.ofNullable(queryFactory.selectFrom(chat)
+                .join(commission).on(commission.chat.id.eq(chat.id))
+                .where((commission.director.id.eq(id1)
+                        .and(commission.member.id.eq(id2)))
+                        .or(commission.director.id.eq(id2))
+                        .and(commission.member.id.eq(id1)))
+                .fetchFirst());
     }
 }

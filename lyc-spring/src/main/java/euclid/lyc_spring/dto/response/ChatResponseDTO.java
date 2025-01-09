@@ -112,12 +112,15 @@ public class ChatResponseDTO {
         private final String nickname;
         private final String profileImage;
         private final Boolean isMine;
+        private final Boolean isDirector;
 
         public static ChatMemberDTO toDTO(MemberChat memberChat, Member member) {
             return ChatMemberDTO.builder()
                     .nickname(memberChat.getMember().getNickname())
                     .profileImage(memberChat.getMember().getProfileImage())
                     .isMine(memberChat.getMember().equals(member))
+                    .isDirector(memberChat.getChat().getCommission().getDirector()
+                            .equals(memberChat.getMember()))
                     .build();
         }
     }
@@ -199,9 +202,13 @@ public class ChatResponseDTO {
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     @Builder(access = AccessLevel.PRIVATE)
     public static class ChatDTO {
+        private final List<ChatMemberDTO> chatMembers;
         private final List<MessageInfoDTO> messages;
-        public static ChatDTO toDTO(List<Message> messages) {
+        public static ChatDTO toDTO(List<Message> messages, Chat chat, Member member) {
             return ChatDTO.builder()
+                    .chatMembers(chat.getMemberChatList().stream()
+                            .map(memberChat -> ChatMemberDTO.toDTO(memberChat, member))
+                            .toList())
                     .messages(messages.stream()
                             .map(MessageInfoDTO::toDTO)
                             .toList())

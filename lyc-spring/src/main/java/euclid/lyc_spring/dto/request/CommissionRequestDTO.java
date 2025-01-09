@@ -12,7 +12,7 @@ public class CommissionRequestDTO {
     @AllArgsConstructor
     public static class CommissionDTO {
 
-        private String directorLoginId;
+        private Long directorId;
         private InfoRequestDTO.BasicInfoDTO basicInfo;
         private StyleRequestDTO.StyleDTO style;
         private InfoRequestDTO.OtherMattersDTO otherMatters;
