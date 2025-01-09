@@ -4,6 +4,8 @@ import euclid.lyc_spring.domain.chat.commission.Commission;
 import euclid.lyc_spring.domain.mapping.MemberChat;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -15,6 +17,8 @@ import java.util.List;
 @Getter
 @Entity
 @Builder
+@DynamicInsert
+@DynamicUpdate
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
@@ -38,13 +42,14 @@ public class Chat {
     private LocalDateTime inactive;
 
     @Setter
-    @Column
+    @Column(columnDefinition = "INTEGER DEFAULT 0")
     private Integer savedClothesCount;
 
     @Setter
-    @Column
+    @Column(columnDefinition = "BIT DEFAULT 0")
     private Boolean isShared;
 
+    @Setter
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "commission_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Commission commission;

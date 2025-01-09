@@ -59,8 +59,7 @@ public class CommissionController {
     @Operation(summary = "[구현완료] 의뢰서 확인하기", description = """
             의뢰서의 전체 내용을 확인합니다.
             """)
-    // url이 의뢰함 불러오기랑 겹쳐서 수정함
-    @GetMapping("/chats/commission/{commissionId}")
+    @GetMapping("/chats/commissions/{commissionId}")
     public ApiResponse<CommissionDTO.CommissionInfoDTO> getCommission(@PathVariable Long commissionId) {
         CommissionDTO.CommissionInfoDTO responseDTO = commissionQueryService.getCommission(commissionId);
         return ApiResponse.onSuccess(SuccessStatus._COMMISSION_FETCHED, responseDTO);

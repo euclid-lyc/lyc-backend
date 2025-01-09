@@ -3,6 +3,7 @@ package euclid.lyc_spring.repository.commission;
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.chat.Chat;
 import euclid.lyc_spring.domain.chat.commission.Commission;
+import euclid.lyc_spring.domain.enums.CommissionStatus;
 import euclid.lyc_spring.repository.querydsl.CommissionRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -15,4 +16,5 @@ public interface CommissionRepository extends JpaRepository<Commission, Long>, C
 
     public List<Commission> findByDirector(Member director);
     public Optional<Commission> findByChat(Chat chat);
+    Optional<Commission> findByDirectorIdAndMemberIdAndStatusNot(Long id, Long id1, CommissionStatus commissionStatus);
 }
