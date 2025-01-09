@@ -183,7 +183,7 @@ public class ChatQueryServiceImpl implements ChatQueryService {
         String loginId = SecurityUtils.getAuthorizedLoginId();
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
-        chatRepository.findByIdAndInactive(chatId, null)
+        Chat chat = chatRepository.findByIdAndInactive(chatId, null)
                 .orElseThrow(() -> new ChatHandler(ErrorStatus.CHAT_NOT_FOUND));
 
         // 채팅에 참여 중인 회원만 채팅방 조회 가능
@@ -206,6 +206,6 @@ public class ChatQueryServiceImpl implements ChatQueryService {
 
         List<Message> messages = messageRepository.findMessagesByChatId(chatId, pageSize, cursorDateTime);
 
-        return ChatResponseDTO.ChatDTO.toDTO(messages);
+        return ChatResponseDTO.ChatDTO.toDTO(messages, chat, member);
     }
 }
