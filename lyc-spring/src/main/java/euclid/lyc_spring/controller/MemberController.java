@@ -10,9 +10,7 @@ import euclid.lyc_spring.service.member.MemberQueryService;
 import euclid.lyc_spring.service.s3.S3ImageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +24,8 @@ public class MemberController {
     private final MemberQueryService memberQueryService;
     private final MemberCommandService memberCommandService;
     private final S3ImageService s3ImageService;
+
+    private final String dir = "profiles/";
 
 /*-------------------------------------------------- 회원정보 설정 --------------------------------------------------*/
 
@@ -47,7 +47,7 @@ public class MemberController {
     public ApiResponse<MemberDTO.MemberSettingInfoDTO> updateMemberInfo(
             @RequestPart MemberRequestDTO.MemberSettingInfoDTO infoDTO,
             @RequestPart(required = false) MultipartFile image) {
-        String imageUrl = image != null ? s3ImageService.upload(image) : "";
+        String imageUrl = image != null ? s3ImageService.uploadImage(dir, image) : "";
         MemberDTO.MemberSettingInfoDTO responseDTO = memberCommandService.updateMemberInfo(infoDTO, imageUrl);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_SETTING_INFO_UPDATED, responseDTO);
     }
