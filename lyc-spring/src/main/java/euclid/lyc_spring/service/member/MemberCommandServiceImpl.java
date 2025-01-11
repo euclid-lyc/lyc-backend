@@ -14,6 +14,7 @@ import euclid.lyc_spring.repository.InfoRepository;
 import euclid.lyc_spring.repository.MemberRepository;
 import euclid.lyc_spring.repository.PushSetRepository;
 import euclid.lyc_spring.repository.mail.VerificationCodeRepository;
+import euclid.lyc_spring.service.s3.S3ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,10 +30,9 @@ public class MemberCommandServiceImpl implements MemberCommandService {
     private final MemberRepository memberRepository;
     private final InfoRepository infoRepository;
     private final PushSetRepository pushSetRepository;
-    private final VerificationCodeRepository verificationCodeRepository;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final JwtProvider jwtProvider;
+    private final S3ImageService s3ImageService;
 
     /*-------------------------------------------------- 회원정보 설정 --------------------------------------------------*/
 
@@ -57,7 +57,10 @@ public class MemberCommandServiceImpl implements MemberCommandService {
         loginMember.setNickname(infoDTO.getNickname());
 
         if (!imageUrl.isEmpty()) {
+            String deprecatedUrl = loginMember.getProfileImage();
             loginMember.setProfileImage(imageUrl);
+            // 기존의 imageUrl 삭제
+            s3ImageService.deleteImageFromS3(deprecatedUrl);
         }
 
         memberRepository.save(loginMember);
