@@ -33,6 +33,8 @@ public class PostingController {
     private final S3ImageService s3ImageService;
     private final WeatherService weatherService;
 
+    private final String dir = "postings/";
+
 /*-------------------------------------------------- 피드 --------------------------------------------------*/
 
     @Operation(summary = "[구현완료] 게시글 미리보기 10개 불러오기", description = "홈 화면에 노출할 최신 피드 10개를 불러옵니다.")
@@ -82,7 +84,7 @@ public class PostingController {
             @RequestPart ImageRequestDTO.LinkDTO linkDTO,
             @RequestPart(required = false) List<MultipartFile> multipartFiles) {
             List<String> images = multipartFiles.stream()
-                    .map(s3ImageService::upload)
+                    .map(image -> s3ImageService.uploadImage(dir, image))
                     .toList();
         PostingDTO.PostingViewDTO postingViewDTO = postingCommandService.createPostingImage(postingId, linkDTO.getLinks(), images);
         return ApiResponse.onSuccess(SuccessStatus._POSTING_CREATED, postingViewDTO);

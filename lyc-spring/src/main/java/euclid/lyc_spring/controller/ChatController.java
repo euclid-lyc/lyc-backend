@@ -2,7 +2,6 @@ package euclid.lyc_spring.controller;
 
 import euclid.lyc_spring.apiPayload.ApiResponse;
 import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
-import euclid.lyc_spring.auth.SecurityUtils;
 import euclid.lyc_spring.dto.request.ChatRequestDTO;
 import euclid.lyc_spring.dto.response.ChatResponseDTO;
 import euclid.lyc_spring.service.chat.ChatCommandService;
@@ -10,15 +9,12 @@ import euclid.lyc_spring.service.chat.ChatQueryService;
 import euclid.lyc_spring.service.s3.S3ImageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.messaging.handler.annotation.*;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,7 +29,7 @@ public class ChatController {
     private final ChatCommandService chatCommandService;
     private final S3ImageService s3ImageService;
 
-    private final SimpMessagingTemplate simpMessagingTemplate;
+    private final String dir = "messages/";
 
 /*-------------------------------------------------- 채팅방 --------------------------------------------------*/
 
@@ -120,7 +116,7 @@ public class ChatController {
     public ApiResponse<String> uploadImageMessage(
             @PathVariable Long chatId,
             @RequestPart(required = false) MultipartFile image) {
-        String imageUrl = s3ImageService.upload(image);
+        String imageUrl = s3ImageService.uploadImage(dir, image);
         return ApiResponse.onSuccess(SuccessStatus._CHAT_IMAGE_UPLOADED, imageUrl);
     }
 

@@ -11,7 +11,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,6 +27,8 @@ public class ClothesController {
     private final ClothesCommandService clothesCommandService;
     private final S3ImageService s3ImageService;
 
+    private final String dir = "clothes/";
+
     @Operation(summary = "[구현완료] 옷장 게시글 작성하기(사진)", description = """
         사진과 함께 옷장 게시글을 작성합니다.
         
@@ -37,7 +38,7 @@ public class ClothesController {
     ApiResponse<ClothesDTO.ClothesImageResponseDTO> createClothesByImage(
             @RequestPart ClothesRequestDTO.ClothesByImageDTO clothesByImageDTO,
             @RequestPart(required = false) MultipartFile image) {
-        String imageUrl = s3ImageService.upload(image);
+        String imageUrl = s3ImageService.uploadImage(dir, image);
         ClothesDTO.ClothesImageResponseDTO clothesImageResponseDTO = clothesCommandService.createClothesByImage(clothesByImageDTO, imageUrl);
         return ApiResponse.onSuccess(SuccessStatus._CLOTHES_BY_IMAGE_CREATED, clothesImageResponseDTO);
     }

@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +29,8 @@ public class AuthController {
     private final AuthCommandService authCommandService;
     private final S3ImageService s3ImageService;
     private final MailService mailService;
+
+    private final String dir = "profiles/";
 
     // 해당 api 전체적으로 굳이 memberId가 필요없다고 느껴서 쿨하게 뺴버렸습니다!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -78,7 +79,7 @@ public class AuthController {
             HttpServletRequest request,
             @RequestPart RegisterDTO.RegisterMemberDTO registerMemberDTO,
             @RequestPart(required = false) MultipartFile image) {
-        String imageUrl = image != null ? s3ImageService.upload(image) : "";
+        String imageUrl = image != null ? s3ImageService.uploadImage(dir, image) : "";
         MemberDTO.MemberInfoDTO responseDTO = authCommandService.join(request, registerMemberDTO, imageUrl);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_CREATED, responseDTO);
     }
