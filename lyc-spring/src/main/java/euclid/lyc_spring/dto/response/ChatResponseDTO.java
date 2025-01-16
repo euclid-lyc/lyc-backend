@@ -202,10 +202,12 @@ public class ChatResponseDTO {
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     @Builder(access = AccessLevel.PRIVATE)
     public static class ChatDTO {
+        private final Long commissionId;
         private final List<ChatMemberDTO> chatMembers;
         private final List<MessageInfoDTO> messages;
         public static ChatDTO toDTO(List<Message> messages, Chat chat, Member member) {
             return ChatDTO.builder()
+                    .commissionId(chat.getCommission().getId())
                     .chatMembers(chat.getMemberChatList().stream()
                             .map(memberChat -> ChatMemberDTO.toDTO(memberChat, member))
                             .toList())
