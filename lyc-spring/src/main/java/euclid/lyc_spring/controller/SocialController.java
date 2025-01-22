@@ -2,7 +2,7 @@ package euclid.lyc_spring.controller;
 
 import euclid.lyc_spring.apiPayload.ApiResponse;
 import euclid.lyc_spring.apiPayload.code.status.SuccessStatus;
-import euclid.lyc_spring.dto.request.InfoRequestDTO;
+import euclid.lyc_spring.dto.request.InfoDTO;
 import euclid.lyc_spring.dto.request.MemberRequestDTO;
 import euclid.lyc_spring.dto.response.InfoResponseDTO;
 import euclid.lyc_spring.dto.response.MemberDTO;
@@ -112,7 +112,7 @@ public class SocialController {
     @Operation(summary = "[구현완료] 스타일 정보 변경하기", description = "로그인한 회원의 스타일 정보를 변경합니다.")
     @PatchMapping("/styles")
     public ApiResponse<InfoResponseDTO.AllInfoDTO> updateStyleInfo(
-            @RequestBody InfoRequestDTO.StyleInfoDTO styleInfoDTO) {
+            @RequestBody InfoDTO.StyleInfoDTO styleInfoDTO) {
         InfoResponseDTO.AllInfoDTO allInfoDTO = socialCommandService.updateStyleInfo(styleInfoDTO);
         return ApiResponse.onSuccess(SuccessStatus._MEMBER_STYLE_INFO_UPDATED, allInfoDTO);
     }

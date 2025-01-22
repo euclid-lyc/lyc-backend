@@ -8,7 +8,7 @@ import euclid.lyc_spring.domain.Follow;
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.Report;
 import euclid.lyc_spring.domain.info.*;
-import euclid.lyc_spring.dto.request.InfoRequestDTO;
+import euclid.lyc_spring.dto.request.InfoDTO;
 import euclid.lyc_spring.dto.request.MemberRequestDTO;
 import euclid.lyc_spring.dto.response.InfoResponseDTO;
 import euclid.lyc_spring.dto.response.MemberDTO;
@@ -113,7 +113,7 @@ public class SocialCommandServiceImpl implements SocialCommandService {
 /*-------------------------------------------------- 프로필 --------------------------------------------------*/
 
     @Override
-    public InfoResponseDTO.AllInfoDTO updateStyleInfo(InfoRequestDTO.StyleInfoDTO styleInfoDTO) {
+    public InfoResponseDTO.AllInfoDTO updateStyleInfo(InfoDTO.StyleInfoDTO styleInfoDTO) {
 
         // Authorization
         String loginId = SecurityUtils.getAuthorizedLoginId();
@@ -128,7 +128,7 @@ public class SocialCommandServiceImpl implements SocialCommandService {
         return InfoResponseDTO.AllInfoDTO.toDTO(info);
     }
 
-    private Info updateInfo(Info info, InfoRequestDTO.StyleInfoDTO styleInfoDTO) {
+    private Info updateInfo(Info info, InfoDTO.StyleInfoDTO styleInfoDTO) {
         info.updateInfo(styleInfoDTO);
         info = infoRepository.save(info);
 
@@ -140,7 +140,7 @@ public class SocialCommandServiceImpl implements SocialCommandService {
         return info;
     }
 
-    private void updateInfoStyle(Info info, InfoRequestDTO.StyleInfoDTO styleInfoDTO) {
+    private void updateInfoStyle(Info info, InfoDTO.StyleInfoDTO styleInfoDTO) {
 
         // 기존 InfoStyle 삭제
         infoStyleRepository.findAllByInfoId(info.getId())
@@ -173,7 +173,7 @@ public class SocialCommandServiceImpl implements SocialCommandService {
                 });
     }
 
-    private void updateInfoFit(Info info, InfoRequestDTO.StyleInfoDTO styleInfoDTO) {
+    private void updateInfoFit(Info info, InfoDTO.StyleInfoDTO styleInfoDTO) {
 
         // 기존 InfoFit 삭제
         infoFitRepository.findAllByInfoId(info.getId())
@@ -205,7 +205,7 @@ public class SocialCommandServiceImpl implements SocialCommandService {
                 });
     }
 
-    private void updateInfoMaterial(Info info, InfoRequestDTO.StyleInfoDTO styleInfoDTO) {
+    private void updateInfoMaterial(Info info, InfoDTO.StyleInfoDTO styleInfoDTO) {
 
         // 기존 InfoMaterial 삭제
         infoMaterialRepository.findAllByInfoId(info.getId())
@@ -237,7 +237,7 @@ public class SocialCommandServiceImpl implements SocialCommandService {
                 });
     }
 
-    private void updateInfoBodyType(Info info, InfoRequestDTO.StyleInfoDTO styleInfoDTO) {
+    private void updateInfoBodyType(Info info, InfoDTO.StyleInfoDTO styleInfoDTO) {
         // 기존 InfoBodyType 삭제
         infoBodyTypeRepository.findAllByInfoId(info.getId())
                 .forEach(infoBodyType -> {
