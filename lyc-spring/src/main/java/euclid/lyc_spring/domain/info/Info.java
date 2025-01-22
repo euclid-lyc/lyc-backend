@@ -3,7 +3,7 @@ package euclid.lyc_spring.domain.info;
 import euclid.lyc_spring.domain.Member;
 import euclid.lyc_spring.domain.enums.BottomSize;
 import euclid.lyc_spring.domain.enums.TopSize;
-import euclid.lyc_spring.dto.request.InfoRequestDTO;
+import euclid.lyc_spring.dto.request.InfoDTO;
 import euclid.lyc_spring.dto.request.MemberRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
@@ -101,7 +101,7 @@ public class Info {
         this.detailAddress = addressReqDTO.getDetailAddress();
     }
 
-    public void updateInfo(InfoRequestDTO.StyleInfoDTO styleInfoDTO) {
+    public void updateInfo(InfoDTO.StyleInfoDTO styleInfoDTO) {
         this.isPublic = styleInfoDTO.getIsPublic();
         this.topSize = styleInfoDTO.getTopSize();
         this.bottomSize = styleInfoDTO.getBottomSize();

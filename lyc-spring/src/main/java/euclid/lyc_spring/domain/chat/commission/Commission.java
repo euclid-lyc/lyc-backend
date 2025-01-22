@@ -14,7 +14,7 @@ import euclid.lyc_spring.domain.enums.BottomSize;
 import euclid.lyc_spring.domain.enums.CommissionStatus;
 import euclid.lyc_spring.domain.enums.TopSize;
 import euclid.lyc_spring.domain.posting.Posting;
-import euclid.lyc_spring.dto.request.InfoRequestDTO;
+import euclid.lyc_spring.dto.request.InfoDTO;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -184,7 +184,7 @@ public class Commission {
         hopeMaterials.add(material);
     }
 
-    public void updateCommissionOther(InfoRequestDTO.OtherMattersDTO otherMattersDTO) {
+    public void updateCommissionOther(InfoDTO.OtherMattersDTO otherMattersDTO) {
         this.dateToUse = otherMattersDTO.getDateToUse();
         this.desiredDate = otherMattersDTO.getDesiredDate();
         this.minPrice = otherMattersDTO.getMinPrice();
@@ -193,7 +193,7 @@ public class Commission {
         this.isShared = otherMattersDTO.getIsShared();
     }
 
-    public void updateCommissionInfo(InfoRequestDTO.BasicInfoDTO basicInfoDTO) {
+    public void updateCommissionInfo(InfoDTO.BasicInfoDTO basicInfoDTO) {
         this.height = basicInfoDTO.getHeight();
         this.weight = basicInfoDTO.getWeight();
         this.topSize = basicInfoDTO.getTopSize();
