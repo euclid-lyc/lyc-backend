@@ -13,9 +13,9 @@ public class CommissionRequestDTO {
     public static class CommissionDTO {
 
         private Long directorId;
-        private InfoRequestDTO.BasicInfoDTO basicInfo;
-        private StyleRequestDTO.StyleDTO style;
-        private InfoRequestDTO.OtherMattersDTO otherMatters;
+        private InfoDTO.BasicInfoDTO basicInfo;
+        private StyleDTO.StyleInfoDTO style;
+        private InfoDTO.OtherMattersDTO otherMatters;
     }
 
     @Getter

@@ -13,12 +13,11 @@ import euclid.lyc_spring.domain.chat.Schedule;
 import euclid.lyc_spring.domain.chat.commission.Commission;
 import euclid.lyc_spring.domain.chat.commission.commission_style.*;
 import euclid.lyc_spring.domain.chat.commission.commission_info.*;
-import euclid.lyc_spring.domain.enums.CommissionStatus;
 import euclid.lyc_spring.domain.enums.MessageCategory;
 import euclid.lyc_spring.domain.mapping.MemberChat;
 import euclid.lyc_spring.dto.request.CommissionRequestDTO;
-import euclid.lyc_spring.dto.request.InfoRequestDTO;
-import euclid.lyc_spring.dto.request.StyleRequestDTO;
+import euclid.lyc_spring.dto.request.InfoDTO;
+import euclid.lyc_spring.dto.request.StyleDTO;
 import euclid.lyc_spring.dto.response.ChatResponseDTO;
 import euclid.lyc_spring.dto.response.CommissionDTO;
 import euclid.lyc_spring.repository.*;
@@ -29,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static euclid.lyc_spring.domain.enums.CommissionStatus.*;
 
@@ -78,9 +78,9 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
             throw new CommissionHandler(ErrorStatus.COMMISSION_ALREADY_EXISTS);
         }
 
-        InfoRequestDTO.BasicInfoDTO basicInfoDTO = commissionRequestDTO.getBasicInfo();
-        StyleRequestDTO.StyleDTO styleDTO = commissionRequestDTO.getStyle();
-        InfoRequestDTO.OtherMattersDTO otherMattersDTO = commissionRequestDTO.getOtherMatters();
+        InfoDTO.BasicInfoDTO basicInfoDTO = commissionRequestDTO.getBasicInfo();
+        StyleDTO.StyleInfoDTO styleInfoDTO = commissionRequestDTO.getStyle();
+        InfoDTO.OtherMattersDTO otherMattersDTO = commissionRequestDTO.getOtherMatters();
 
         Commission commission = Commission.builder()
                 .status(REQUIRED)
@@ -102,10 +102,10 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
 
         commission = commissionRepository.save(commission);
 
-        createCommissionHopeStyle(commission, styleDTO.getStyleList());
-        createCommissionHopeFit(commission, styleDTO.getFitList());
-        createCommissionHopeMaterial(commission, styleDTO.getMaterialList());
-        createCommissionStyleColor(commission, styleDTO.getColorList());
+        createCommissionHopeStyle(commission, styleInfoDTO.getStyleList());
+        createCommissionHopeFit(commission, styleInfoDTO.getFitList());
+        createCommissionHopeMaterial(commission, styleInfoDTO.getMaterialList());
+        createCommissionStyleColor(commission, styleInfoDTO.getColorList());
 
         createCommissionStyle(commission, basicInfoDTO.getInfoStyle());
         createCommissionFit(commission, basicInfoDTO.getInfoFit());
@@ -241,6 +241,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
 
                         return newChat;
                     });
+            chat.setCommission(commission);
 
             Schedule schedule = Schedule.builder()
                 .date(commission.getDesiredDate())
@@ -301,16 +302,16 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
         if(!member.getId().equals(commission.getMember().getId()))
             throw new CommissionHandler(ErrorStatus.CLIENT_NOT_EQUAL_MEMBER);
 
-        InfoRequestDTO.BasicInfoDTO basicInfoDTO = commissionRequestDTO.getBasicInfo();
-        StyleRequestDTO.StyleDTO styleDTO = commissionRequestDTO.getStyle();
-        InfoRequestDTO.OtherMattersDTO otherMattersDTO = commissionRequestDTO.getOtherMatters();
+        InfoDTO.BasicInfoDTO basicInfoDTO = commissionRequestDTO.getBasicInfo();
+        StyleDTO.StyleInfoDTO styleInfoDTO = commissionRequestDTO.getStyle();
+        InfoDTO.OtherMattersDTO otherMattersDTO = commissionRequestDTO.getOtherMatters();
 
         if(otherMattersDTO.getDesiredDate().isBefore(LocalDate.now()) || otherMattersDTO.getDateToUse().isBefore(LocalDate.now())){
             throw new CommissionHandler(ErrorStatus.COMMISSION_INVALID_DATE);
         }
 
         updateCommissionInfo(commission, basicInfoDTO);
-        updateCommissionStyle(commission, styleDTO);
+        updateCommissionStyle(commission, styleInfoDTO);
         commission.updateCommissionOther(otherMattersDTO);
 
         return CommissionDTO.CommissionViewDTO.toDTO(commission);
@@ -443,7 +444,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
 
 /*-------------------------------------------------- Update Methods --------------------------------------------------*/
 
-    private void updateCommissionInfo(Commission commission, InfoRequestDTO.BasicInfoDTO basicInfoDTO) {
+    private void updateCommissionInfo(Commission commission, InfoDTO.BasicInfoDTO basicInfoDTO) {
 
         commission.updateCommissionInfo(basicInfoDTO);
 
@@ -469,33 +470,33 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
 
     }
 
-    private void updateCommissionStyle(Commission commission, StyleRequestDTO.StyleDTO styleDTO){
+    private void updateCommissionStyle(Commission commission, StyleDTO.StyleInfoDTO styleInfoDTO){
 
         // update CommissionHopeStyle
         commissionHopeStyleRepository.deleteAllByCommission(commission);
         commission.deleteAllHopeStyles();
-        createCommissionHopeStyle(commission, styleDTO.getStyleList());
+        createCommissionHopeStyle(commission, styleInfoDTO.getStyleList());
 
         // update CommissionHopeFit
         commissionHopeFitRepository.deleteAllByCommission(commission);
         commission.deleteAllHopeFits();
-        createCommissionHopeFit(commission, styleDTO.getFitList());
+        createCommissionHopeFit(commission, styleInfoDTO.getFitList());
 
         // update CommissionHopeMaterial
         commissionHopeMaterialRepository.deleteAllByCommission(commission);
         commission.deleteAllHopeMaterials();
-        createCommissionHopeMaterial(commission, styleDTO.getMaterialList());
+        createCommissionHopeMaterial(commission, styleInfoDTO.getMaterialList());
 
         // update CommissionHopeColor
         commissionHopeColorRepository.deleteAllByCommission(commission);
         commission.deleteAllHopeColors();
-        createCommissionStyleColor(commission, styleDTO.getColorList());
+        createCommissionStyleColor(commission, styleInfoDTO.getColorList());
 
     }
 
 /*-------------------------------------------------- Create Methods --------------------------------------------------*/
 
-    private void createCommissionStyleColor(Commission commission, StyleRequestDTO.ColorListDTO colorList) {
+    private void createCommissionStyleColor(Commission commission, StyleDTO.ColorListDTO colorList) {
         if (colorList == null || colorList.getColorList() == null) {return;}
 
         colorList.getColorList()
@@ -510,7 +511,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 });
     }
 
-    private void createCommissionHopeMaterial(Commission commission, StyleRequestDTO.MaterialListDTO materialList) {
+    private void createCommissionHopeMaterial(Commission commission, StyleDTO.MaterialListDTO materialList) {
         if (materialList == null || materialList.getMaterialList() == null) {return;}
 
         materialList.getMaterialList()
@@ -525,7 +526,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 });
     }
 
-    private void createCommissionHopeFit(Commission commission, StyleRequestDTO.FitListDTO fitList) {
+    private void createCommissionHopeFit(Commission commission, StyleDTO.FitListDTO fitList) {
         if (fitList == null || fitList.getFitList() == null) {return;}
 
         fitList.getFitList()
@@ -540,7 +541,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 });
     }
 
-    private void createCommissionHopeStyle(Commission commission, StyleRequestDTO.StyleListDTO styleList) {
+    private void createCommissionHopeStyle(Commission commission, StyleDTO.StyleListDTO styleList) {
         if (styleList == null || styleList.getStyleList() == null) {return;}
 
         styleList.getStyleList()
@@ -555,7 +556,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 });
     }
 
-    private void createCommissionStyle(Commission commission, InfoRequestDTO.InfoStyleListDTO infoStyleListDTO){
+    private void createCommissionStyle(Commission commission, InfoDTO.InfoStyleListDTO infoStyleListDTO){
         if (infoStyleListDTO == null || infoStyleListDTO.getPreferredStyleList() == null) {return;}
 
         infoStyleListDTO.getPreferredStyleList()
@@ -581,7 +582,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 });
     }
 
-    private void createCommissionFit(Commission commission, InfoRequestDTO.InfoFitListDTO infoFitListDTO){
+    private void createCommissionFit(Commission commission, InfoDTO.InfoFitListDTO infoFitListDTO){
         if (infoFitListDTO == null || infoFitListDTO.getPreferredFitList() == null) {return;}
         infoFitListDTO.getPreferredFitList()
                 .forEach(fit -> {
@@ -606,7 +607,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 });
     }
 
-    private void createCommissionBodyType(Commission commission, InfoRequestDTO.InfoBodyTypeListDTO infoBodyTypeListDTO) {
+    private void createCommissionBodyType(Commission commission, InfoDTO.InfoBodyTypeListDTO infoBodyTypeListDTO) {
         if (infoBodyTypeListDTO == null || infoBodyTypeListDTO.getGoodBodyTypeList() == null) {return;}
 
         infoBodyTypeListDTO.getGoodBodyTypeList()
@@ -632,7 +633,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 });
     }
 
-    private void createCommissionMaterial(Commission commission, InfoRequestDTO.InfoMaterialListDTO infoMaterialListDTO) {
+    private void createCommissionMaterial(Commission commission, InfoDTO.InfoMaterialListDTO infoMaterialListDTO) {
         if (infoMaterialListDTO == null || infoMaterialListDTO.getPreferredMaterialList() == null) {return;}
 
         infoMaterialListDTO.getPreferredMaterialList()

@@ -83,7 +83,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         }
 
         MemberRequestDTO.MemberDTO memberDTO = registerMemberDTO.getMember();
-        InfoRequestDTO.BasicInfoDTO basicInfoDTO = registerMemberDTO.getInfo();
+        InfoDTO.BasicInfoDTO basicInfoDTO = registerMemberDTO.getInfo();
         MemberRequestDTO.PushSetDTO pushSetDTO = registerMemberDTO.getPushSet();
 
         if(imageUrl == null || imageUrl.isEmpty()) {
@@ -145,7 +145,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
         member.addPushSet(pushSet);
     }
 
-    private void createInfo(Member member, InfoRequestDTO.BasicInfoDTO infoDto) {
+    private void createInfo(Member member, InfoDTO.BasicInfoDTO infoDto) {
 
         Info info = Info.builder()
                 .member(member)
@@ -168,7 +168,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
 
     }
 
-    private void createInfoStyle(Info info, InfoRequestDTO.InfoStyleListDTO infoStyleListDTO) {
+    private void createInfoStyle(Info info, InfoDTO.InfoStyleListDTO infoStyleListDTO) {
 
         infoStyleListDTO.getPreferredStyleList()
                 .forEach(style -> {
@@ -195,7 +195,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                 });
     }
 
-    private void createInfoFit(Info info, InfoRequestDTO.InfoFitListDTO infoFitListDTO) {
+    private void createInfoFit(Info info, InfoDTO.InfoFitListDTO infoFitListDTO) {
 
         infoFitListDTO.getPreferredFitList()
                 .forEach(style -> {
@@ -220,7 +220,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                 });
     }
 
-    private void createInfoMaterial(Info info, InfoRequestDTO.InfoMaterialListDTO infoMaterialListDTO) {
+    private void createInfoMaterial(Info info, InfoDTO.InfoMaterialListDTO infoMaterialListDTO) {
 
         infoMaterialListDTO.getPreferredMaterialList()
                 .forEach(material -> {
@@ -245,7 +245,7 @@ public class AuthCommandServiceImpl implements AuthCommandService {
                 });
     }
 
-    private void createInfoBodyType(Info info, InfoRequestDTO.InfoBodyTypeListDTO infoBodyTypeListDTO) {
+    private void createInfoBodyType(Info info, InfoDTO.InfoBodyTypeListDTO infoBodyTypeListDTO) {
 
         infoBodyTypeListDTO.getGoodBodyTypeList()
                 .forEach(bodyType -> {
