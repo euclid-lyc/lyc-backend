@@ -188,6 +188,7 @@ public class Commission {
     }
 
     public void updateCommissionOther(InfoDTO.OtherMattersDTO otherMattersDTO) {
+        this.occasion = otherMattersDTO.getOccasion();
         this.dateToUse = otherMattersDTO.getDateToUse();
         this.desiredDate = otherMattersDTO.getDesiredDate();
         this.minPrice = otherMattersDTO.getMinPrice();
