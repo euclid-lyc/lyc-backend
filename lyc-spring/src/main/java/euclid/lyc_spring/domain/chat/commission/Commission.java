@@ -133,6 +133,9 @@ public class Commission {
 /*-------------------------------------------------- 3페이지 (기타사항) --------------------------------------------------*/
 
     @Column
+    private String occasion;
+
+    @Column
     private LocalDate dateToUse;
 
     @Column
@@ -185,6 +188,7 @@ public class Commission {
     }
 
     public void updateCommissionOther(InfoDTO.OtherMattersDTO otherMattersDTO) {
+        this.occasion = otherMattersDTO.getOccasion();
         this.dateToUse = otherMattersDTO.getDateToUse();
         this.desiredDate = otherMattersDTO.getDesiredDate();
         this.minPrice = otherMattersDTO.getMinPrice();
