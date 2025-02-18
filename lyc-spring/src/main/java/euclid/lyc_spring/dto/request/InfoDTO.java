@@ -165,6 +165,7 @@ public class InfoDTO {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @AllArgsConstructor
     public static class OtherMattersDTO {
+        private String occasion;
         private Integer minPrice;
         private Integer maxPrice;
         private LocalDate dateToUse;
@@ -174,6 +175,7 @@ public class InfoDTO {
 
         public static OtherMattersDTO toDTO(Commission commission) {
             return OtherMattersDTO.builder()
+                    .occasion(commission.getOccasion())
                     .minPrice(commission.getMinPrice())
                     .maxPrice(commission.getMaxPrice())
                     .dateToUse(commission.getDateToUse())

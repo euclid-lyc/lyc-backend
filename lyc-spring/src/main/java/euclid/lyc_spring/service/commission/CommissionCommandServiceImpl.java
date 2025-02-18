@@ -92,6 +92,7 @@ public class CommissionCommandServiceImpl implements CommissionCommandService {
                 .topSize(basicInfoDTO.getTopSize())
                 .bottomSize(basicInfoDTO.getBottomSize())
                 .text(basicInfoDTO.getText())
+                .occasion(otherMattersDTO.getOccasion())
                 .dateToUse(otherMattersDTO.getDateToUse())
                 .desiredDate(otherMattersDTO.getDesiredDate())
                 .minPrice(otherMattersDTO.getMinPrice())
