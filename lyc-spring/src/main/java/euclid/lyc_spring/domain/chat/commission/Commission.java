@@ -133,6 +133,9 @@ public class Commission {
 /*-------------------------------------------------- 3페이지 (기타사항) --------------------------------------------------*/
 
     @Column
+    private String occasion;
+
+    @Column
     private LocalDate dateToUse;
 
     @Column
