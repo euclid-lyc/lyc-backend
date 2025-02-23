@@ -107,6 +107,8 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // WEATHER
     _WEATHER_NOT_FOUND(HttpStatus.NOT_FOUND, "WEATHER4001", "날씨 정보를 찾을 수 없습니다."),
+    WEATHER_JSON_PARSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "WEATHER4002", "날씨 데이터(JSON) 파싱에 실패했습니다."),
+    WEATHER_API_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "WEATHER4003", "날씨 API 호출에 실패했습니다."),
 
     // POINT
     FAIL_TO_POINT_RECHARGE(HttpStatus.INTERNAL_SERVER_ERROR, "PNT5001", "포인트를 충전할 수 없습니다."),
